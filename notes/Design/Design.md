@@ -18,7 +18,8 @@ Open questions:
 - - - -
 
 ## How one would extend the model to accept the group of images?
-Extension
+
+<a href='Extension.md'>Extension</a>
 
 - - - -
 
