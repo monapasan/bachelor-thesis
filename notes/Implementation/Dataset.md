@@ -229,10 +229,10 @@ Dataset class properties:
 
 
 Questions:
-	* How to check whether data make sense
-	* What is good amount of samples?
-	* double check distribution of number in dataset
-	* As we do some random permutation on the dataset, does it make sense to store the dataset to have the same dataset?
+* How to check whether data make sense?
+* What is good amount of samples?
+* double check distribution of number in dataset
+* As we do some random permutation on the dataset, does it make sense to store the dataset to have the same dataset?
 
 ---
 
