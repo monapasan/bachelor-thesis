@@ -1,23 +1,25 @@
 # MNIST, Dataset
 #bachelor/Implementation/dataset
 
-**The original black** and white (bilevel) images from NIST were size normalized to fit in a 20x20 pixel box while preserving their aspect ratio.
-**The resulting images** contain grey levels as a result of the anti-aliasing technique used by the normalization algorithm. the images were centered in a 28x28 image by computing the center of mass of the pixels, and translating the image so as to position this point at the center of the 28x28 field.
 
-
-With some classification methods (particularly template-based methods, such as SVM and K-nearest neighbors), the error rate improves when the digits are centered by bounding box rather than center of mass. **If you do this kind of pre-processing, you should report it in your publications.** [1]
+> **The original black** and white (bilevel) images from NIST were size normalized to fit in a 20x20 pixel box while preserving their aspect ratio.   
+> **The resulting images** contain grey levels as a result of the anti-aliasing technique used by the normalization algorithm. the images were centered in a 28x28 image by computing the center of mass of the pixels, and translating the image so as to position this point at the center of the 28x28 field.  
+>   
+> With some classification methods (particularly template-based methods, such as SVM and K-nearest neighbors), the error rate improves when the digits are centered by bounding box rather than center of mass. **If you do this kind of pre-processing, you should report it in your publications.**  
+- - - -
+ [1]
 
 
 #### Points to keep in mind
 
 The basic idea of experiment to prove whether model is capable of identifying pictures that do not influence on making classification decision. Therefore following things are considered:
-	* whether the dataset set has a defined order between images, i.e. that noise picture will always be placed at one certain index in an array.
-	* Noise picture variations (see paragraph below)
+* whether the dataset set has a defined order between images, i.e. that noise picture will always be placed at one certain index in an array.
+* Noise picture variations (see paragraph below)
 
 
 #### Noise picture variations
 
-<u>So far we acknowledged two variations:</u>
+<u>At the moment there are two variations acknowledged:</u>
 Considering that each sample from dataset consists of 5 images.
 
 1. It's possible to make one certain number picture - a noise picture. For example, we can achieve this by making number 0 be always a noise picture and this case number 0 will be irrelevant for classification decision. An example of this can be as follows:
@@ -37,16 +39,14 @@ For one sample we need 5 digits.  Depends on the class of the sample one, two an
 
 As we don't know yet how many parameters(weights) our network will have, let's consider a dataset of size 45000 is good enough for our problem.
 In 45000 examples we will have:
-
 * ~15000 belongs to class 1
 * ~15000 belongs to class 2
 * ~15000 belongs to class 3
 
-MNIST training dataset has **5444** examples of digit 0.
+MNIST training dataset has 5444 examples of digit 0.
 
 The good thing about the dataset, that we can use any non-zero digit in one class what gives us a good amount of samples:
-* One sample of class 1 can consist of the same numbers but  have different digit representations, that is that we can have different variations of the samples.
-* I.e. [0, 5, 3, 1, 9]  can occur two times but have different pictures of digits in it.
+* One sample of class 1 can consist of the same numbers but  have different digit representations, that is that we can have different variations of the samples. I.e. [0, 5, 3, 1, 9]  can occur two times but have different pictures of digits in it.
 
 
 
@@ -123,25 +123,29 @@ To generate 15000 samples for the first class:
 	* taking into account that we don't want to have two identical samples we have to make sure that we don't have identical non-zero digits in a sample with same zero digits.
 		* or better to not have any identical sample at all
 	* To achieve that we can build 15000 identical unordered 4-tuples from non-zero digit dataset.
-	* Good news are that having 49556 samples in our non-zero digit dataset gives us a huge number of combinations of size 4 (it's about 2.5E+17).
-	* we can build 15000 combination of size 4 from non-digits dataset
-	* and use these combinations.
+	* Good news are that from 49556 samples in our non-zero digit dataset we can extract a huge number of combinations of size 4 (it's about 2.5E+17).
+		* Counting combinations: from 49556 samples we want to build combinations of size 4:
+		* using the formula: `n_C_r = n! / r! (n - r)!` n_C_r = 49556! / 4! (49556 - 4)! ~=2.5E+17
+	* we can build at least 15000 combinations of 4-tuples from non-zero digits dataset (noise dataset), which is leading to non identical samples.
+3. We concat the combinations from step 2 with zero digit from step 1.
+4. Indexes of resulted array will be explained below.
 
 
 ##### Building second class
 To generate 15000 samples for the second class where one sample should contain two zero digits in a sample:
-1.  we need to have 15000 zero digit pair.
-	* They shouldn't be identical as to prevent duplicates in the dataset we can use different  non-zero digits.
-	* but to completely prevent that model can learn any dependencies between digits it's desired to not use the same pair of zero digits in dataset.
-	* And since number of combinations is equal to 14.815.846 we can easily achieve 15000 non duplicated zero digit pairs.
+1.  we need to have 15000 zero digit tuples.
+	* In order to prevent that model can learn any dependencies between digits it's would be great to not use the same pair of zero digits in dataset more than one time.
+	* Since number of combinations of size 2 from 5444 samples is equal to 14.815.846 we can easily gather 15000 non duplicated zero digit pairs.
 		* Counting combinations: from 5444 sample we want to build combinations of size 2:
 		* using the formula: `n_C_r = n! / r! (n - r)!` n_C_r = 5444! / 2! (5444 - 2)! = 5443 * 5444 / 2 = 14.815.846
-	* building the array of combinations and sampling from it, will give us 15000 non-duplicated zero digit pairs.
-2. We also need 15000 unordered triples non-zero digits
+	* building the these  combinations, will give us 15000 non-duplicated zero digit pairs.
+2. We also need to have 15000 unordered triples of non-zero digits
 	* As we have 49556 in our non-zero digit dataset, and 15000 x 3 = 45000 which less than 49556
 	* To build the amount of triples it should be enough:
 		* To randomly rearrange digits in the non-zero digit dataset
 		* and just take sequentially three digit at a time based on a new order of non-zero digit dataset.
+3. We concat the combinations from step 2 with zero digits from step 1.
+4. Indexes of resulted array will be explained below.
 
 
 
@@ -149,18 +153,18 @@ To generate 15000 samples for the second class where one sample should contain t
 
 To generate 15000 samples for the third class where one sample should contain three zero digits in a sample:
 1. we need to have 15000 unordered zero digit triples.
-	* They shouldn't be identical as to prevent duplicates in the dataset we can use different  non-zero digits.
-	* but to completely prevent that model can learn any dependencies between digits it's desired to not use the same pair of zero digits in dataset.
-	* And since number of combinations is equal to 26,875,944,644 we can easily achieve 15000 non duplicated zero digit triples.
+	* In order to prevent that model can learn any dependencies between digits it's would be great to not use the same pair of zero digits in dataset more than one time.
+	* Since number of combinations of size 2 from 5444 samples is equal to 26,875,944,644 we can easily gather 15000 unordered non duplicated zero digit triples.
 		* Counting combinations: from 5444 sample we want to build combinations of size 3:
 		* using the formula: `n_C_r = n! / r! (n - r)!`.  n_C_r = 5444! / 3! (5444 - 3!) = 5442 * 5443 * 5444 / 6 = 26.875.944.644
-	* building the array of combinations and sampling from it, will give us 15000 unordered set of non-duplicated zero digit triples.
-2. We also need 15000 unordered pairs non-zero digits
+	* building the these  combinations, will give us 15000 unordered non-duplicated zero digit triples.
+2. We also need to have 15000 unordered pairs non-zero digits
 	* As we have 49556 in our non-zero digit dataset, and 15000 x 2 = 30000 which less than 49556
 	* To build the amount of triples it should be enough:
 		* To randomly rearrange digits in the non-zero digit dataset
 		* and just take sequentially two digit at a time based on a new order of non-zero digit dataset.
-
+3. We concat the combinations from step 2 with zero digits from step 1.
+4. Indexes of resulted array will be explained below.
 
 #### Choosing the indexes of zero digit and noise pictures
 
@@ -171,9 +175,9 @@ We have two major possibilities to place our noise pictures in a sample:
 	* always have zero digit at certain place
 	* we can put indexes at start of the array or at end of the array
 	* Make experiments and investigate how the model will behave in these different cases.
-	* in case of 2 and 3 classes we must have multiple indexes.
+	* in case of 2nd and 3rd classes we must have multiple indexes.
 2. with random place:
-	* we can sample indexes of zero from uniform distribution.
+	* we can sample indexes for zero digits from uniform distribution.
 	* depends on the class we can sample multiple indexes.
 
 ### Implementation procedure
@@ -190,53 +194,115 @@ Steps to be done:
 
 
 ## Classes overview
-I see here three classes
-* Index_generator
+The approach to generate the new dataset can be implemented by using two classes:
+1. IndexGenerator
 	* responsible for generating indexes
-* Raw_dataset
+	* maybe split this one into three classes:
+		* BaseIndexGenerator - abstract class
+		* OrderedIndexGenerator - class when order is the same
+		* UnorderedIndexGenerator - class when order is taken from distribution.
+2. RawDataset
 	* the dataset which holds the raw data
 	* can accept index_generator class as parameter.
+
+We can also create a class for convenient use in our model:
 * Dataset
-	* the dataset which holds tf tensors
+	* the dataset which holds tf tensors.
+	* basically a wrapper for convenient use in out model.
 	* has Raw_dataset as property.
 		* or also as parameter
 
-Index generator:
-	* 	keep_order ? - wether order should be
 
+### IndexGenerator class
 
-### Index_generator class
+<u>Properties</u>:
+* `keep_order` - whether order should be saved for all samples.
+* `distribution` - distributions to use  when order only used when keep_order is false (default uniform)
+* `noise_index_order` - order of noise (like random, start, end), only if keep_order is true. Maybe better to use a list of indexes.
+* `sample_size` - the size of one sample( in the case above is 5)
+* `noise_size` - the size of noise sample (in case of the first class is 4)
+* `number_classes` - number of classes in dataset(in above case is 3)
+	* if `number_classes` is more than 1 then all of parameters above can be passed as array.
+	* when the props above is not arrays, then it's assumed that all properties are the same for all classes.
 
-### Raw_dataset class
+<u>Methods</u>:
+* `get_indexes(size:int=1)`
+	* will return an array of size `(size, number_classes, noise_size)`
+		* or will return an array of size `(size, number_classes, sample_size)`. In this case we can make it one hot encoded.
+* `get_indexes_for_class(class, size=1)`
+	* will give you next batch of index with respect to class `class: int`
+	* will return an array of size  `(size, noise_size)`
 
-### Dataset class
+### RawDataset class
+
+Constructor should accept following:
+	* `IndexGenerator` - class described above
+	* `dataset` - accept the dataset (MNIST)
+		* pythonic way: dataset should have properties `images` and `labels`
+	* `distribution` -
+	* `noise_label_index` - noise label is expected at this index. All other indexes will be considered as places from which actual information comes from. One either specifies `noise_label_index` or `data_label_index`. These properties are mutually exclusive.
+	* `data_label_index` - data label is expected at this index. Indexes of labels where actual information comes from.
+	* `amount_of_classes` - amount of classes
+	* `noise_quantity` -  amount of noise labels that should be putting into each of the class. Should be an array of size `amount_of_classes`. This equation should be fulfilled: `amount_of_classes >noise_size`
+	* `amount_of_samples_in_class` - amount of sample in each of the class. Should be an array of size `amount_of_classes`.(take a look on class 3, maybe some technics)
+
+Public properties:
+* `images # /groups` -- array of groups of images.
+* `labels` -- array of labels
+
+Methods:
+* `next_batch(size): (images, labels)` -
+* `permute` - permute the order.
+
+### Dataset class, work in progress
 
 As for convenience sake public methods of the Dataset class should accept and return only Tensorflow's tensors. It will provide a good level of abstraction and make Tensorflow's tensors a first-class citizen of the prototype. Having the tensors first-class citizen will contribute to construction of coherent prototype.
 
 Additional requirement to dataset are:
-
+* This gonna be a bit complicated.
 
 TensorFlow provide a class for importing the [MNIST dataset ](https://github.com/aymericdamien/TensorFlow-Examples/blob/master/notebooks/0_Prerequisite/mnist_dataset_intro.ipynb).  We build our Dataset class upon the one from tensor flow.
 
 Dataset class methods:
-	*
+* WIP
 Dataset class properties:
-	*
+* WIP
 
+## Utilities
+* `itertools.combinations(iterable, r)` - nice way of building combinations. Does not build it by calling, but will return a generator.
+* `numpy.random.uniform` - sampling from uniform distribution, provided by bumpy
+* `numpy.random. randint` - sampling discrete values from uniform distribution
+* `numpy.random.permutation` - or rather use this for distribution
+* `np.random.choice` - this is will be equivalent to above
 - - - -
 [1] - MNIST handwritten digit database, Yann LeCun, Corinna Cortes and Chris Burges. (n.d.). Retrieved April 12, 2017, from http://yann.lecun.com/exdb/mnist/
 
 
 
 Questions:
-* How to check whether data make sense?
-* What is good amount of samples?
-* double check distribution of number in dataset
-* As we do some random permutation on the dataset, does it make sense to store the dataset to have the same dataset?
+* What are good metrics that one has a good dataset? How check for correlation and dependencies between data in the dataset?
+* What will be good amount of samples? How is that dependent on weight variables?
+* double check distribution of numbers in dataset
+* As we do some random permutation on the dataset, does it make sense to store the dataset to have the same dataset at every training of the model? Or would it better to generate a new one per training?
+* PEP 008 recommends using camelCase naming for methods and  properties names. But I have a feeling that this convention is not widely used. For instance, If one looks at [this](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/training/adam.py) it seems like tensorFlow guys for example don't follow it.
 
----
+- - - -
+
+
+
+
+
+
+
+
+
+
 
 Garbage:
+
+
+
+
 
 1. take the digits based on order in dataset:
 	* e.g. we have an array [4,1,4,5,1,3,6,8,1,9,4,1].
@@ -246,11 +312,11 @@ Garbage:
 
 With current approach we can easily build 15000 samples for the first class.
 
-	* firstly, we can take zero digits from the zero digit dataset based on the order of this dataset.
-	* This we give us about
+* firstly, we can take zero digits from the zero digit dataset based on the order of this dataset.
+* This we give us about
 
 To generate samples for the first class:
-	* take one zero digit from zero digit dataset
-	* take four digits from non-zero digit dataset
-	* build an array
-		* choose indexes (see below)
+* take one zero digit from zero digit dataset
+* take four digits from non-zero digit dataset
+* build an array
+	* choose indexes (see below)
