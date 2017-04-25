@@ -279,7 +279,10 @@ Dataset class properties:
 
 
 
-Questions:
+
+
+
+### Questions:
 * What are good metrics that one has a good dataset? How check for correlation and dependencies between data in the dataset?
 * What will be good amount of samples? How is that dependent on weight variables?
 * double check distribution of numbers in dataset
