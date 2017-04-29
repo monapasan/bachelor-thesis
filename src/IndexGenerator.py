@@ -10,7 +10,7 @@ class IndexGenerator:
     """
     def __init__(
         self, sample_size, noise_size, class_amount, keep_order=False,
-        distribution=uniform, noise_index_order=None
+        distribution=uniform, noise_index_order=None, indexes=None
     ):
         """Construct a new Index Generator.
         Args:
@@ -52,9 +52,6 @@ class IndexGenerator:
                 distribution(self.class_amount + 1, noise)
                 for noise in self.noise_size
             ]
-            # for i in range(class_amount):
-            #     res[i] = distribution(self.class_amount, self.noise_size[i])
-            # return res
 
         def generate(size):
             for i in range(size):
@@ -62,8 +59,6 @@ class IndexGenerator:
         self._generate = generate
 
         def generate_for_class(class_number):
-            if(class_number > self.class_amount):
-                raise ValueError('cls can not be higher then class_amount')
             return distribution(
                 self.class_amount + 1, self.noise_size[class_number]
             )
@@ -71,24 +66,33 @@ class IndexGenerator:
 
     def _build_generator_with_order(self, noise_index_order):
         self.order = noise_index_order
+        self._check_order()
 
         def generate():
-            return None
-        self._generator = generate
+            return self.order
+
+        def generate_for_class(class_number):
+            return self.order[class_number]
+
+        self._generate = generate
+        self.generate_for_class = generate_for_class
+
+    def _check_order(self):
+        for i, order in enumerate(self.order):
+            if(len(order) == self.noise_size[i]):
+                raise ValueError(
+                    'The shape of the indexes object does not match with \
+                     shape of noise_size'
+                )
 
     def get_indexes(self, size=1):
         return self._generate(size)
 
     def get_indexes_for_class(self, cls_number, size=1):
+        if(cls_number >= self.class_amount):
+            raise ValueError(
+                'Index is out of range. \
+                cls parameter can not be higher then class_amount'
+            )
         for i in range(size):
             yield self.generate_for_class(cls_number)
-
-
-sample_size = 5
-class_amount = 3
-noise_size = [4, 3, 2]
-myIndexGenerator = IndexGenerator(sample_size, noise_size, class_amount)
-myIndexGenerator.get_indexes(1)
-# myIndexGenerator.get_indexes(1) -->
-# this should return an array of shape [1, class_amount, noise_size]
-# [[1,5,3,1], [1,5,3], [3, 4]]

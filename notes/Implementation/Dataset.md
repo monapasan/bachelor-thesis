@@ -236,15 +236,15 @@ We can also create a class for convenient use in our model:
 ### RawDataset class
 
 Constructor should accept following:
-	* `IndexGenerator` - class described above
-	* `dataset` - accept the dataset (MNIST)
-		* pythonic way: dataset should have properties `images` and `labels`
-	* `distribution` -
-	* `noise_label_index` - noise label is expected at this index. All other indexes will be considered as places from which actual information comes from. One either specifies `noise_label_index` or `data_label_index`. These properties are mutually exclusive.
-	* `data_label_index` - data label is expected at this index. Indexes of labels where actual information comes from.
-	* `amount_of_classes` - amount of classes
-	* `noise_quantity` -  amount of noise labels that should be putting into each of the class. Should be an array of size `amount_of_classes`. This equation should be fulfilled: `amount_of_classes >noise_size`
-	* `amount_of_samples_in_class` - amount of sample in each of the class. Should be an array of size `amount_of_classes`.(take a look on class 3, maybe some technics)
+* `IndexGenerator` - class described above
+* `dataset` - accept the dataset (MNIST)
+	* pythonic way: dataset should have properties `images` and `labels`
+* `distribution` -
+* `noise_label_index` - noise label is expected at this index. All other indexes will be considered as places from which actual information comes from. One either specifies `noise_label_index` or `data_label_index`. These properties are mutually exclusive.
+* `data_label_index` - data label is expected at this index. Indexes of labels where actual information comes from.
+* `amount_of_classes` - amount of classes
+* `noise_quantity` -  amount of noise labels that should be putting into each of the class. Should be an array of size `amount_of_classes`. This equation should be fulfilled: `amount_of_classes >noise_size`
+* `amount_of_samples_in_class` - amount of sample in each of the class. Should be an array of size `amount_of_classes`.(take a look on class 3, maybe some technics)
 
 Public properties:
 * `images # /groups` -- array of groups of images.
