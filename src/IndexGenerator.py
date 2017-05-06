@@ -9,7 +9,7 @@ class IndexGenerator:
     """Responsible for generating indexes
     """
     def __init__(
-        self, sample_size, noise_size, class_amount, keep_order=False,
+        self, images_per_sample, noise_size, class_amount, keep_order=False,
         distribution=uniform, noise_index_order=None, indexes=None
     ):
         """Construct a new Index Generator.
@@ -21,9 +21,9 @@ class IndexGenerator:
         Raises:
             ValueError: If the `initial_accumulator_value` is invalid.
         """
-        if(sample_size is None or noise_size is None):
+        if(images_per_sample is None or noise_size is None):
             raise ValueError(
-                'sample_size and noise_size should be passed to constructor'
+                'images_per_sample and noise_size should be passed to constructor'
             )
         if(
             not isinstance(noise_size, int) and
@@ -35,7 +35,7 @@ class IndexGenerator:
                 or equal to amount of classes'
             )
 
-        self.sample_size = sample_size
+        self.images_per_sample = images_per_sample
         self.noise_size = [noise_size] * class_amount if isinstance(
             noise_size, int) else noise_size
         self.class_amount = class_amount
@@ -54,8 +54,9 @@ class IndexGenerator:
             ]
 
         def generate(size):
-            for i in range(size):
-                yield generateOneSample()
+            return [generateOneSample() for i in range(size)]
+            # for i in range(size):
+            #     yield generateOneSample()
         self._generate = generate
 
         def generate_for_class(class_number):
@@ -92,7 +93,10 @@ class IndexGenerator:
         if(cls_number >= self.class_amount):
             raise ValueError(
                 'Index is out of range. \
-                cls parameter can not be higher then class_amount'
+                cls parameter can not be higher then class_amount: %i %i' % (
+                    cls_number, self.class_amount
+                )
             )
-        for i in range(size):
-            yield self.generate_for_class(cls_number)
+        return [self.generate_for_class(cls_number) for i in range(size)]
+        # for i in range(size):
+        #     yield self.generate_for_class(cls_number)
