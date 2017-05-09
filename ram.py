@@ -16,8 +16,8 @@ from tensorflow.examples.tutorials.mnist import input_data
 
 logging.getLogger().setLevel(logging.INFO)
 
-rnn_cell = tf.nn.rnn_cell
-seq2seq = tf.nn.seq2seq
+rnn_cell = tf.contrib.rnn
+seq2seq = tf.contrib.legacy_seq2seq
 
 mnist = input_data.read_data_sets('MNIST_data', one_hot=False)
 
@@ -28,13 +28,6 @@ loc_mean_arr = []
 sampled_loc_arr = []
 
 
-def get_next_input(output, i):
-  loc, loc_mean = loc_net(output)
-  gl_next = gl(loc)
-  loc_mean_arr.append(loc_mean)
-  sampled_loc_arr.append(loc)
-  return gl_next
-
 # placeholders
 images_ph = tf.placeholder(tf.float32,
                            [None, config.original_size * config.original_size *
@@ -43,9 +36,18 @@ labels_ph = tf.placeholder(tf.int64, [None])
 
 # Build the aux nets.
 with tf.variable_scope('glimpse_net'):
-  gl = GlimpseNet(config, images_ph)
+    gl = GlimpseNet(config, images_ph)
 with tf.variable_scope('loc_net'):
-  loc_net = LocNet(config)
+    loc_net = LocNet(config)
+
+
+def get_next_input(output, i):
+    loc, loc_mean = loc_net(output)
+    gl_next = gl(loc)
+    loc_mean_arr.append(loc_mean)
+    sampled_loc_arr.append(loc)
+    return gl_next
+
 
 # number of examples
 N = tf.shape(images_ph)[0]
@@ -61,27 +63,27 @@ outputs, _ = seq2seq.rnn_decoder(
 
 # Time independent baselines
 with tf.variable_scope('baseline'):
-  w_baseline = weight_variable((config.cell_output_size, 1))
-  b_baseline = bias_variable((1,))
+    w_baseline = weight_variable((config.cell_output_size, 1))
+    b_baseline = bias_variable((1,))
 baselines = []
 for t, output in enumerate(outputs[1:]):
-  baseline_t = tf.nn.xw_plus_b(output, w_baseline, b_baseline)
-  baseline_t = tf.squeeze(baseline_t)
-  baselines.append(baseline_t)
-baselines = tf.pack(baselines)  # [timesteps, batch_sz]
+    baseline_t = tf.nn.xw_plus_b(output, w_baseline, b_baseline)
+    baseline_t = tf.squeeze(baseline_t)
+    baselines.append(baseline_t)
+baselines = tf.stack(baselines)  # [timesteps, batch_sz]
 baselines = tf.transpose(baselines)  # [batch_sz, timesteps]
 
 # Take the last step only.
 output = outputs[-1]
 # Build classification network.
 with tf.variable_scope('cls'):
-  w_logit = weight_variable((config.cell_output_size, config.num_classes))
-  b_logit = bias_variable((config.num_classes,))
+    w_logit = weight_variable((config.cell_output_size, config.num_classes))
+    b_logit = bias_variable((config.num_classes,))
 logits = tf.nn.xw_plus_b(output, w_logit, b_logit)
 softmax = tf.nn.softmax(logits)
 
 # cross-entropy.
-xent = tf.nn.sparse_softmax_cross_entropy_with_logits(logits, labels_ph)
+xent = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, labels=labels_ph)
 xent = tf.reduce_mean(xent)
 pred_labels = tf.argmax(logits, 1)
 # 0/1 reward.
@@ -117,8 +119,8 @@ opt = tf.train.AdamOptimizer(learning_rate)
 train_op = opt.apply_gradients(zip(grads, var_list), global_step=global_step)
 
 with tf.Session() as sess:
-  sess.run(tf.initialize_all_variables())
-  for i in xrange(n_steps):
+  sess.run(tf.global_variables_initializer())
+  for i in range(n_steps):
     images, labels = mnist.train.next_batch(config.batch_size)
     # duplicate M times, see Eqn (2)
     images = np.tile(images, [config.M, 1])
@@ -147,7 +149,7 @@ with tf.Session() as sess:
         correct_cnt = 0
         num_samples = steps_per_epoch * config.batch_size
         loc_net.sampling = True
-        for test_step in xrange(steps_per_epoch):
+        for test_step in range(steps_per_epoch):
           images, labels = dataset.next_batch(config.batch_size)
           labels_bak = labels
           # Duplicate M times
