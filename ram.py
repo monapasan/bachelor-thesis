@@ -85,11 +85,14 @@ output = outputs[-1]
 with tf.variable_scope('cls'):
     w_logit = weight_variable((config.cell_output_size, config.num_classes))
     b_logit = bias_variable((config.num_classes,))
+
 logits = tf.nn.xw_plus_b(output, w_logit, b_logit)
 softmax = tf.nn.softmax(logits)
 
 # cross-entropy.
-xent = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, labels=labels_ph)
+xent = tf.nn.sparse_softmax_cross_entropy_with_logits(
+    logits=logits, labels=labels_ph
+)
 xent = tf.reduce_mean(xent)
 pred_labels = tf.argmax(logits, 1)
 # 0/1 reward.
@@ -125,55 +128,56 @@ opt = tf.train.AdamOptimizer(learning_rate)
 train_op = opt.apply_gradients(zip(grads, var_list), global_step=global_step)
 
 with tf.Session() as sess:
-  sess.run(tf.global_variables_initializer())
-  for i in range(n_steps):
-    images, labels = mnist.train.next_batch(config.batch_size)
-    # duplicate M times, see Eqn (2)
-    images = np.tile(images, [config.M, 1])
-    labels = np.tile(labels, [config.M])
-    loc_net.samping = True
-    adv_val, baselines_mse_val, xent_val, logllratio_val, \
-        reward_val, loss_val, lr_val, _ = sess.run(
-            [advs, baselines_mse, xent, logllratio,
-             reward, loss, learning_rate, train_op],
-            feed_dict={
-                images_ph: images,
-                labels_ph: labels
-            })
-    if i and i % 100 == 0:
-      logging.info('step {}: lr = {:3.6f}'.format(i, lr_val))
-      logging.info(
-          'step {}: reward = {:3.4f}\tloss = {:3.4f}\txent = {:3.4f}'.format(
-              i, reward_val, loss_val, xent_val))
-      logging.info('llratio = {:3.4f}\tbaselines_mse = {:3.4f}'.format(
-          logllratio_val, baselines_mse_val))
+    sess.run(tf.global_variables_initializer())
+    for i in range(n_steps):
+        images, labels = mnist.train.next_batch(config.batch_size)
+        # duplicate M times, see Eqn (2)
+        images = np.tile(images, [config.M, 1])
+        labels = np.tile(labels, [config.M])
+        loc_net.samping = True
 
-    if i and i % training_steps_per_epoch == 0:
-      # Evaluation
-      for dataset in [mnist.validation, mnist.test]:
-        steps_per_epoch = dataset.num_examples // config.eval_batch_size
-        correct_cnt = 0
-        num_samples = steps_per_epoch * config.batch_size
-        loc_net.sampling = True
-        for test_step in range(steps_per_epoch):
-          images, labels = dataset.next_batch(config.batch_size)
-          labels_bak = labels
-          # Duplicate M times
-          images = np.tile(images, [config.M, 1])
-          labels = np.tile(labels, [config.M])
-          softmax_val = sess.run(softmax,
-                                 feed_dict={
-                                     images_ph: images,
-                                     labels_ph: labels
-                                 })
-          softmax_val = np.reshape(softmax_val,
-                                   [config.M, -1, config.num_classes])
-          softmax_val = np.mean(softmax_val, 0)
-          pred_labels_val = np.argmax(softmax_val, 1)
-          pred_labels_val = pred_labels_val.flatten()
-          correct_cnt += np.sum(pred_labels_val == labels_bak)
-        acc = correct_cnt / num_samples
-        if dataset == mnist.validation:
-          logging.info('valid accuracy = {}'.format(acc))
-        else:
-          logging.info('test accuracy = {}'.format(acc))
+        feed_dict = {images_ph: images, labels_ph: labels}
+        runnables = [
+            advs, baselines_mse, xent, logllratio,
+            reward, loss, learning_rate, train_op
+        ]
+        adv_val, baselines_mse_val, xent_val, logllratio_val, reward_val, \
+            loss_val, lr_val, _ = sess.run(runnables, feed_dict=feed_dict)
+
+        if i and i % 100 == 0:
+            logging.info('step {}: lr = {:3.6f}'.format(i, lr_val))
+            info = 'step {}: reward = {:3.4f}\tloss = {:3.4f}\txent = {:3.4f}'
+            logging.info(
+                info.format(i, reward_val, loss_val, xent_val)
+            )
+            logging.info('llratio = {:3.4f}\tbaselines_mse = {:3.4f}'.format(
+                logllratio_val, baselines_mse_val)
+            )
+
+        if i and i % training_steps_per_epoch == 0:
+            # Evaluation
+            for dataset in [mnist.validation, mnist.test]:
+                steps_per_epoch = dataset.num_examples // config.eval_batch_size
+                correct_cnt = 0
+                num_samples = steps_per_epoch * config.batch_size
+                loc_net.sampling = True
+                for test_step in range(steps_per_epoch):
+                    images, labels = dataset.next_batch(config.batch_size)
+                    labels_bak = labels
+                    # Duplicate M times
+                    images = np.tile(images, [config.M, 1])
+                    labels = np.tile(labels, [config.M])
+                    feed_dict = {images_ph: images, labels_ph: labels}
+                    softmax_val = sess.run(softmax, feed_dict=feed_dict)
+                    softmax_val = np.reshape(
+                        softmax_val, [config.M, -1, config.num_classes]
+                    )
+                    softmax_val = np.mean(softmax_val, 0)
+                    pred_labels_val = np.argmax(softmax_val, 1)
+                    pred_labels_val = pred_labels_val.flatten()
+                    correct_cnt += np.sum(pred_labels_val == labels_bak)
+                acc = correct_cnt / num_samples
+                if dataset == mnist.validation:
+                    logging.info('valid accuracy = {}'.format(acc))
+                else:
+                    logging.info('test accuracy = {}'.format(acc))
