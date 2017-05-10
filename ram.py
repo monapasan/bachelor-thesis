@@ -8,8 +8,10 @@ import logging
 import tensorflow as tf
 import numpy as np
 
-from glimpse import GlimpseNet
-from location import LocNet
+from glimpseNetwork import GlimpseNet
+from locationNetwork import LocNet
+from glimpseSensor import GlimpseSensor
+
 from utils import weight_variable, bias_variable, loglikelihood
 from config import Config
 
@@ -35,9 +37,11 @@ images_ph = tf.placeholder(tf.float32,
                             config.num_channels])
 labels_ph = tf.placeholder(tf.int64, [None])
 
+
 # Build the aux nets.
 with tf.variable_scope('glimpse_net'):
-    gl = GlimpseNet(config, images_ph)
+    gl_sensor = GlimpseSensor(config)
+    gl = GlimpseNet(gl_sensor, config, images_ph)
 with tf.variable_scope('loc_net'):
     loc_net = LocNet(config)
 
@@ -52,6 +56,7 @@ def get_next_input(output, i):
 
 # number of examples
 N = tf.shape(images_ph)[0]
+
 init_loc = tf.random_uniform((N, 2), minval=-1, maxval=1)
 init_glimpse = gl(init_loc)
 # Core network.

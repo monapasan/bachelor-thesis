@@ -34,7 +34,6 @@ l - location
 """
 
 
-
 class GlimpseNet(object):
     """Glimpse network.
 
@@ -42,7 +41,9 @@ class GlimpseNet(object):
 
     """
 
-    def __init__(self, config, images_ph):
+    def __init__(self, glimpse_sensor, config, images_ph):
+        self.glimpse_sensor = glimpse_sensor
+
         self.original_size = config.original_size
         self.num_channels = config.num_channels
         self.sensor_size = config.sensor_size
@@ -75,33 +76,7 @@ class GlimpseNet(object):
         self.b_l1 = weight_variable((self.g_size,))
 
     def _get_glimpse(self, loc):
-        """Take glimpse on the original images."""
-        # loc.shape --> [batch_size, 2]
-        # imgs.shape --> [batch_size, 28, 28, 1]
-        batch_size = tf.shape(self.images_ph)[0]
-        imgs = tf.reshape(self.images_ph, [
-            batch_size, self.original_size,
-            self.original_size, self.num_channels
-        ])
-        # win_size = 8
-        # [batch_size, win_size, win_size, num_channels]
-        glimpse_imgs = tf.image.extract_glimpse(
-            imgs, [self.win_size, self.win_size], loc
-        )
-        glimpse_imgs = tf.reshape(glimpse_imgs, [
-            batch_size, self.win_size * self.win_size * self.num_channels
-        ])
-        # [batch_size, 8 * 8 * 1] or
-        # [batch_size, win_size * win_size * num_channels]
-
-        # here we exract only one patch
-        # which is good enough to reproduce results
-        # accroding to the paper.
-        # TODO: but, to generalise the model, it's needed to extract several
-        # patches. Therefore this function should be replaced by:
-        # self.glimpse_sensor.forward(img, loc),
-        # glimpse_sensor class will have proeprty n_patches
-        return glimpse_imgs
+        return self.glimpse_sensor(self.images_ph, loc)
 
     def __call__(self, loc):
         """
