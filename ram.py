@@ -8,7 +8,8 @@ import logging
 import tensorflow as tf
 import numpy as np
 
-from glimpse import GlimpseNet, LocNet
+from glimpse import GlimpseNet
+from location import LocNet
 from utils import weight_variable, bias_variable, loglikelihood
 from config import Config
 
