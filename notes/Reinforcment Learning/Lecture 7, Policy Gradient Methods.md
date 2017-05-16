@@ -122,19 +122,19 @@ Score function represents **How much more of this feature I do  than usual.**
 ![](Lecture%207,%20Policy%20Gradient%20Methods/F58A77F6-6E3A-4977-B70D-77C2CBE7818C.png)
 
 _What is our objective function?_
-	* it's **expected** reward that we get following the policy.
-	* We want to improve our objective function by applying gradient ascent, hence change the parameters to have a more expected return.
-	* Why do we use log form ?
-		* We are starting with something which is expectation.
-		* after taking a gradient of it we recover something which is still an expectation.
-		* In order to have an expectation in our gradient.
-		* this is the whole point of it.
-		* in details:
-			* first sum over S, d(s) is the expectation over state from our policy
-			* second sum over a, p(s,a) is the expectation over discrete action space from state s 
-	* That means if we want to improve our policy we need to update our objective in direction of of the score function multiplied by reward.
-	* Which means that we need only reward that we experiences to compute the score function since we know the policy because we're following it.
-	* This give us update our parameters without knowing model(model-free)
+* it's **expected** reward that we get following the policy.
+* We want to improve our objective function by applying gradient ascent, hence change the parameters to have a more expected return.
+* Why do we use log form ?
+	* We are starting with something which is expectation.
+	* after taking a gradient of it we recover something which is still an expectation.
+	* In order to have an expectation in our gradient.
+	* this is the whole point of it.
+	* in details:
+		* first sum over S, d(s) is the expectation over state from our policy
+		* second sum over a, p(s,a) is the expectation over discrete action space from state s 
+* That means if we want to improve our policy we need to update our objective in direction of of the score function multiplied by reward.
+* Which means that we need only reward that we experiences to compute the score function since we know the policy because we're following it.
+* This give us update our parameters without knowing model(model-free)
 
 
 #### Policy Gradient Theorem
