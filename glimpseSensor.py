@@ -43,6 +43,7 @@ class GlimpseSensor(object):
         # glimpse_sensor class will have property n_patches
         # to resize images take a look at
         # https://www.tensorflow.org/api_docs/python/tf/image/resize_bilinear
+        # https://www.tensorflow.org/api_docs/python/tf/image/resize_images
         # tf.resize_bilinear().
-        # make sense to do preprocessing of these or? 
+        # make sense to do preprocessing of these or?
         return glimpse_imgs

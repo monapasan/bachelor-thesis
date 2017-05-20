@@ -1,3 +1,8 @@
+import os
+
+_dir = os.getcwd()
+
+
 class Config(object):
     win_size = 8
     bandwidth = win_size**2
@@ -18,6 +23,8 @@ class Config(object):
     # Size of parameters for Glimpse network
     hg_size = hl_size = 128
     g_size = 256
+
+    log_dir = _dir + '/log/'
 
     cell_output_size = 256
     # location shape --> (x, y)
