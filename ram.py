@@ -38,8 +38,9 @@ def placeholder_inputs():
     img_size = (
         config.original_size * config.original_size * config.num_channels
     )
-    images_ph = tf.placeholder(tf.float32, [None, img_size])
-    labels_ph = tf.placeholder(tf.int64, [None])
+    with tf.variable_scope('data'):
+        labels_ph = tf.placeholder(tf.int64, [None], name='labels')
+        images_ph = tf.placeholder(tf.float32, [None, img_size], name='images')
     return images_ph, labels_ph
 
 
@@ -59,16 +60,16 @@ def init_location_network(config):
 
 def init_baseline_net(outputs):
     # Time independent baselines
+    baselines = []
     with tf.variable_scope('baseline'):
         w_baseline = weight_variable((config.cell_output_size, 1))
         b_baseline = bias_variable((1,))
-    baselines = []
-    for output in outputs[1:]:
-        baseline_t = tf.nn.xw_plus_b(output, w_baseline, b_baseline)
-        baseline_t = tf.squeeze(baseline_t)
-        baselines.append(baseline_t)
-    baselines = tf.stack(baselines)  # [timesteps, batch_sz]
-    baselines = tf.transpose(baselines)  # [batch_sz, timesteps]
+        for output in outputs[1:]:
+            baseline_t = tf.nn.xw_plus_b(output, w_baseline, b_baseline)
+            baseline_t = tf.squeeze(baseline_t)
+            baselines.append(baseline_t)
+        baselines = tf.stack(baselines)  # [timesteps, batch_sz]
+        baselines = tf.transpose(baselines)  # [batch_sz, timesteps]
     return baselines
 
 
@@ -98,7 +99,7 @@ def inference(output):
             (config.cell_output_size, config.num_classes)
         )
         b_logit = bias_variable((config.num_classes,))
-        logits = tf.nn.xw_plus_b(output, w_logit, b_logit)
+        logits = tf.nn.xw_plus_b(output, w_logit, b_logit, name='cls_net')
     return logits
 
 
@@ -163,7 +164,7 @@ def evaluation(sess, dataset, softmax, images_ph, labels_ph):
 def cross_entropy(logits, labels_ph):
     # cross-entropy for classification decision
     xent = tf.nn.sparse_softmax_cross_entropy_with_logits(
-        logits=logits, labels=labels_ph
+        logits=logits, labels=labels_ph, name="x_entr_for_cls"
     )
     xent = tf.reduce_mean(xent)
     return xent
@@ -171,10 +172,11 @@ def cross_entropy(logits, labels_ph):
 
 def get_rewards(pred_labels, labels_ph):
     # 0/1 reward.
-    reward = tf.cast(tf.equal(pred_labels, labels_ph), tf.float32)
-    rewards = tf.expand_dims(reward, 1)  # [batch_sz, 1]
-    rewards = tf.tile(rewards, (1, config.num_glimpses))  # [bath_sz,timesteps]
-    reward = tf.reduce_mean(reward)
+    with tf.variable_scope('rewards'):
+        reward = tf.cast(tf.equal(pred_labels, labels_ph), tf.float32)
+        rewards = tf.expand_dims(reward, 1)  # [batch_sz, 1]
+        rewards = tf.tile(rewards, (1, config.num_glimpses))  # [b_sz,tsteps]
+        reward = tf.reduce_mean(reward)
     return reward, rewards
 
 
