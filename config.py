@@ -27,6 +27,7 @@ class Config(object):
     log_dir = _dir + '/log/'
 
     cell_output_size = 256
+    # EXTENSTION: (n_img, x ,y)
     # location shape --> (x, y)
     loc_dim = 2
     cell_size = 256

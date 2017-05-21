@@ -76,6 +76,7 @@ class GlimpseNet(object):
         self.b_l1 = weight_variable((self.g_size,))
 
     def _get_glimpse(self, loc):
+        # EXTENSTION: choose image based on location value
         return self.glimpse_sensor(self.images_ph, loc)
 
     def __call__(self, loc):

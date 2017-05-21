@@ -36,6 +36,7 @@ class LocNet(object):
         self.b = bias_variable((self.loc_dim,))
 
     def __call__(self, input):
+        # EXTENSTION: don't clip all values, only location vals
         mean = tf.clip_by_value(
             tf.nn.xw_plus_b(input, self.w, self.b), -1., 1.
         )
@@ -43,8 +44,8 @@ class LocNet(object):
         if self._sampling:
             loc = mean + tf.random_normal(tf.shape(mean), stddev=self.loc_std)
             loc = tf.clip_by_value(loc, -1., 1.)
-        else:
-            loc = mean
+        # else:
+        #     loc = mean
         loc = tf.stop_gradient(loc)
         return loc, mean
 
