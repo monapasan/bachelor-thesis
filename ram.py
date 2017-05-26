@@ -6,6 +6,7 @@ from __future__ import print_function
 
 import logging
 import time
+
 import tensorflow as tf
 import numpy as np
 
@@ -23,11 +24,6 @@ logging.getLogger().setLevel(logging.INFO)
 rnn_cell = tf.contrib.rnn
 seq2seq = tf.contrib.legacy_seq2seq
 
-mnist = input_data.read_data_sets('MNIST_data', one_hot=False)
-
-config = Config()
-n_steps = config.step
-
 loc_mean_arr = []
 sampled_loc_arr = []
 
@@ -36,7 +32,7 @@ def placeholder_inputs():
     """Generate placeholder variables to represent the input tensors.
     """
     img_size = (
-        config.original_size * config.original_size * config.num_channels
+        Config.original_size * Config.original_size * Config.num_channels
     )
     with tf.variable_scope('data'):
         labels_ph = tf.placeholder(tf.int64, [None], name='labels')
@@ -47,8 +43,8 @@ def placeholder_inputs():
 # Build the aux nets.
 def init_glimpse_network(images_ph):
     with tf.variable_scope('glimpse_net'):
-        gl_sensor = GlimpseSensor(config)
-        gl = GlimpseNet(gl_sensor, config, images_ph)
+        gl_sensor = GlimpseSensor(Config)
+        gl = GlimpseNet(gl_sensor, Config, images_ph)
     return gl
 
 
@@ -62,7 +58,7 @@ def init_baseline_net(outputs):
     # Time independent baselines
     baselines = []
     with tf.variable_scope('baseline'):
-        w_baseline = weight_variable((config.cell_output_size, 1))
+        w_baseline = weight_variable((Config.cell_output_size, 1))
         b_baseline = bias_variable((1,))
         for output in outputs[1:]:
             baseline_t = tf.nn.xw_plus_b(output, w_baseline, b_baseline)
@@ -82,12 +78,12 @@ def lstm_inputs(glimpse_net, N):
     # amount of inputs data should be equal to amound of glimpses
     # once there is no input more, model will make a cl. decision
     inputs = [init_glimpse]
-    inputs.extend([0] * config.num_glimpses)
+    inputs.extend([0] * Config.num_glimpses)
     return inputs
 
 
 def init_lstm_cell(config, N):
-    lstm_cell = rnn_cell.LSTMCell(config.cell_size, state_is_tuple=True)
+    lstm_cell = rnn_cell.LSTMCell(Config.cell_size, state_is_tuple=True)
     init_state = lstm_cell.zero_state(N, tf.float32)
     return lstm_cell, init_state
 
@@ -96,19 +92,19 @@ def inference(output):
     # Build classification network.
     with tf.variable_scope('cls'):
         w_logit = weight_variable(
-            (config.cell_output_size, config.num_classes)
+            (Config.cell_output_size, Config.num_classes)
         )
-        b_logit = bias_variable((config.num_classes,))
+        b_logit = bias_variable((Config.num_classes,))
         logits = tf.nn.xw_plus_b(output, w_logit, b_logit, name='cls_net')
     return logits
 
 
 def fill_feed_dict(data_set, images_pl, labels_pl):
-    images, labels = data_set.next_batch(config.batch_size)
+    images, labels = data_set.next_batch(Config.batch_size)
     # duplicate M times, see Eqn (2)
     # running kinda m episodes
-    images_feed = np.tile(images, [config.M, 1])
-    labels_feed = np.tile(labels, [config.M])
+    images_feed = np.tile(images, [Config.M, 1])
+    labels_feed = np.tile(labels, [Config.M])
     feed_dict = {
         images_pl: images_feed,
         labels_pl: labels_feed,
@@ -120,9 +116,9 @@ def init_seq_rnn(images_ph, labels_ph):
     # Core network.
     N = tf.shape(images_ph)[0]
     glimpse_net = init_glimpse_network(images_ph)
-    loc_net = init_location_network(config)
+    loc_net = init_location_network(Config)
     inputs = lstm_inputs(glimpse_net, N)
-    lstm_cell, init_state = init_lstm_cell(config, N)
+    lstm_cell, init_state = init_lstm_cell(Config, N)
 
     def get_next_input(output, i):
         loc, loc_mean = loc_net(output)
@@ -138,20 +134,20 @@ def init_seq_rnn(images_ph, labels_ph):
 
 
 def evaluation(sess, dataset, softmax, images_ph, labels_ph):
-    steps_per_epoch = dataset.num_examples // config.eval_batch_size
+    steps_per_epoch = dataset.num_examples // Config.eval_batch_size
     correct_cnt = 0
-    num_samples = steps_per_epoch * config.batch_size
+    num_samples = steps_per_epoch * Config.batch_size
     # loc_net.sampling = True
     for test_step in range(steps_per_epoch):
-        images, labels = dataset.next_batch(config.batch_size)
+        images, labels = dataset.next_batch(Config.batch_size)
         labels_bak = labels
         # Duplicate M times
-        images = np.tile(images, [config.M, 1])
-        labels = np.tile(labels, [config.M])
+        images = np.tile(images, [Config.M, 1])
+        labels = np.tile(labels, [Config.M])
         feed_dict = {images_ph: images, labels_ph: labels}
         softmax_val = sess.run(softmax, feed_dict=feed_dict)
         softmax_val = np.reshape(
-            softmax_val, [config.M, -1, config.num_classes]
+            softmax_val, [Config.M, -1, Config.num_classes]
         )
         softmax_val = np.mean(softmax_val, 0)  # [32x10]
         pred_labels_val = np.argmax(softmax_val, 1)
@@ -175,24 +171,25 @@ def get_rewards(pred_labels, labels_ph):
     with tf.variable_scope('rewards'):
         reward = tf.cast(tf.equal(pred_labels, labels_ph), tf.float32)
         rewards = tf.expand_dims(reward, 1)  # [batch_sz, 1]
-        rewards = tf.tile(rewards, (1, config.num_glimpses))  # [b_sz,tsteps]
+        rewards = tf.tile(rewards, (1, Config.num_glimpses))  # [b_sz,tsteps]
         reward = tf.reduce_mean(reward)
     return reward, rewards
 
 
 def init_learning_rate(global_step, training_steps_per_epoch):
-    starter_learning_rate = config.lr_start
+    starter_learning_rate = Config.lr_start
     learning_rate = tf.train.exponential_decay(
         starter_learning_rate,
         global_step,
         training_steps_per_epoch,
         0.97,
         staircase=True)
-    learning_rate = tf.maximum(learning_rate, config.lr_min)
+    learning_rate = tf.maximum(learning_rate, Config.lr_min)
     return learning_rate
 
 
 def run_training():
+    mnist = input_data.read_data_sets('MNIST_data', one_hot=False)
     with tf.Graph().as_default():
         images_ph, labels_ph = placeholder_inputs()
         outputs = init_seq_rnn(images_ph, labels_ph)
@@ -208,7 +205,7 @@ def run_training():
 
         reward, rewards = get_rewards(pred_labels, labels_ph)
 
-        logll = loglikelihood(loc_mean_arr, sampled_loc_arr, config.loc_std)
+        logll = loglikelihood(loc_mean_arr, sampled_loc_arr, Config.loc_std)
 
         advs = rewards - tf.stop_gradient(baselines)
         logllratio = tf.reduce_mean(logll * advs)
@@ -222,14 +219,14 @@ def run_training():
         tf.summary.scalar('loss', loss)
 
         grads = tf.gradients(loss, var_list)
-        grads, _ = tf.clip_by_global_norm(grads, config.max_grad_norm)
+        grads, _ = tf.clip_by_global_norm(grads, Config.max_grad_norm)
         global_step = tf.get_variable(
             'global_step', [],
             initializer=tf.constant_initializer(0), trainable=False
         )
 
         training_steps_per_epoch = (
-            mnist.train.num_examples // config.batch_size
+            mnist.train.num_examples // Config.batch_size
         )
 
         learning_rate = init_learning_rate(
@@ -251,13 +248,13 @@ def run_training():
         # saver = tf.train.Saver()
 
         # Create a session for running Ops on the Graph.
-        sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
+        sess = tf.Session()  # config=tf.ConfigProto(log_device_placement=T))
 
         # Instantiate a SummaryWriter to output summaries and the Graph.
-        summary_writer = tf.summary.FileWriter(config.log_dir, sess.graph)
+        summary_writer = tf.summary.FileWriter(Config.log_dir, sess.graph)
 
         sess.run(init)
-        for i in range(n_steps):
+        for i in range(Config.n_steps):
             start_time = time.time()
             feed_dict = fill_feed_dict(mnist.train, images_ph, labels_ph)
             runnables = [
@@ -303,11 +300,3 @@ def log_step(
     logging.info('llratio = {:3.4f}\tbaselines_mse = {:3.4f}'.format(
         logllratio, baseline_mse)
     )
-
-
-def main(_):
-    run_training()
-
-
-if __name__ == '__main__':
-    tf.app.run(main=main)

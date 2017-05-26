@@ -46,9 +46,10 @@ class GlimpseNet(object):
 
         self.original_size = config.original_size
         self.num_channels = config.num_channels
-        self.sensor_size = config.sensor_size
+
+        self.sensor_size = config.win_size**2 * config.n_patches
         self.win_size = config.win_size
-        self.minRadius = config.minRadius
+        # self.minRadius = config.minRadius
 
         self.hg_size = config.hg_size
         self.hl_size = config.hl_size
