@@ -9,10 +9,11 @@ class GlimpseSensor(object):
     def __init__(self, config):
         # TODO: config should have property depth/scale
         # which represents how many patches should one glimpse have.
-        # self.depth = config.depth
+        self.depth = config.glimpse_depth
         self.win_size = config.win_size
         self.num_channels = config.num_channels
         self.original_size = config.original_size
+        self.scale = config.glimpse_scale
 
     def __call__(self, images_ph, loc):
         """Take glimpse on the original images."""
@@ -28,6 +29,17 @@ class GlimpseSensor(object):
         glimpse_imgs = tf.image.extract_glimpse(
             imgs, [self.win_size, self.win_size], loc
         )
+        # imgs = []
+        # for i in range(self.depth):
+        #     # win_size = self.win_size * self.scale
+        #     if(i == 1):
+        #         win_size = self.win_size
+        #     else:
+        #         win_size = win_size * self.scale
+        #     imgs.append(tf.image.extract_glimpse(
+        #         imgs, [self.win_size, self.win_size], loc
+        #     ))
+
         glimpse_imgs = tf.reshape(glimpse_imgs, [
             batch_size, self.win_size * self.win_size * self.num_channels
         ])

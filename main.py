@@ -62,10 +62,18 @@ if __name__ == '__main__':
         help='number of channels in the image, f.i. MNIST has 1 channel.'
     )
     parser.add_argument(
-        '--n_patches',
+        '--glimpse_depth',
         type=int,
         default=1,
-        help='Number of patches which should be extracted in a glimpse.'
+        help='depth is number of patches to crop per glimpse \
+            (one patch per depth).'
+    )
+    parser.add_argument(
+        '--glimpse_scale',
+        type=int,
+        default=1,
+        help='Scale determines the size(t) = scale * size(t-1) of \
+            successive cropped patches.'
     )
     parser.add_argument(
         '--hg_size',
