@@ -148,19 +148,18 @@ def accuracy(softmax, batch_size, labels):
     return n_correct / batch_size
 
 
-def n_correct_pred(softmax, batch_size, labels):
-    # real_labels = tf.placeholder(tf.int64, [None], name='evaluation_labels')
-    softmax_acc = tf.reshape(
-        softmax, [Config.M, -1, Config.num_classes]
-    )
-    softmax_mean = tf.reduce_mean(softmax_acc, 0)  # [32x10]
-    pred_labels = tf.argmax(softmax_mean, 1)
-
-    n_correct = tf.reduce_sum(
-        tf.cast(tf.equal(pred_labels, labels[:batch_size]), tf.float32)
-    )
-    # accuracy = n_correct / batch_size
-    return n_correct
+# def n_correct_pred(softmax, batch_size, labels):
+#     softmax_acc = tf.reshape(
+#         softmax, [Config.M, -1, Config.num_classes]
+#     )
+#     softmax_mean = tf.reduce_mean(softmax_acc, 0)  # [32x10]
+#     pred_labels = tf.argmax(softmax_mean, 1)
+#
+#     n_correct = tf.reduce_sum(
+#         tf.cast(tf.equal(pred_labels, labels[:batch_size]), tf.float32)
+#     )
+#
+#     return n_correct
 
 # def evaluation(sess, dataset, softmax, images_ph, labels_ph):
 #     steps_per_epoch = dataset.num_examples // Config.eval_batch_size
@@ -186,6 +185,20 @@ def n_correct_pred(softmax, batch_size, labels):
 #     logging.info('accuracy = {}'.format(acc))
 
 
+def n_correct_pred(softmax, labels):
+    softmax_acc = np.reshape(
+        softmax, [Config.M, -1, Config.num_classes]
+    )
+    softmax_mean = np.mean(softmax_acc, 0)  # [32x10]
+    pred_labels = np.argmax(softmax_mean, 1).flatten()
+
+    n_correct = np.sum(pred_labels == labels[:Config.batch_size])
+    return n_correct
+    # tf.cast(tf.equal(pred_labels, labels[:batch_size]), tf.float32)
+    # )
+    # accuracy = n_correct / batch_size
+
+
 def evaluation(
     sess, dataset, softmax, images_ph, labels_ph, summary_writer, step, tag
 ):
@@ -195,8 +208,9 @@ def evaluation(
     # loc_net.sampling = True
     for test_step in range(steps_per_epoch):
         feed_dict = fill_feed_dict(dataset, images_ph, labels_ph)
-        correct_pred = n_correct_pred(softmax, Config.batch_size, labels_ph)
-        correct_cnt += sess.run(correct_pred, feed_dict=feed_dict)
+        softmax_val = sess.run(softmax, feed_dict=feed_dict)
+        correct_cnt += n_correct_pred(softmax_val, feed_dict[labels_ph])
+        # correct_cnt += sess.run(correct_pred, feed_dict=feed_dict)
 
     acc = correct_cnt / num_samples
     logging.info('{} = {}% \n'.format(tag, acc))
@@ -303,7 +317,7 @@ def run_training():
             softmax, Config.batch_size, labels_ph
         )
 
-        accuracy_summary = tf.summary.scalar('Accuracy on a batch', accuracy_op)
+        accuracy_summary = tf.summary.scalar('Batch accuracy', accuracy_op)
 
         sess.run(init)
         for i in range(Config.n_steps):
