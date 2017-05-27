@@ -29,4 +29,4 @@ def loglikelihood(mean_arr, sampled_arr, sigma):
 # helper
 # scp ram.py  s0547796@deepgreen03.f4.htw-berlin.de:/home/05/47796/RAM/RAM_structed
 # to forward 127.0.0.1:16006 to the remote server :6006 use:
-# ssh -L 16006:127.0.0.1:6006
+# ssh -L 16006:127.0.0.1:6006 s0547796@deepgreen03.f4.htw-berlin.de

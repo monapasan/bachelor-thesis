@@ -35,8 +35,8 @@ def placeholder_inputs():
         Config.original_size * Config.original_size * Config.num_channels
     )
     with tf.variable_scope('data'):
-        labels_ph = tf.placeholder(tf.int64, [None], name='labels')
         images_ph = tf.placeholder(tf.float32, [None, img_size], name='images')
+        labels_ph = tf.placeholder(tf.int64, [None], name='labels')
     return images_ph, labels_ph
 
 
@@ -133,28 +133,74 @@ def init_seq_rnn(images_ph, labels_ph):
     return outputs
 
 
-def evaluation(sess, dataset, softmax, images_ph, labels_ph):
+def accuracy(softmax, batch_size, labels):
+    # real_labels = tf.placeholder(tf.int64, [None], name='evaluation_labels')
+    softmax_acc = tf.reshape(
+        softmax, [Config.M, -1, Config.num_classes]
+    )
+    softmax_mean = tf.reduce_mean(softmax_acc, 0)  # [32x10]
+    pred_labels = tf.argmax(softmax_mean, 1)
+
+    n_correct = tf.reduce_sum(
+        tf.cast(tf.equal(pred_labels, labels[:batch_size]), tf.float32)
+    )
+    # accuracy = n_correct / batch_size
+    return n_correct / batch_size
+
+
+def n_correct_pred(softmax, batch_size, labels):
+    # real_labels = tf.placeholder(tf.int64, [None], name='evaluation_labels')
+    softmax_acc = tf.reshape(
+        softmax, [Config.M, -1, Config.num_classes]
+    )
+    softmax_mean = tf.reduce_mean(softmax_acc, 0)  # [32x10]
+    pred_labels = tf.argmax(softmax_mean, 1)
+
+    n_correct = tf.reduce_sum(
+        tf.cast(tf.equal(pred_labels, labels[:batch_size]), tf.float32)
+    )
+    # accuracy = n_correct / batch_size
+    return n_correct
+
+# def evaluation(sess, dataset, softmax, images_ph, labels_ph):
+#     steps_per_epoch = dataset.num_examples // Config.eval_batch_size
+#     correct_cnt = 0
+#     num_samples = steps_per_epoch * Config.batch_size
+#     # loc_net.sampling = True
+#     for test_step in range(steps_per_epoch):
+#         images, labels = dataset.next_batch(Config.batch_size)
+#         labels_bak = labels
+#         # Duplicate M times
+#         images = np.tile(images, [Config.M, 1])
+#         labels = np.tile(labels, [Config.M])
+#         feed_dict = {images_ph: images, labels_ph: labels}
+#         softmax_val = sess.run(softmax, feed_dict=feed_dict)
+#         softmax_val = np.reshape(
+#             softmax_val, [Config.M, -1, Config.num_classes]
+#         )
+#         softmax_val = np.mean(softmax_val, 0)  # [32x10]
+#         pred_labels_val = np.argmax(softmax_val, 1)
+#         pred_labels_val = pred_labels_val.flatten()
+#         correct_cnt += np.sum(pred_labels_val == labels_bak)
+#     acc = correct_cnt / num_samples
+#     logging.info('accuracy = {}'.format(acc))
+
+
+def evaluation(
+    sess, dataset, softmax, images_ph, labels_ph, summary_writer, step, tag
+):
     steps_per_epoch = dataset.num_examples // Config.eval_batch_size
     correct_cnt = 0
     num_samples = steps_per_epoch * Config.batch_size
     # loc_net.sampling = True
     for test_step in range(steps_per_epoch):
-        images, labels = dataset.next_batch(Config.batch_size)
-        labels_bak = labels
-        # Duplicate M times
-        images = np.tile(images, [Config.M, 1])
-        labels = np.tile(labels, [Config.M])
-        feed_dict = {images_ph: images, labels_ph: labels}
-        softmax_val = sess.run(softmax, feed_dict=feed_dict)
-        softmax_val = np.reshape(
-            softmax_val, [Config.M, -1, Config.num_classes]
-        )
-        softmax_val = np.mean(softmax_val, 0)  # [32x10]
-        pred_labels_val = np.argmax(softmax_val, 1)
-        pred_labels_val = pred_labels_val.flatten()
-        correct_cnt += np.sum(pred_labels_val == labels_bak)
+        feed_dict = fill_feed_dict(dataset, images_ph, labels_ph)
+        correct_pred = n_correct_pred(softmax, Config.batch_size, labels_ph)
+        correct_cnt += sess.run(correct_pred, feed_dict=feed_dict)
+
     acc = correct_cnt / num_samples
-    logging.info('accuracy = {}'.format(acc))
+    logging.info('{} = {}% \n'.format(tag, acc))
+    add_summary(summary_writer, acc, step, True, tag)
 
 
 def cross_entropy(logits, labels_ph):
@@ -253,17 +299,25 @@ def run_training():
         # Instantiate a SummaryWriter to output summaries and the Graph.
         summary_writer = tf.summary.FileWriter(Config.log_dir, sess.graph)
 
+        accuracy_op = accuracy(
+            softmax, Config.batch_size, labels_ph
+        )
+
+        accuracy_summary = tf.summary.scalar('Accuracy on a batch', accuracy_op)
+
         sess.run(init)
         for i in range(Config.n_steps):
             start_time = time.time()
             feed_dict = fill_feed_dict(mnist.train, images_ph, labels_ph)
             runnables = [
                 advs, baselines_mse, xent, logllratio,
-                reward, loss, learning_rate, train_op
+                reward, loss, learning_rate, accuracy_op, train_op
             ]
 
             adv_val, baselines_mse_val, xent_val, logllratio_val, reward_val, \
-                loss_val, lr_val, _ = sess.run(runnables, feed_dict=feed_dict)
+                loss_val, lr_val, acc_val, _ = sess.run(
+                    runnables, feed_dict=feed_dict
+                )
 
             duration = time.time() - start_time
             if i and i % 100 == 0:
@@ -271,19 +325,35 @@ def run_training():
                     i, duration, lr_val, reward_val, loss_val,
                     xent_val, logllratio_val, baselines_mse_val
                 )
-                summary_str = sess.run(summary, feed_dict=feed_dict)
-                summary_writer.add_summary(summary_str, i)
-                summary_writer.flush()
+                logging.info('Batch accuracy: %f%%. \n' % (acc_val))
+                summary_str, acc_sum = sess.run(
+                    [summary, accuracy_summary],
+                    feed_dict=feed_dict
+                )
+                add_summary(summary_writer, summary_str, i)
+                add_summary(summary_writer, acc_sum, i)
             if i and i % training_steps_per_epoch == 0:
-                # Evaluation
                 logging.info('Validation dataset: ')
                 evaluation(
-                    sess, mnist.validation, softmax, images_ph, labels_ph
+                    sess, mnist.validation, softmax, images_ph, labels_ph,
+                    summary_writer, i, 'accuracy on validation data'
                 )
                 logging.info('Test dataset: ')
                 evaluation(
-                    sess, mnist.test, softmax, images_ph, labels_ph
+                    sess, mnist.test, softmax, images_ph, labels_ph,
+                    summary_writer, i, 'accuracy on test data'
                 )
+
+
+def add_summary(writer, summary_val, step, is_custom=False, tag=None):
+    if is_custom:
+        summary_val = tf.Summary(value=[
+            tf.Summary.Value(
+                tag=tag, simple_value=summary_val
+            )
+        ])
+    writer.add_summary(summary_val, step)
+    writer.flush()
 
 
 def log_step(
