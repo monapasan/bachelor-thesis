@@ -163,6 +163,12 @@ if __name__ == '__main__':
         default=10,
         help='Amount of episodes per image for Monte Carlo sampling.'
     )
+    parser.add_argument(
+        '--n_img_group',
+        type=int,
+        default=5,
+        help='Amount of images per group.'
+    )
     FLAGS, unparsed = parser.parse_known_args()
     config.init_config(FLAGS)
     tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)

@@ -35,8 +35,12 @@ def placeholder_inputs():
         Config.original_size * Config.original_size * Config.num_channels
     )
     with tf.variable_scope('data'):
-        images_ph = tf.placeholder(tf.float32, [None, img_size], name='images')
-        labels_ph = tf.placeholder(tf.int64, [None], name='labels')
+        images_ph = tf.placeholder(
+            tf.float32, [None, Config.n_img_group, img_size], name='images'
+        )
+        labels_ph = tf.placeholder(
+            tf.int64, [None, Config.n_img_group], name='labels'
+        )
     return images_ph, labels_ph
 
 
@@ -121,8 +125,8 @@ def init_seq_rnn(images_ph, labels_ph):
     lstm_cell, init_state = init_lstm_cell(Config, N)
 
     def get_next_input(output, i):
-        loc, loc_mean = loc_net(output)
-        gl_next = glimpse_net(loc)
+        loc, loc_mean, n_image = loc_net(output)
+        gl_next = glimpse_net(loc, n_image)
         loc_mean_arr.append(loc_mean)
         sampled_loc_arr.append(loc)
         return gl_next

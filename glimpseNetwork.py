@@ -48,7 +48,7 @@ class GlimpseNet(object):
         self.num_channels = config.num_channels
 
         self.sensor_size = config.win_size**2 * config.glimpse_depth
-        self.win_size = config.win_size
+        # self.win_size = config.win_size
         # self.minRadius = config.minRadius
 
         self.hg_size = config.hg_size
@@ -76,18 +76,27 @@ class GlimpseNet(object):
         self.w_l1 = weight_variable((self.hl_size, self.g_size))
         self.b_l1 = weight_variable((self.g_size,))
 
-    def _get_glimpse(self, loc):
+    def _get_glimpse(self, loc, n_image):
+        # self.images_ph = [batch, n_images, pixel]
+        # self.images_ph = [batch, pixel]
+        # n_image.shape  = [batch_size, 1]
+        # filter placholder based on the value from location network, n_images
         # EXTENSTION: choose image based on location value
-        return self.glimpse_sensor(self.images_ph, loc)
+        # TODO: ^^
+        batch_size = tf.shape(self.images_ph)[0]
+        indicies = tf.stack([tf.range(batch_size), tf.squeeze(n_image)])
+        selected_images = tf.gather_nd(self.images_ph, indicies, axis=-1)
 
-    def __call__(self, loc):
+        return self.glimpse_sensor(selected_images, loc)
+
+    def __call__(self, loc, n_image):
         """
         GlimpseNet(x, l) = Rect(Hg + Hl)
         where:
         Hg = Linear(Rect(Linear(ρ(x, l))))
         Hl = Linear(Rect(Linear(l)))
         """
-        glimpse_input = self._get_glimpse(loc)
+        glimpse_input = self._get_glimpse(loc, n_image)
         # glimpse_input = tf.reshape(glimpse_input,
         #                            (tf.shape(loc)[0], self.sensor_size))
         # g_0 --> batch_size, 128
