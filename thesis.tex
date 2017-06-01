@@ -1,0 +1,29 @@
+% preamble:
+\documentclass[12pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+
+% \title{Development and Evaluation of a Visual Attention Model with Python and Tensorflow}
+% \date{31-05-2017}
+% \author{Oleg Yarin}
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[autostyle]{csquotes}
+\graphicspath{ {img/} }
+
+\usepackage{float}
+
+
+\begin{document}
+	\input{./tex/title.tex}
+	\tableofcontents
+	\listoffigures
+	\listoftables
+	\include{./tex/intro}
+	\include{./tex/theory}
+	% Bibliography:
+	\clearpage
+	% \input{./tex/mybibliography.tex}
+	\bibliographystyle{ieeetr}
+	\bibliography{bibliography}
+\end{document}
