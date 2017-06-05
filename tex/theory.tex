@@ -318,7 +318,7 @@ accept a sequence with an arbitrary length without changing weights of a network
 RNN are capable of persisting the information by means of recurrences, i.e. including
 the output of the network into next computational steps and summarizing this information
 into an object called \emph{state}.
- \ref{Kriesel2007NeuralNetworks}.
+ \cite{Kriesel2007NeuralNetworks}.
 \\
 To simplify the understanding you can imagine RNN as an composition of identical
 feedforward network, one for each step in time, passing the message to a successor.
@@ -367,11 +367,11 @@ most widely known architecture called \emph{Long Short-Term Memory (LSTM)}.
 
 
 \subsection{Long Short-Term Memory (LSTM)}
-The reason that the vanilla RNN(Elman RNN cell \ref{Elman1990}) is not considered here,
+The reason that the vanilla RNN(Elman RNN cell \cite{Elman1990}) is not considered here,
 because they are not able
-to learn long term dependencies due to vanishing and exploding gradient problem \ref{Hochreiter1991}.
+to learn long term dependencies due to vanishing and exploding gradient problem \cite{Hochreiter1991}.
 \paragraph{Long Short Term Memory networks(LSTMs)} are a special architecture of RNN cell,
-capable of learning long-term dependencies. \ref{Hochreiter:1997:LSM:1246443.1246450}
+capable of learning long-term dependencies. \cite{Hochreiter:1997:LSM:1246443.1246450}
 LSTMs have the ability to remember new information and forgetting old, unnecessary information
 using concept of gates. LSTM cell holds information in the object called \emph{state($C_t$)}
 and only the gates are permitted to manipulate and change this state.
@@ -382,7 +382,7 @@ below.
 \begin{figure}[H]
 	\includegraphics[width=\linewidth]{LSTM_inside.png}
 	\caption{
-		Structure of LSTM cell(Source: \ref{ColahChristopher2015}) \\
+		Structure of LSTM cell(Source: \cite{ColahChristopher2015}) \\
 		An yellow square with $\sigma$ inside represents a neural
 		network with sigmoid activation function, while yellow square with $tahn$ inside represents
 		a neural network with tahn activation function.
@@ -391,13 +391,9 @@ below.
 \end{figure}
 
 
-As you can see from the figure \ref{img:lstm} LSTM cell has fours layers,
+As you can see from the figure \ref{img:lstm}, LSTM cell has four layers,
 which build up three gates to interact with the state:
-\begin{itemize}
-	\item Forget gate
-	\item Input gate
-	\item Output gate
-\end{itemize}
+\emph{Forget gate}, \emph{Input gate}, \emph{Output gate}.
 
 % Let's take a close look at key idea behind, this three LSTM gates:
 
@@ -420,10 +416,10 @@ to be updated and till what extent, while the network with tahn activation funct
 new candidate state value. Then the outputs from then networks are multiplied with each other
 to create an update for the LSTM cell's state:
 
-\begin{equation} \label{eq:input_gate}
-	i_t = \sigma (W_i \cdot [h_{t-1}, x_t] + b_i) \\
+\begin{align} \label{eq:input_gate}
+	i_t = \sigma (W_i \cdot [h_{t-1}, x_t] + b_i) \nonumber\\
 	C_t^{(candidate)} = tahn(W_C \cdot [h_{t-1}, x_t] + b_C)
-\end{equation}
+\end{align}
 
 \subparagraph{Updating the state}
 It's fairly simple now to update the old state $C_{t-1}$ using $f_t$ from equation
@@ -440,7 +436,7 @@ should be outputted.
 \begin{figure}[H]
 	\includegraphics[width=\linewidth,height=6cm,keepaspectratio]{LSTM_out.png}
 	\caption{
-		LSTM's output gate layer (Source: \ref{ColahChristopher2015})
+		LSTM's output gate layer (Source: \cite{ColahChristopher2015})
 		}
 	\label{img:lstm_out}
 \end{figure}
@@ -449,20 +445,38 @@ As you can see from figure \ref{img:lstm_out}: firstly, state cell goes
 through tahn function and then multiplied
 with output from the neural network of output gate layer:
 
-\begin{equation} \label{eq:update_state}
+\begin{equation} \label{eq:out_gate}
 	o_t = \sigma (W_o \cdot [h_{t-1}, x_t] + b_o)
 	h_t = o_t * tahn(C_t)
 \end{equation}
 
+$h_t$ is the output of LSTM cell at time step $t$ as well as the input
+for RNN cell at time step $t+1$. The gates stabilize the state and solve the
+vanishing gradient problem, hence it's very important for an LSTM
+cell to work.\cite{Goodfellow-et-al-2016}
 
 % TODO: just follow the stuff from colah's blog.
 % * Talk about the gates
 % * explain all three gates in particular
 % * write equations
 % * write shortly about backpropagation through the time.
-\paragraph{Backpropagation-Through-Time}
+\paragraph{Backpropagation Through Time} Taking into account that RNN nets
+share all weight between layers(time steps), there is a specific
+technic for computing
+gradient when training the network called \emph{Backpropagation Through Time(BPTT)}.
+It propagates the error all the way back through the time to the time step 0,
+that's the reason it's called BPTT. \cite{werbos:bptt}
+% hence why it's called
+% hence is the name.
 
-\cite{Goodfellow-et-al-2016}
+We can think about it as using feedforward neural network's backpropagation
+but with the constrain that the weights of the layers should be the same.
+However as RNN might have a hundred of thousands time steps it is common
+practice to truncate the backpropagation only back to few time steps, instead
+of backpropagating it to the first time step.
+
+
+
 
 
 \section{Reinforcement Learning}
