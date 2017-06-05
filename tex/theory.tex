@@ -222,7 +222,7 @@ where:
 \ref{Nielsen2015}
 
 
-\subparagraph{Gradient Descent} Once we defined our cost function, we need to find
+\subparagraph{Gradient Descent} \label{par:grad_desc}Once we defined our cost function, we need to find
 a set of parameters $W, b$ which make the cost as small as possible. The most common
 algorithm used to minimize the cost function called \emph{gradient descent}.
 Let's explain the algorithm on an example function: $f = f(V)$,
@@ -445,10 +445,10 @@ As you can see from figure \ref{img:lstm_out}: firstly, state cell goes
 through tahn function and then multiplied
 with output from the neural network of output gate layer:
 
-\begin{equation} \label{eq:out_gate}
-	o_t = \sigma (W_o \cdot [h_{t-1}, x_t] + b_o)
+\begin{align} \label{eq:out_gate}
+	o_t = \sigma (W_o \cdot [h_{t-1}, x_t] + b_o) \\
 	h_t = o_t * tahn(C_t)
-\end{equation}
+\end{align}
 
 $h_t$ is the output of LSTM cell at time step $t$ as well as the input
 for RNN cell at time step $t+1$. The gates stabilize the state and solve the
@@ -480,6 +480,37 @@ of backpropagating it to the first time step.
 
 
 \section{Reinforcement Learning}
+\subparagraph{Why reinforcement learning?}
+As you might recall from \autoref{chap:intro}, the recurrent visual attention model
+extracting information from a picture by attending to certain locations of the picture
+and aggregating the information from these locations. This property will make our network
+avoid locations with insignificant information, hence ignore clutter. In order to teach the network
+output next location to attend given previous location, we need to provide training data to
+the neural network. The problem is here, that we don't know the right answer for this.
+We can only say whether the network made a right classification decision after the network
+has already chosen several locations. Consequently, the training of the network parameters will
+be a very difficult task. As previously mentioned in \autoref{par:grad_desc}, using gradient descent
+with backpropagation for training NN is possible only with differentiable cost function like
+mean squared error function or cross entropy function. However, we can't use this functions without
+the knowing the right answer, therefore defining the cost function would be a complicated task.
+This sort of tasks is studied by a field of machine learning called \emph{reinforcement
+learning(RL)}. Reinforcement learning concerned with teaching an agent to take actions based on
+reward signal, even if this signal is delayed. These agents are trained to maximise the total
+sum of such reward signals.
+
+% \subsection{}
+
+
+% used the idea
+% need to decide next location based on the predecessor location \
+% why do we need it our work?
+
+
+\paragraph{The Basics and main components}
+
+MOMDP
+Reinforce rule
+reducing variance by using advantage function
 
 % Generally, recurrent networks are net- works that are capable of influencing themselves
 % by means of recurrences, e.g. by including the network output in the following
