@@ -14,7 +14,7 @@ on your belief that an image(or a group of images) belongs to a specific class.
 % that will change or influence on your belief more than other patterns
 % that an image or a group of images belongs to a specific class.
 }
-This is problem is known as pattern recognition problem or in our case
+This problem is known as pattern recognition problem or in our case
 visual pattern recognition problem \cite{Bishop1995}.
 The solve this problem it's required to develop ability for a machine
 to recognize patterns that will help to make a decision about a class.
@@ -85,7 +85,7 @@ of making even more sophisticated decisions.
 it's fairly easy to understand Neural Network. However we need to change
 the mathematical notation a bit. For the sake of convenience, let's move
 $threshold$ in equation \ref{perc:out} to the left part and replace it
-with by what's known as the \epmh{bias} : $ b = -threshold$. Let's also simplify
+with a variable known as the \epmh{bias} : $ b = -threshold$. Let's also simplify
 the sum sign: $\sum_j w_j x_j$ by writing weights and input as vectors and use a dot product
 to multiply them:
 $\sum_j w_j x_j = W \cdot x$. Using changes described above we can rewrite the
@@ -113,6 +113,8 @@ following form:
 \begin{equation} \label{sigmoid_function}
 	\sigma(z) = \frac{1}{1 + e^{-z}}
 \end{equation}
+
+TODO: write about tahn activation function
 
 The use of the sigmoid activation will make a network to produce output to be
 interpreted as posterior probabilities. Probability interpretation helps to provide
@@ -204,7 +206,7 @@ Mean squared error function has following form:
 \end{equation}
 \begin{itemize}
 	\item $y_{W^\prime}$ - is our neural network function with the parameters ($W^\prime, b^\prime$),
-	\item $x{^(i)}, y{^(i)}$ - is input and output of a training sample respectively.
+	\item $x^{(i)}, y^{(i)}$ - is input and output of a training sample respectively.
 \end{itemize}}
 
 Another common type of function to measure the cost of NN known as \emph{cross entropy}.
@@ -215,7 +217,7 @@ In short, cross entropy gives a way to express how different two distributions a
 where:
 \begin{itemize}
 	\item $y_{W^\prime}$ - is our neural network function with the parameters ($W^\prime, b^\prime$),
-	\item $x{^(i)}, y{^(i)}$ - is input and output of a training sample respectively.
+	\item $x^{(i)}, y^{(i)}$ - is input and output of a training sample respectively.
 \end{itemize}}
 \ref{Nielsen2015}
 
@@ -302,7 +304,7 @@ i.e. capable of memorizing information, therefore deal better with sequential in
 RNNs are closer to the way human's brain works. We don't start our thinking scratch,
 all of us have different background, memories and experience and based on this
 we're making our own decision and actions. \\
-As already mentioned in chapter \ref{Introduction}, in this work
+As already mentioned in \autoref{chap:intro}, in this work
 the network should be able attend to different locations within an image, i.e.
 choose a location and process only area with respect to this location. The network then
 incrementally combines the information from different location and based
@@ -357,33 +359,119 @@ where:
 
 As you might notice, the all calculations responsible for extracting and
 memorising information performed in $f$, which provide knowledge about
-specific \emph{RNN architecture(RNN cell)}. Thus the choice of recurrent function $f$(RNN cell)
+specific \emph{RNN architecture(RNN cell)}.
+Thus the choice of recurrent function $f$(RNN cell)
 is essential for RNNs to work and remember information. There are a lot of variations
 of RNN cells, but we mostly will consider one of the recent and
 most widely known architecture called \emph{Long Short-Term Memory (LSTM)}.
 
 
 \subsection{Long Short-Term Memory (LSTM)}
-The reason that the vanilla RNN(Elman RNN cell) is not considered here, because they are not able
+The reason that the vanilla RNN(Elman RNN cell \ref{Elman1990}) is not considered here,
+because they are not able
 to learn long term dependencies due to vanishing and exploding gradient problem \ref{Hochreiter1991}.
-Long Short Term Memory networks(LSTMs) are a special architecture of RNN cell,
+\paragraph{Long Short Term Memory networks(LSTMs)} are a special architecture of RNN cell,
 capable of learning long-term dependencies. \ref{Hochreiter:1997:LSM:1246443.1246450}
 LSTMs have the ability to remember new information and forgetting old, unnecessary information
-using concept of gates.
-TODO: just follow the stuff from colah's blog.
-* Talk about the gates
-* explain all three gates in particular
-* write equations
-* write shortly about backpropagation through the time.
+using concept of gates. LSTM cell holds information in the object called \emph{state($C_t$)}
+and only the gates are permitted to manipulate and change this state.
+% These gates are responsible for the data in \emph{state}.
+Gates are represented as an sigmoid layer and pointwise operation and will be explained
+below.
+
+\begin{figure}[H]
+	\includegraphics[width=\linewidth]{LSTM_inside.png}
+	\caption{
+		Structure of LSTM cell(Source: \ref{ColahChristopher2015}) \\
+		An yellow square with $\sigma$ inside represents a neural
+		network with sigmoid activation function, while yellow square with $tahn$ inside represents
+		a neural network with tahn activation function.
+		}
+	\label{img:lstm} % to reference to the figure later
+\end{figure}
+
+
+As you can see from the figure \ref{img:lstm} LSTM cell has fours layers,
+which build up three gates to interact with the state:
+\begin{itemize}
+	\item Forget gate
+	\item Input gate
+	\item Output gate
+\end{itemize}
+
+% Let's take a close look at key idea behind, this three LSTM gates:
+
+\subparagraph{Forget gate layer}
+The sigmoid layer that you can see on the right side is
+called "forget gate layer". As you might notice from the name, this gate is responsible
+for remembering information(or forgetting). It concatenates output from previous state: $h_{t-1}$
+with the input at the timestep $t$: $x_t$. Then the result is fed to the neural network
+with sigmoid activation function which produces an output with values from $0$ to $1$.
+Where 0 means to completely forget the information and $1$ means to leave
+the information in the state:
+
+\begin{equation} \label{eq:forget_gate}
+	f_t = \sigma (W_f \cdot [h_{t-1}, x_t] + b_f)
+\end{equation}
+
+\subparagraph{Input gate layer} composed of two networks: networks with sigmoid
+and tahn activation functions. The first sigmoid network decides which values needed
+to be updated and till what extent, while the network with tahn activation function create a
+new candidate state value. Then the outputs from then networks are multiplied with each other
+to create an update for the LSTM cell's state:
+
+\begin{equation} \label{eq:input_gate}
+	i_t = \sigma (W_i \cdot [h_{t-1}, x_t] + b_i) \\
+	C_t^{(candidate)} = tahn(W_C \cdot [h_{t-1}, x_t] + b_C)
+\end{equation}
+
+\subparagraph{Updating the state}
+It's fairly simple now to update the old state $C_{t-1}$ using $f_t$ from equation
+\ref{eq:forget_gate} to forget information and using new state candidate values
+$C_t^{(candidate)}$ and it's extent $i_t$ from equation \ref{eq:input_gate}:
+
+\begin{equation} \label{eq:update_state}
+	C_t = f_t * C_{t-1} + i_t * C_t^{(candidate)}
+\end{equation}
+
+\subparagraph{Output gate layer} is responsible for the cell's output $h_t$.
+This layer is allowed to read information from the state $C_t$ and decides what information
+should be outputted.
+\begin{figure}[H]
+	\includegraphics[width=\linewidth,height=6cm,keepaspectratio]{LSTM_out.png}
+	\caption{
+		LSTM's output gate layer (Source: \ref{ColahChristopher2015})
+		}
+	\label{img:lstm_out}
+\end{figure}
+
+As you can see from figure \ref{img:lstm_out}: firstly, state cell goes
+through tahn function and then multiplied
+with output from the neural network of output gate layer:
+
+\begin{equation} \label{eq:update_state}
+	o_t = \sigma (W_o \cdot [h_{t-1}, x_t] + b_o)
+	h_t = o_t * tahn(C_t)
+\end{equation}
+
+
+% TODO: just follow the stuff from colah's blog.
+% * Talk about the gates
+% * explain all three gates in particular
+% * write equations
+% * write shortly about backpropagation through the time.
 \paragraph{Backpropagation-Through-Time}
 
 \cite{Goodfellow-et-al-2016}
 
+
+\section{Reinforcement Learning}
+
 % Generally, recurrent networks are net- works that are capable of influencing themselves
 % by means of recurrences, e.g. by including the network output in the following
 % computation steps. There are many types of recurrent networks of nearly arbitrary
-% form, and nearly all of them are re- ferred to as recurrent neural networks.
-% As a result, for the few paradigms in- troduced here I use the name recurrent
+% form, and nearly all of them are referred to as recurrent neural networks.
+% As a result, for the few paradigms introduced here I use the name recurrent
 % multilayer perceptrons.
 % Apparently,
 %  to provide the new location to attend based
@@ -392,7 +480,7 @@ TODO: just follow the stuff from colah's blog.
 % The model is a recurrent neural network (RNN) which processes inputs sequentially,
 % attending to different locations within the images (or video frames) one at a time,
 % and incrementally combines information from these fixations to build up a dynamic
-% internal representation of the scene or envi- ronment. Instead of processing an entire
+% internal representation of the scene or environment. Instead of processing an entire
 % image or even bounding box at once, at each step, the model selects the next location
 % to attend to based on past information and the demands of the task.
 
