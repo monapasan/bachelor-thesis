@@ -13,7 +13,7 @@ on your belief that an image(or a group of images) belongs to a specific class.
 % Given a group of images, find the patterns in this images
 % that will change or influence on your belief more than other patterns
 % that an image or a group of images belongs to a specific class.
-}
+% }
 This problem is known as pattern recognition problem or in our case
 visual pattern recognition problem \cite{Bishop1995}.
 The solve this problem it's required to develop ability for a machine
@@ -30,7 +30,7 @@ in a different way.
 They don't execute programs instructions, they don't have
 sequential semantic and normally are not
 deterministic. They acquire their "knowledge" by extracting patterns from raw data,
-which normally called training data(which normally is a set of tuple \code(input, label))
+which normally called training data(which normally is a set of tuple $(input, label)$
 This approach also know as concept of statistical pattern recognition. \cite{Bishop1995}
 Artificial Neural networks have recently shown an excellent performance and
 accuracy at recognizing objects compared with other
@@ -87,14 +87,14 @@ of making even more sophisticated decisions.
 it's fairly easy to understand Neural Network. However we need to change
 the mathematical notation a bit. For the sake of convenience, let's move
 $threshold$ in equation \ref{perc:out} to the left part and replace it
-with a variable known as the \epmh{bias} : $ b = -threshold$. Let's also simplify
+with a variable known as the \epmh{bias} : $b = -threshold$. Let's also simplify
 the sum sign: $\sum_j w_j x_j$ by writing weights and input as vectors and use a dot product
 to multiply them:
 $\sum_j w_j x_j = W \cdot x$. Using changes described above we can rewrite the
 equation \ref{perc:out} as following:
 
 \begin{equation} \label{perc:with_bias}
-	output = \begin{cases} 0, & \mbox{if } w \cdot x + b\leq 0 \\ 1, & \mbox{if } w \cdot x + b > 0 \end{cases}
+	output = \begin{cases} 0, & \mbox{if } W \cdot x + b\leq 0 \\ 1, & \mbox{if } W \cdot x + b > 0 \end{cases}
 \end{equation}
 
 \emph{Bias} is a measure of how influential is a certain neuron on making output 1.
@@ -174,7 +174,7 @@ introduce learning procedure. But before going into learning, let's recap
 how our neural network model looks like:
 
 \begin{equation} \label{eq:nn}
-	y = g(W * x + b)
+	y = g(W \cdot x + b)
 \end{equation}
 Where $g$ is an activation function, $W$ - weights, $b$-biases, $x$ - input data.
 The space of different weights and biases values building a space of solution for
@@ -186,8 +186,8 @@ a continuous feedback to NN, which NN can use to learn from. This feedback
 in machine learning called \emph{training data}.
 Training data consist of the input data samples
 and appropriated outputs. You can think of training data as of an list of tuples:
-${(x^{(1)}, y^{(1)}), (x^{(2)}, y^{(2)}), ..., (x^{(n)}, y^{(n)})}$ where $x$ - input,
-$y$ - output (also known as ground truth), $n$ - amount of training examples. Neural network trained on training data
+${{(x^{(1)}, y^{(1)}), (x^{(2)}, y^{(2)}), ..., (x^{(n)}, y^{(n)})}}$ where $x$ - input,
+$y$ - output (also known as \emph{ground truth}), $n$ - amount of training examples. Neural network trained on training data
 should be able to generalise the output on unseen input data.
 The goal of the learning is to train network on training data and make it to capable of generalizing the output on unseen input data.
 
@@ -204,12 +204,12 @@ model works, therefore the goal of the learning is to minimize the cost of our m
 Let's consider the common type of cost function called \emph{mean squared error function}.
 Mean squared error function has following form:
 \begin{equation} \label{eq:mse}
-	I_{W^\prime} = 1/2 * n * \sum_{i=1}^n (y_{W^\prime}(x^{(i)}) - y^{(i)})^2
+	I_{W^\prime} = \frac{1}{2n} \sum_{i=1}^n (y_{W^\prime}(x^{(i)}) - y^{(i)})^2
 \end{equation}
 \begin{itemize}
 	\item $y_{W^\prime}$ - is our neural network function with the parameters ($W^\prime, b^\prime$),
 	\item $x^{(i)}, y^{(i)}$ - is input and output of a training sample respectively.
-\end{itemize}}
+\end{itemize}
 
 Another common type of function to measure the cost of NN known as \emph{cross entropy}.
 In short, cross entropy gives a way to express how different two distributions are:
@@ -220,7 +220,7 @@ where:
 \begin{itemize}
 	\item $y_{W^\prime}$ - is our neural network function with the parameters ($W^\prime, b^\prime$),
 	\item $x^{(i)}, y^{(i)}$ - is input and output of a training sample respectively.
-\end{itemize}}
+\end{itemize}
 \cite{Nielsen2015}
 
 
@@ -229,13 +229,13 @@ a set of parameters $W, b$ which make the cost as small as possible. The most co
 algorithm used to minimize the cost function called \emph{gradient descent}.
 Let's explain the algorithm on an example function:
 \begin{equation} \label{eq:ex_cost}
-	f = f(V)
+	f = f(\Theta)
 \end{equation}
-where $V = \vec{v_1}, \vec{v_2},...$ are variables that we want to minimize.
+where $\Theta = \vec{v_1}, \vec{v_2},...$ are variables that we want to minimize.
 \\
 Gradient descent uses partial derivative
 to iteratively update parameters. Derivative of a function shows how function output
-will change with respect to very, very small change in input $\Delta V $.
+will change with respect to very, very small change in input $\Delta \Theta $.
 For example, partial derivative with respect to variable $\Delta{\vec{v_1}}$ will tell us, how different
 the output will be $\Delta f $ if we change $\vec{v_1}$ on the small amount.
 This property of derivative is used in gradient descent algorithm.
@@ -245,8 +245,8 @@ cost function with respect to this variables. \\
 Gradient descent adopt the following procedure.
 Beginning with an initial guess for value $v= \vec{v_1}, \vec{v_2}, ...$, we update the vector $v$
 by moving a small distance in v-space in direction in which our function $f$ raises
-most rapidly, i.e. in the direction of $- \Delta_V * f $. Iterating this process,
-we can devise the new set of parameters $V^{(new)}$:
+most rapidly, i.e. in the direction of $- \Delta_{\Theta} f $. Iterating this process,
+we can devise the new set of parameters $\Theta^{(new)}$:
 
 \begin{equation} \label{eq:gd_update}
 	\vec{v_i^{new}} = \vec{v_i} - \alpha \frac{df(\vec{v_i})}{d\vec{v_i}}
@@ -257,11 +257,12 @@ it appropriately since if learning rate is too small the learning can be too slo
 learning rate is too big, algorithm updates can be too big to achieve the minimum
 (it can overstep the minimum).
 
-Depends on the conditions this will converge to the parameters $V$ where the function
+Depends on the conditions this will converge to the parameters $\Theta$ where the function
 $f$ is minimized.
 % Let's now substitute our loss function into gradient descent algorithm
 One important things to notice is that, we can use the gradient descent algorithm only
-if $f$ in equation \ref{eq:ex_cost} is differentiable, i.e. our cost function should
+if $f$ in equation \ref{eq:ex_cost} is differentiable. That means, if we want
+to use gradient descent algorithm our cost function should
 be differentiable \cite{Bishop1995}.
 
 \paragraph{Mini-batch Gradient Descent} Normally gradient descent algorithm
@@ -362,7 +363,7 @@ where:
 	\item $o_t$ - is the output at time step $t$,
 	\item $x_t$ - is the input at time step $t$,
 	\item $f$ - is a recurrent function(normally called as RNN cell).
-\end{itemize}}
+\end{itemize}
 
 As you might notice, the all calculations responsible for extracting and
 memorising information performed in $f$, which provide knowledge about
@@ -393,8 +394,8 @@ below.
 		Structure of LSTM cell(Source: \cite{ColahChristopher2015}) \\
 		An yellow square with $\sigma$ inside represents a neural
 		network with sigmoid activation function, while yellow square with $tahn$ inside represents
-		a neural network with tahn activation function.
-		}
+		a neural network with $tahn$ activation function.}
+
 	\label{img:lstm} % to reference to the figure later
 \end{figure}
 
@@ -435,12 +436,13 @@ It's fairly simple now to update the old state $C_{t-1}$ using $f_t$ from equati
 $C_t^{(candidate)}$ and it's extent $i_t$ from equation \ref{eq:input_gate}:
 
 \begin{equation} \label{eq:update_state}
-	C_t = f_t * C_{t-1} + i_t * C_t^{(candidate)}
+	C_t = f_t \cdot C_{t-1} + i_t \cdot C_t^{(candidate)}
 \end{equation}
 
 \subparagraph{Output gate layer} is responsible for the cell's output $h_t$.
 This layer is allowed to read information from the state $C_t$ and decides what information
 should be outputted.
+
 \begin{figure}[H]
 	\includegraphics[width=\linewidth,height=6cm,keepaspectratio]{LSTM_out.png}
 	\caption{
@@ -455,7 +457,7 @@ with output from the neural network of output gate layer:
 
 \begin{align} \label{eq:out_gate}
 	o_t = \sigma (W_o \cdot [h_{t-1}, x_t] + b_o) \\
-	h_t = o_t * tahn(C_t)
+	h_t = o_t \cdot tahn(C_t)
 \end{align}
 
 $h_t$ is the output of LSTM cell at time step $t$ as well as the input
@@ -484,41 +486,41 @@ practice to truncate the backpropagation only back to few time steps, instead
 of backpropagating it to the first time step.
 
 
+\input{./tex/rein_learning}
 
-
-
-\section{Reinforcement Learning}
-\subparagraph{Why reinforcement learning?}
-As you might recall from \autoref{chap:intro}, the recurrent visual attention model
-extracting information from a picture by attending to certain locations of the picture
-and aggregating the information from these locations. This property will make our network
-avoid locations with insignificant information, hence ignore clutter. In order to teach the network
-output next location to attend given previous location, we need to provide training data to
-the neural network. The problem is here, that we don't know the right answer for this.
-We can only say whether the network made a right classification decision after the network
-has already chosen several locations. Consequently, the training of the network parameters will
-be a very difficult task. As previously mentioned in \autoref{par:grad_desc}, using gradient descent
-with backpropagation for training NN is possible only with differentiable cost function like
-mean squared error function or cross entropy function. However, we can't use this functions without
-the knowing the right answer, therefore defining the cost function would be a complicated task.
-This sort of tasks is studied by a field of machine learning called \emph{reinforcement
-learning(RL)}. Reinforcement learning concerned with teaching an agent to take actions based on
-reward signal, even if this signal is delayed. These agents are trained to maximise the total
-sum of such reward signals.
-
-% \subsection{}
-
-
-% used the idea
-% need to decide next location based on the predecessor location \
-% why do we need it our work?
-
-
-\paragraph{The Basics and main components}
-
-MOMDP
-Reinforce rule
-reducing variance by using advantage function
+%
+% \section{Reinforcement Learning}
+% \subparagraph{Why reinforcement learning?}
+% As you might recall from \autoref{chap:intro}, the recurrent visual attention model
+% extracting information from a picture by attending to certain locations of the picture
+% and aggregating the information from these locations. This property will make our network
+% avoid locations with insignificant information, hence ignore clutter. In order to teach the network
+% output next location to attend given previous location, we need to provide training data to
+% the neural network. The problem is here, that we don't know the right answer for this.
+% We can only say whether the network made a right classification decision after the network
+% has already chosen several locations. Consequently, the training of the network parameters will
+% be a very difficult task. As previously mentioned in \autoref{par:grad_desc}, using gradient descent
+% with backpropagation for training NN is possible only with differentiable cost function like
+% mean squared error function or cross entropy function. However, we can't use this functions without
+% the knowing the right answer, therefore defining the cost function would be a complicated task.
+% This sort of tasks is studied by a field of machine learning called \emph{reinforcement
+% learning(RL)}. Reinforcement learning concerned with teaching an agent to take actions based on
+% reward signal, even if this signal is delayed. These agents are trained to maximise the total
+% sum of such reward signals.
+%
+% % \subsection{}
+%
+%
+% % used the idea
+% % need to decide next location based on the predecessor location \
+% % why do we need it our work?
+%
+%
+% \paragraph{The Basics and main components}
+%
+% MOMDP
+% Reinforce rule
+% reducing variance by using advantage function
 
 % Generally, recurrent networks are net- works that are capable of influencing themselves
 % by means of recurrences, e.g. by including the network output in the following
