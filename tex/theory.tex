@@ -45,7 +45,8 @@ it's indeed much much simpler than brain in terms of number of neurons that is u
 in ANN \cite{Goodfellow-et-al-2016}.
 To understand how neural networks works it is crucial to understand first the
 way a \emph{perceptron} work.
-\subparagraph{Perceptron} is a simple type of an artificial neuron.
+
+\paragraph{Perceptron} is a simple type of an artificial neuron.
 Given several binary inputs, perceptron is meant to produce a single binary output.
 \begin{figure}[H]
 	\includegraphics[width=\linewidth]{perceptron.png}
@@ -80,8 +81,9 @@ and will be responsible for the weighting up input, in contrast to second layer
 the first layer. Therefore second layer is located on more abstract level from input data
 compared and can make more complicated decisions. Further layers might be capable
 of making even more sophisticated decisions.
+\subsection{The Basics of Neural Networks}
 
-\subparagraph{Neural Network} Now that we know the way perceptrons work,
+\paragraph{Neural Network} Now that we know the way perceptrons work,
 it's fairly easy to understand Neural Network. However we need to change
 the mathematical notation a bit. For the sake of convenience, let's move
 $threshold$ in equation \ref{perc:out} to the left part and replace it
@@ -104,7 +106,7 @@ Output being only binary value will limit the ability to make sophisticated deci
 Therefore we introduce a function known as \emph{an activation function} before
 actually outputting a value: $output = g( W \cdot x + b)$ \cite{Nielsen2015} .
 
-\subparagraph{Activation function} $g(\cdot)$ is known as an activation function.
+\paragraph{Activation function} $g(\cdot)$ is known as an activation function.
 Activation function helps to control the output and non-linearity of the network.
 Activation function also plays a crucial role in multi layer architecture, where it helps
 to prevent the values of each layer from blowing up.
@@ -131,8 +133,8 @@ what is called feedforward neural network and the terms related to it.
 \paragraph{Feedforward neural network} is a network where the output
 from one layer is used as input to the next layer. In feedforward NN
 information is always fed forward in contrast to recurrent neural network(RNN)
-where information can go in a loop. We will take a closer look at RNN in section
-\ref{Recurrent Neural Network}.
+where information can go in a loop. We will take a closer look at RNNs in section
+\autoref{sec:rec_NN}.
 
 \begin{figure}[H]
 	\includegraphics[width=\linewidth]{mult_layer.png}
@@ -164,7 +166,7 @@ For example, the Neural network in figure \ref{img:mult_layer} consist of
 \end{itemize}
 
 
-\paragraph{Training}
+\subsection{Training an Artificial Neural Network}
 As mentioned above Neural Network is capable of solving complicated
 pattern recognition problems. However designing an neural network is not sufficient
 for this. It's also requiring to train an network. In this paragraph we will
@@ -179,7 +181,7 @@ The space of different weights and biases values building a space of solution fo
 cetrain problem. The goal of the training is to find the best parameters
 for neural network ($W, b$), that suited our problem.
 
-\subparagraph{Training data} To solve pattern recognition problem we need to provide
+\paragraph{Training data} To solve pattern recognition problem we need to provide
 a continuous feedback to NN, which NN can use to learn from. This feedback
 in machine learning called \emph{training data}.
 Training data consist of the input data samples
@@ -189,7 +191,7 @@ $y$ - output (also known as ground truth), $n$ - amount of training examples. Ne
 should be able to generalise the output on unseen input data.
 The goal of the learning is to train network on training data and make it to capable of generalizing the output on unseen input data.
 
-\subparagraph{Cost} In order to teach the model, it's essential to understand
+\paragraph{Cost} In order to teach the model, it's essential to understand
 what does it mean for an neural network to be good or to be bad. For this purpose
 it's required first to define a \epmh{cost function}. Cost(also knows as error) is the metric
 for the NN(or any other function approximation method), which represents how far of
@@ -198,11 +200,11 @@ With the cost function, it's possible
 to define our training goal more precisely: the smaller our cost, the better our
 model works, therefore the goal of the learning is to minimize the cost of our model.
 
-\subparagraph{Types of cost} There are a plenty of ways to define cost of the model.
+\paragraph{Types of cost} There are a plenty of ways to define cost of the model.
 Let's consider the common type of cost function called \emph{mean squared error function}.
 Mean squared error function has following form:
 \begin{equation} \label{eq:mse}
-	I_{W^\prime} = 1/2 * n * \sum_{i=1}^n (y_{W^\prime}(x^{(i)} - y^{(i)}) )^2
+	I_{W^\prime} = 1/2 * n * \sum_{i=1}^n (y_{W^\prime}(x^{(i)}) - y^{(i)})^2
 \end{equation}
 \begin{itemize}
 	\item $y_{W^\prime}$ - is our neural network function with the parameters ($W^\prime, b^\prime$),
@@ -219,14 +221,18 @@ where:
 	\item $y_{W^\prime}$ - is our neural network function with the parameters ($W^\prime, b^\prime$),
 	\item $x^{(i)}, y^{(i)}$ - is input and output of a training sample respectively.
 \end{itemize}}
-\ref{Nielsen2015}
+\cite{Nielsen2015}
 
 
-\subparagraph{Gradient Descent} \label{par:grad_desc}Once we defined our cost function, we need to find
+\paragraph{Gradient Descent} \label{par:grad_desc}Once we defined our cost function, we need to find
 a set of parameters $W, b$ which make the cost as small as possible. The most common
 algorithm used to minimize the cost function called \emph{gradient descent}.
-Let's explain the algorithm on an example function: $f = f(V)$,
+Let's explain the algorithm on an example function:
+\begin{equation} \label{eq:ex_cost}
+	f = f(V)
+\end{equation}
 where $V = \vec{v_1}, \vec{v_2},...$ are variables that we want to minimize.
+\\
 Gradient descent uses partial derivative
 to iteratively update parameters. Derivative of a function shows how function output
 will change with respect to very, very small change in input $\Delta V $.
@@ -237,7 +243,7 @@ Essentially, the gradient descent
 performs updates on the variables to be minimized according to partial derivative of the
 cost function with respect to this variables. \\
 Gradient descent adopt the following procedure.
-Beginning with an initial guess for value $v= \vec{v_1}, \vec{v_2} ...$, we update the vector $v$
+Beginning with an initial guess for value $v= \vec{v_1}, \vec{v_2}, ...$, we update the vector $v$
 by moving a small distance in v-space in direction in which our function $f$ raises
 most rapidly, i.e. in the direction of $- \Delta_V * f $. Iterating this process,
 we can devise the new set of parameters $V^{(new)}$:
@@ -255,9 +261,10 @@ Depends on the conditions this will converge to the parameters $V$ where the fun
 $f$ is minimized.
 % Let's now substitute our loss function into gradient descent algorithm
 One important things to notice is that, we can use the gradient descent algorithm only
-if $f$ is differentiable. \cite{Bishop1995}
+if $f$ in equation \ref{eq:ex_cost} is differentiable, i.e. our cost function should
+be differentiable \cite{Bishop1995}.
 
-\subparagraph{Mini-batch Gradient Descent} Normally gradient descent algorithm
+\paragraph{Mini-batch Gradient Descent} Normally gradient descent algorithm
 is associated with the update on the loss computed with whole set of training data,
 while, gradient descent where updates is performed only using loss computed
 on a small batch of data knows as \emph{mini-batch gradient descent}.
@@ -286,7 +293,7 @@ Much faster convergence can be achieved in practice using mini-batch gradient de
 
 
 
-\subparagraph{Backpropagation} In order to compute gradients in gradient descent algorithm
+\paragraph{Backpropagation} In order to compute gradients in gradient descent algorithm
 backpropagation algorithm is normally used. Backpropagation is the procedure of computing
 gradients applying a gradient chain rules and updating the weights accordingly.
 It performs first an forward update to receive the network's error value. This error
@@ -296,12 +303,12 @@ which an certain neuron is responsible
 for. Once this extent is calculated, it performs weights update \cite{Rumelhart1986}.
 
 
-\section{Recurrent Neural Network}
+\section{Recurrent Neural Network} \label{sec:rec_NN}
 
 \paragraph{Why recurrent NN?} Motivation for recurrent neural network(RNN) is that
 in contrast to feedforward neural network, RNNs are capable of having internal memory,
 i.e. capable of memorizing information, therefore deal better with sequential input data.
-RNNs are closer to the way human's brain works. We don't start our thinking scratch,
+RNNs are closer to the way human's brain works. We don't start our thinking from scratch,
 all of us have different background, memories and experience and based on this
 we're making our own decision and actions. \\
 As already mentioned in \autoref{chap:intro}, in this work
@@ -367,9 +374,10 @@ most widely known architecture called \emph{Long Short-Term Memory (LSTM)}.
 
 
 \subsection{Long Short-Term Memory (LSTM)}
-The reason that the vanilla RNN(Elman RNN cell \cite{Elman1990}) is not considered here,
-because they are not able
-to learn long term dependencies due to vanishing and exploding gradient problem \cite{Hochreiter1991}.
+% The reason that the vanilla RNN(Elman RNN cell \cite{Elman1990}) is not considered here,
+% because they are not able
+% to learn long term dependencies due to vanishing and exploding gradient
+% problem \cite{Hochreiter1991}.
 \paragraph{Long Short Term Memory networks(LSTMs)} are a special architecture of RNN cell,
 capable of learning long-term dependencies. \cite{Hochreiter:1997:LSM:1246443.1246450}
 LSTMs have the ability to remember new information and forgetting old, unnecessary information
