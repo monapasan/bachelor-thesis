@@ -1,6 +1,7 @@
 \chapter{Theory}
 \section{Artificial Neural Networks}
 \paragraph{Why Neural Networks?}
+\label{sec:neural_networks}
 Before going into what actually artificial neural networks are, let's first
 try to face the question why do we need it in this paper. The problem that
 we give to our application to solve can be shortly summarized in the following statement:
@@ -125,7 +126,7 @@ of activation functions but in this work we mainly will use the sigmoid activati
 and \emph{rectified function}. Rectified function is fairly simple.
 It produces $0$ when input is less than $0$, and it does not change input value if
 input is more than 0:
-\begin{equation} \label{rect_function}
+\begin{equation} \label{eq:rect_function}
 	R(z) = max(0, z)
 \end{equation}
 Now that we derived a concept of Neural Network, we can talk more about
@@ -421,7 +422,7 @@ the information in the state:
 
 \subparagraph{Input gate layer} composed of two networks: networks with sigmoid
 and tahn activation functions. The first sigmoid network decides which values needed
-to be updated and till what extent, while the network with tahn activation function create a
+to be updated and till what extent, while the network with tahn activation function creates a
 new candidate state value. Then the outputs from then networks are multiplied with each other
 to create an update for the LSTM cell's state:
 

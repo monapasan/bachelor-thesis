@@ -78,15 +78,15 @@ needed to learn how to play Atari 2600 games.
 \end{figure}
 % The rl system have 4 main compoentn s
 In the figure \ref{img:atari_rl}, the brain represents the agent. Agent is our
-computational system.
+computational system or decision making system.
 Agent in RL interacts with environment by performing actions. An action would be moving a joystick in the right.
 By moving a joystick
-we interact with environment, which in this case is the Atari video console.
+we interact with the environment, which in this case is the true state of the Atari game engine.
 After the environment receives an action, it gives back to the agent an observation
-and reward signal. In our example, an observations is the current state of the game,
-i.e. the image representing it and reward is the current score of the game.
+in the form of the video frame shown on the screen
+and reward signal which reflects the points scored.
 \\
-\paragraph{State}
+\paragraph{State} \label{sec:comp_rl}
 Let's now abstract from our example and describe the flow of RL system more precisely.
 At each time step $t$ the agent executes an action $A_t$, receives the observation $O_t$
 and receives scalar reward $R_t$. The environment receives an action $A_t$,
@@ -95,21 +95,23 @@ after the environment's step. In RL instead of working with observations, one wo
 with the \emph{state} or \emph{agent state}. The agent state is the data the agent uses
 to pick the next action. State is formally a function of the
 history(data that agent received so far):
-$H_t = O_1, R_1, A_1, O_2, R_2, A_2, ..., O_t, R_t, A_t$:
 
-\begin{equation} \label{eq:rl_state}
-	S_t = f(H_t)
-\end{equation}
+\begin{align} \label{eq:rl_state}
+	H_t = O_1, R_1, A_1, O_2, R_2, A_2, ..., O_t, R_t, A_t \\
+	S_t^a = f(H_t)
+\end{align}
+where $H_t$ - is the history object at time step $t$ and
+$S_t^a$ - is the agent's state at time step $t$
 
 Because history $H_t$ can be very hard to maintain as it grows rapidly over the time,
 it is very common to talk about \emph{markov state} in RL. Markov state is meant
 to contain all useful information from the history as well as possess of \emph{markov property}:
 \begin{equation} \label{eq:markov_property}
-	P[S_{t+1} | S_t] = P[S_{t+1} | S_1, ..., S_t]
+	P[S_{t+1} | S_t^a] = P[S_{t+1}^a | S_1^a, ..., S_t^a]
 \end{equation}
-where $S_t$ - is the state at time step $t$.
+where $S_t^a$ - is the agent's state at time step $t$.
 It means that the state is only dependent on the present state and not on
-successors states. Hence, once the state is know, we can erase the history.
+successors states. Hence, once the state is knows, we can erase the history.
 
 \paragraph{Reward} As mentioned before $R_t$ is scalar feedback signal, which
 indicates how well agent is doing at time step $t$. The job of an agent to
@@ -117,18 +119,15 @@ maximise the sum of rewards received after $t$ steps. This sum is also known as
 cumulative reward.
 
 Additionally to this an agent may possess of following components:
-% Beside the agent and environment, we can identify 4 main components used
-% in RL systems:
 a \emph{policy},
-% a \emph{reward function},
-a \emph{value function}, and,
-optionally, a \emph{model of the environment}.
+a \emph{value function}, and
+a \emph{model of the environment}.
 
 \paragraph{A Policy} is agent's behaviour function. It maps agent's state
 to actions to be taken by agent, when agent are in those states. Normally, the policy is
 something that we want to find. Once the best policy is known, we solved RL problem.
 Policy can be deterministic: $a = \pi (s)$
-as well as stochastic: $\pi(a|s) = P[A_t = a|S_t = s]$
+as well as stochastic: $\pi(a|s) = P[A_t = a|S_t^a = s]$
 
 % \paragraph{Reward function}
 
@@ -138,11 +137,12 @@ as well as stochastic: $\pi(a|s) = P[A_t = a|S_t = s]$
 The value of a state is the total amount of reward an agent can expect to
 to receive when following policy $\pi$, starting from that state:
 
-\begin{equation} \label{eq:markov_propert}
-	v_{\pi}(s) = \mathbb{E}_{\pi} [R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + ... | St = s]
+\begin{equation} \label{eq:general_value_function}
+	v_{\pi}(s) = \mathbb{E}_{\pi} [R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + ... | S_t^a = s]
 \end{equation}
 where $\mathbb{E}_{\pi}$ is the expectation of the cumulative reward from time step $t$
-following policy $\pi$ given the state $s$, $\gamma$ - is a discount factor which will be explained in \autoref{subs:reward_process}\\
+following policy $\pi$ given the state $s$, $\gamma$ - is a discount factor [0, 1].
+ which will be explained in \autoref{subs:reward_process}\\
 While reward determines how well is current action at given time step, value of a state
 give us more information about long term desirability of a state taking into account
 the values of all possible states an agent can end up in after leaving this state.
@@ -153,17 +153,20 @@ from this state on.
 \paragraph{Model of the environment} represents what the environment will do next. Given
 the current state $s$ and action $a$, model defines the probability of an agent to end up in
 a state $s^\prime$:
-\begin{align} \label{eq:markov_propert}
-P^a_{ss^{\prime}} = P[S_{t+1} = s_0 | S_t = s, A_t = a] \\
-R^a_s = \mathbb{E}[R_{t+1} | S_t = s, A_t = a]
+\begin{align} \label{eq:model_env}
+P^a_{ss^{\prime}} = P[S_{t+1} = s_0 | S_t^a = s, A_t = a] \\
+R^a_s = \mathbb{E}[R_{t+1} | S_t^a = s, A_t = a]
 \end{align}
-where $P$ is state transition probability matrix and $R$ is a reward function.
+where $P$ is state transition probability matrix and $R$ is a reward give
+	the probability of next state given current state and action:
 
 \subsection{Partially Observable Environments}
 One distinguishes between two type of environments in RL problems.
-\emph{Fully observable environments} where an agent is capable of directly observing the state of environment,
-and \emph{partially observable environment}. In this work we will concentrate
-on partially observable environments.
+\emph{Fully observable environments} where an agent is capable of directly
+observing the state of environment:
+$O_t = S_t^a = S_t^e$ - where $S_t^e$ is environment's state,
+and partially observable environment. In this work we will concentrate
+on \emph{partially observable environments}.
 
 \paragraph{Partially observable environments}
 In partially observable environments the agent's state is not equal to environment state,
@@ -171,14 +174,15 @@ instead the agent is constructing his own representation of environment state fr
 the the external input(observations) that the environment provide.
 Partially observable environments is a special instance of what is known in RL community
 as partially observable Markov decision process (POMDP). In our work we are constructing
-the agent's state by injection the input into RNN:
+the agent's state by injection the input provided by environment into RNN:
 \begin{equation} \label{eq:rnn_state}
-	S_t^a = \sigma(S_{t-1}^a) \cdot W_s + O_t \cdot W_o)
+	S_t^a = \sigma(S_{t-1}^a \cdot W_s + O_t \cdot W_o)
 \end{equation}
 where $S_t^a$ and $S_{t-1}^a$ are agent state at time step $t$ and $t-1$
 respectively, $O_t$ - is external input (in our work that is glimpse),
 and $W_s$, $W_o$ - appropriate weights.
 We will investigate in POMDP more in \autoref{subs:POMDP}.
+
 % \paragraph{Partially Observable Environments}
 
 % TODO: tomorrow
@@ -186,7 +190,119 @@ We will investigate in POMDP more in \autoref{subs:POMDP}.
 % explain a bit about temporal difference algorithm
 % explain reinforce
 
-\subsection{Markov Reward Process} \label{subs:reward_process}
+\subsection{Markov Decision Processes(MDP)} \label{subs:reward_process}
+The agent is the algorithm that we trying to build, the agent is interacting with
+environment. \emph{Markov Decision Process(MDP)} describes this environment.
+Markov Decision Process is an extension of a Markov chain and is one of the core
+concept that is used in reinforcement learning and almost all problems in RL
+can be described by using MDP. We have already defined some elements of MDP in \autoref{sec:comp_rl},
+however MDP's theory gives our a way to solve problems.
+
+\paragraph{Main components of MDP} The MDP is defined using following elements:
+\begin{itemize}
+	\item \emph{Finite set of state}s $\mathcal{S}$ - a set of Markov states that we described in \autoref{sec:comp_rl}
+	\item \emph{Finite set of actions} $\mathcal{A}$ - a set of all possible actions.
+		An action $A_t = a$ \in $\mathcal{A(S_t)}$, where $\mathcal{A}(S_t)$ -
+		is a set of all possible actions that can be taken in state $S_t$
+	\item \emph{Reward function} $R$ - is the function which describes
+		the reward based on a state and action: $R_s^a = \mathbb{E}[R_{t+1}| S_t = s, A_t = a]$
+	\item \emph{State transition probability matrix} $\mathcal{P}$ give
+		the probability of next state given current state and action: $P^a_{ss^{\prime}} = P[S_{t+1} = s_0 | S_t^a = s, A_t = a]$
+	\item \emph{Discount factor} $\gamma$ - the discount factor determines the present value
+	 	of future rewards.
+\end{itemize}
+
+Another important definition that is used in MDP known as return $G_t$. Return is nothing
+more than all cumulative reward that an agent can get from time step $t$:
+
+\begin{equation} \label{eq:return}
+	G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+2} + ... = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1}
+\end{equation}
+where $R_t$ - is immediate reward at time step $t$,
+and $\gamma$ - is the discount factor.
+
+\subparagraph{Discount} Most rewards in MDP are discounted by discount factor $\gamma$.
+There are several reason for that. Firstly, it is mathematically convenient
+to use discounts as this will prevent the return value from being exploded to infinity.
+Secondly, discount give us a way to tune the model to prefer the immediate reward over
+delayed or vice versa.
+\paragraph{Value functions in MDP} MDP distinguishes between two types of value functions:
+\emph{state-value function} and \emph{action-value function}.
+
+State-value function is basically the same value function that we defined in \autoref{sec:comp_rl}:
+it describes the \emph{value} of state $S_t$ if following policy $\pi$ which is expected return
+starting from state $S_t$ and then following policy $\pi$. We can rewrite the equation \ref{eq:general_value_function}
+using our new definition of return $G_t$:
+\begin{equation} \label{eq:value_state}
+	v_{\pi}(s) = \mathbb{E}_{\pi} [G_t |S_t = s]
+\end{equation}
+where \mathbb{E}_{\pi} - is the expected value of the state $S_t$ when
+following policy $\pi$.
+
+Action-value function is defined in very similar way beside the fact that it also takes
+into consideration the action taken by the agent at time step $t$. It's denoted $q_{\pi}(s, a)$
+and equal to expected return starting from state $s$, taking the action $a$ and then following
+policy $\pi$:
+
+\begin{equation} \label{eq:action_value_func}
+	q_{\pi}(s, a) = \mathbb{E}_{\pi} [G_t |S_t = s, A_t = a]
+\end{equation}
+
+\paragraph{Bellman equations} The most important reason that MDPs is used in RL problems because
+it give us the opportunity to use \emph{Bellman equations}. Bellman equations forms the way
+of computing, optimizing and evaluating value functions $v_{\pi}(s)$ and $q_{\pi}(s, a)$.
+
+\subparagraph{Bellman expectation equation} decomposes the value functions to represent
+in a recursive way through the value of successor state:
+
+\begin{align*}
+	v_{\pi}(s) = \mathbb{E}_{\pi} [G_t |S_t = s] \\
+		= \mathbb{E}_{\pi} [\sum_{k=0}^{\infty} \gamma^k R_{t+k+1} |S_t = s] \\
+		= \mathbb{E}_{\pi} [R_{t+1} + \gamma \sum_{k=0}^{\infty} \gamma^k R_{t+k+2} |S_t = s] \\
+		= \mathbb{E}_{\pi} [R_{t+1} + \gamma v_{\pi}(S_{t+1}) | S_t = s]
+\end{align*}
+
+In a similar way, action-value function is decomposed:
+\begin{align*}
+	q_{\pi}(s, a) = \mathbb{E}_{\pi} [G_t |S_t = s, A_t = a] \\
+		= \mathbb{E}_{\pi} [ |S_t = s, A_t = a] \\
+		= \mathbb{E}_{\pi} [R_{t+1} + \gamma \sum_{k=0}^{\infty} \gamma^k R_{t+k+2} |S_t = s, A_t = a] \\
+		= \mathbb{E}_{\pi} [R_{t+1} + \gamma v_{\pi}(S_{t+1}) | S_t = s, A_t = a]
+\end{align*}
+
+% Once we know how to represent the value function, It's time to think about
+% possibilities to evaluate the policy as this will solve our RL problems
+% talk abot optimality equaiton
+% and the move to reinfoce explanaiton,
+
+
+
+% s expected return starting from state $S_t$ and following policy $\pi$.
+% Using return we can now represent our value function as the expectation of return:
+
+% \begin{equation} \label{eq:value_return}
+% 	v(s) = \mathbb{E} [G_t | S_t,]
+% \end{equation}
+% v(s) = E [Gt
+% | St = s
+
+
+
+
+
+
+
+\subsection{Policy-Based Reinforcement Learning}
+Policy-Based Reinforcement Learning is a field in RL where agent works directly
+with the policy and does not necessary represents a value function or a model.
+Let's make acquaintance with the notation we are going to use.
+$\pi_{\theta}$ is the policy with parameters $\theta$. We can represent our policy
+with the help of different function approximators. The most common function
+approximator used in RL is neural network that was introduced in \autoref{sec:neural_networks}.
+So $\theta$ can represent parameters of neural network, although any other function approximator
+can be used like decision tree or nearest neighbour approximator.
+
+
 
 \subsection{POMDP} \label{subs:POMDP}
 
