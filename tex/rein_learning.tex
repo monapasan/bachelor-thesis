@@ -202,7 +202,7 @@ however MDP's theory gives our a way to solve problems.
 \begin{itemize}
 	\item \emph{Finite set of state}s $\mathcal{S}$ - a set of Markov states that we described in \autoref{sec:comp_rl}
 	\item \emph{Finite set of actions} $\mathcal{A}$ - a set of all possible actions.
-		An action $A_t = a$ \in $\mathcal{A(S_t)}$, where $\mathcal{A}(S_t)$ -
+		An action $A_t = a$ \in $\mathcal{A}(S_t)$, where $\mathcal{A}(S_t)$ -
 		is a set of all possible actions that can be taken in state $S_t$
 	\item \emph{Reward function} $R$ - is the function which describes
 		the reward based on a state and action: $R_s^a = \mathbb{E}[R_{t+1}| S_t = s, A_t = a]$
@@ -220,6 +220,12 @@ more than all cumulative reward that an agent can get from time step $t$:
 \end{equation}
 where $R_t$ - is immediate reward at time step $t$,
 and $\gamma$ - is the discount factor.
+
+Policy in MDP is a distribution over actions given a state.
+It maps a state $s$ to a probability of taking action $a$, where $a \in \mathcal{A}(S_t = s)$:
+\begin{equation}
+	\pi(a|s) = P[A_t = a|S_t^a = s]
+\end{equation}
 
 \subparagraph{Discount} Most rewards in MDP are discounted by discount factor $\gamma$.
 There are several reason for that. Firstly, it is mathematically convenient
@@ -247,6 +253,9 @@ policy $\pi$:
 \begin{equation} \label{eq:action_value_func}
 	q_{\pi}(s, a) = \mathbb{E}_{\pi} [G_t |S_t = s, A_t = a]
 \end{equation}
+Policies in MDP are time independent. That is, no matter what time step $t$ it is, we have still the same
+policy distribution at each time step.
+
 
 \paragraph{Bellman equations} The most important reason that MDPs is used in RL problems because
 it give us the opportunity to use \emph{Bellman equations}. Bellman equations forms the way
@@ -269,6 +278,66 @@ In a similar way, action-value function is decomposed:
 		= \mathbb{E}_{\pi} [R_{t+1} + \gamma \sum_{k=0}^{\infty} \gamma^k R_{t+k+2} |S_t = s, A_t = a] \\
 		= \mathbb{E}_{\pi} [R_{t+1} + \gamma v_{\pi}(S_{t+1}) | S_t = s, A_t = a]
 \end{align*}
+
+If we look beneath the math, these equations formally telling us that the value of a state is equal to the
+immediate reward that the agent get after leaving current state plus discounted value
+of the state where the agent will end up after leaving current state.
+
+\textbf{TODO:}
+\subparagraph{Optimal value function} Now that we know how to represent the value of
+a state, we can concentrate on the problem that we really care about, which
+is to find a best behaviour for MDP.
+
+\paragraph{Explorations, greedy polciy}
+
+\textbf{TODO: Explaint glie monte carlo control}
+\paragraph{Monte Carlo method,} How to assert value to return, i.e. represent value.
+\textbf{TODO:} also stricti definition. LOOK up latex definition.
+
+\paragraph{Intuition behind value function: Lookup table}
+In order to beeing able comprehend the concept of value function let's consider
+it's representation as lookup table. Imagine environment
+CartPole which can be described following:
+
+
+
+
+
+\blockquote{
+	A pole is attached by an un-actuated joint to a cart, which moves along a
+	frictionless track. The system is controlled by applying a force of +1 or -1
+	to the cart. The pendulum starts upright, and the goal is to prevent it from
+	falling over. A reward of +1 is provided for every time step that the pole remains
+	upright. The episode ends when the pole is more than 15 degrees from vertical, or the
+	cart moves more than 2.4 units from the center.
+}
+We can represent state as tuple of every unit of horizontal space and
+the slope between pole and vertical. As example it can look like following:
+\begin{table}
+	\caption{Example of state space represented as look up table}
+	\label{}
+
+\end{table}
+
+Now that we know how to define a state space we need to represent actions. Actions
+in this example would R and L, which moves the the card 1 unit to the right
+and to the left per time step respectively. After we defined the action
+space, we just calculate the reward according to the state by using monte carlo method.
+So our lookup can look as following:
+
+
+Once we are done, can choose the policy by always choosing the state which has
+the biggest value.
+% https://gym.openai.com/envs/CartPole-v0
+
+% Least Squares Prediction
+% http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching_files/FA.pdf
+% describe example as on page 35
+
+
+
+% Table lookup is a special case of linear value function
+% approximation
 
 % Once we know how to represent the value function, It's time to think about
 % possibilities to evaluate the policy as this will solve our RL problems
@@ -293,15 +362,105 @@ In a similar way, action-value function is decomposed:
 
 
 \subsection{Policy-Based Reinforcement Learning}
+Now, when we understand how is the environment managed, we can finally
+look at the concept of policy more accurately.
 Policy-Based Reinforcement Learning is a field in RL where agent works directly
-with the policy and does not necessary represents a value function or a model.
-Let's make acquaintance with the notation we are going to use.
+with the policy and does not necessary represents a value function or a model,
+but still may compute action-value or state-value functions.\\
+
+\textbf{TODO: the equation about average and etc. choose only one}
+\subparagraph{But how we can evaluate a policy}
+
+
+We need somehow to find a way to represent this state
+as we want to defined the value of each state. We can do it using lookup table
+but in our case RNN can produce near continuous output and to represent that
+as look up table will require a lot of memory. Therefore for problems with large
+state space is recommended using function approximation methods.
+Using function approximators such as neural network will allow to estimate value function:
+
+\begin{align} \label{eq:value_appr_func}
+	\hat{v}(s, W) \approx v_{\pi}(s) \\
+	\hat{q}(s, a, W) \approx q_{\pi}(s, a)
+\end{align}
+
+\subparagraph{Note:}
+The representation in \ref{eq:value_appr_func} will even allow to generalise
+the value functions from seen states to unseen.
+In a similar way, we can also estimate policy function:
+\textbf{TODO: polcy approximation}
+\begin{align} \label{eq:policy_appr_func}
+	\pi_{\theta} = \mathbb{P}[a|s, \theta]
+\end{align}
+
+% \hat{v}(s, W) \approx v_{\pi}(s) \\
+% \hat{q}(s, a, W) \approx q_{\pi}(s, a)
+
+% Let's make acquaintance with the notation we are going to use. ???
 $\pi_{\theta}$ is the policy with parameters $\theta$. We can represent our policy
 with the help of different function approximators. The most common function
 approximator used in RL is neural network that was introduced in \autoref{sec:neural_networks}.
 So $\theta$ can represent parameters of neural network, although any other function approximator
 can be used like decision tree or nearest neighbour approximator.
 
+
+In our problem, observations will come from glimpses to RNN which we will use
+as a state for our agent:
+\begin{equation} \label{eq:rnn_state}
+	S_t^a = \sigma(S_{t-1}^a \cdot W_s + O_t \cdot W_o)	\tag{\ref{eq:rnn_state} revisited}
+\end{equation}
+where $S_t^a$ and $S_{t-1}^a$ are agent state at time step $t$ and $t-1$
+respectively, $O_t$ - is external input (in our work that is glimpse),
+and $W_s$, $W_o$ - appropriate weights.
+
+
+
+% policy can be chosen as gaussian distribution with mean  = v(s) * \thetha
+
+\paragraph{Policy gradient theorem} it basically says that gradient
+for any differentiable objective function the policy gradient is:
+
+\begin{equation} \label{eq:reinforce}
+	\Delta_{\theta} J(\theta) = \mathbb{E}_{\pi_{\theta}}
+		[\Delta_{\theta} log(
+		\pi_{\theta}(s, a) )  Q_{\pi_{\theta}}(s, a)]
+\end{equation}
+
+% where $Q_{\pi_{\theta}}(s, a)$ can be computer with the help of,
+% for example, Monte Carlo method described earlier.
+
+\paragraph{Reinforce rule}
+Using return $v_t$ as an unbiased sample from $Q_{\pi_{\theta}}(s, a)$
+in \ref{eq:reinforce}. As suggested by in \ref{definition_value},
+which is unbiased sample from value function in .
+
+and then actual sequential of steps from.
+The whole process can simulated as following:
+
+\begin{orderedlisting}
+	\item Initialise $\theta$ randomly
+	\item do a $t$ of episodes
+	and etc.
+\end{orderedlisting}
+
+% The pseudo code
+% for the REINFORCE rule will be like following:
+%
+% Or maybe just explain it with the words, lile:
+
+% \begin{lstlisting}
+% 	function REINFORCE
+% 		Initialise θ arbitrarily
+% 		for each episode {s1, a1,r2, ...,sT−1, aT−1,rT } ∼ πθ do
+% 		for t = 1 to T − 1 do
+% 		θ ← θ + α∇θ log πθ(st
+% 		, at)vt
+% 		end for
+% 		end for
+% 		return θ
+% 		end function
+% \end{lstlisting}
+% the way you actually computing it.
 
 
 \subsection{POMDP} \label{subs:POMDP}
