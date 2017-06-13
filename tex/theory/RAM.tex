@@ -1,9 +1,9 @@
 \section{Recurrent Models of Visual Attention}
-
+\label{sec:ram_model}
 As as it was mentioned in \autoref{chap:intro}, Recurrent Models of Visual
 Attention(also known as the recurrent attention model(RAM)) is
 a computational approach presented by google Deepmind’s researchers to reduce
-and computational cost while classifying images.
+and contronl computational cost while classifying images.
 \subparagraph{Note: } The theory described in this section based on the
 \cite{Ba2015}, unless otherwise stated.
 
@@ -24,26 +24,27 @@ locations and only processing these location at high-resolution
 The attention problem in RAM is considered as sequential decision
 process of an agent who interact with visual environment. The idea is,
 that agent never sees the whole input, but only receives the observations
-via bandwidth-limited sensor. So the goal for our agent is
-to find and select those location on the images where the agent can extract
-most of information needed to do a classification decision.
+via bandwidth-limited sensor. The goal for our agent is
+to find and select those locations on the images where the agent can extract
+most of information needed for a classification decision.
 To summarize it:
 \begin{itemize}
 	\item Agent selects a location on the image
 	\item Agent receives an observation
 	\item Agent extracts the information from the observation via bandwidth-limited
 		sensor with respect to the location.
-	\item Based on what he sees, he selects the next locations or if time step
-		more than some predefined number $n$, agent is forced to do a
+	\item Based on what he extracted, he selects the next location.
+	\item If current time step is
+		more than some predefined number $T$, agent is forced to do a
 		classification decision.
 \end{itemize}
 
 \begin{figure}[H]
 	\includegraphics[width=\linewidth]{ram_model.png}
 	\caption{
-		A) Glimpse Sensor \\
-		B) Glimpse Network \\
-		C) Model Architecture \\
+		A) Glimpse Sensor,
+		B) Glimpse Network,
+		C) Model Architecture,
 		(Source: \cite{Ba2015})
 	}
 	\label{img:ram_model}
@@ -54,16 +55,15 @@ In figure \ref{img:ram_model}, you can see
 of the model.
 
 \paragraph{Glimpse sensor} Glimpse sensor is formally the bandwidth-limited sensor
-which takes the the observation and feeds the bandwidth-limited representation of it to
-the agent.
+which takes image and location as input and produces the bandwidth-limited representation of it.
 Thus, the main responsibility of the glimpse sensor
 is to build from an image $x_t$ the image representation $\rho(x_t, l_{t-1})$
 with respect to the location $l_{t-1}$. The sensor select a number of patches
  from an image $x_t$ centered at the location $l_{t-1}$ as you can see in \ref{img:ram_model}.
  The first batch is processed at high resolution, while for patches further
- from $l_{t-1}$ progressively lower resolution is used. This representation contaned
+ from $l_{t-1}$, progressively lower resolution is used. This representation contained
  multiple resolution patches
- of an image is knows as \emph{glimpse} and is dentoed as $\rho(x_t, l_{t-1})$. \cite{Larochelle2010}
+ of an image is known as \emph{glimpse} and is denoted as $\rho(x_t, l_{t-1})$. \cite{Larochelle2010}
  The glimpse sensor is used within glimpse network to produce
   glimpse feature vector.
 
@@ -90,7 +90,7 @@ $l_{t-1}$ into two independent neural networks with parameters $\theta_g^0$ and 
 respectively followed by another neural network which combines the information
 from both components. The last NN parametrized by $\theta_g^2$ produces then
 final feature vector $g_t = f_g (x_t, l_{t-1}; \theta_g)$,
-where $\theta_g = {\theta_g^0, \theta_g^1, \theta_g^2}$.
+where $\theta_g = \{\theta_g^0, \theta_g^1, \theta_g^2\}$.
 
 \paragraph{Model Architecture} The model architecture is shown
 on picture C) in the figure \ref{img:ram_model}. The agent is built around
@@ -110,7 +110,7 @@ In our work, environment actions makes the classification decision of an image.
 It's formulated using softmax output from environment neural network
  $f_a(h_t; \theta_a)$, where $\theta_a$ - is a parameter of neural network $f_a$.
 
-\subparagraph{Rewards} As we making a classification decision only after $n$
+\subparagraph{Rewards} As we making a classification decision only after $T$
 number of steps, our reward signal will be delayed. Therefore agent is receiving
 a reward $r_n = 1$ if the classification decision was correct and $0$ otherwise.
 

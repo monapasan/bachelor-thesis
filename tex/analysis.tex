@@ -1,0 +1,108 @@
+\chapter{Analysis}
+
+The main objective of this work will be to build an extensible prototype,
+which will be built on the model of visual attention but is extended to classify
+a set of images. This chapter will explain how we can achieve that.
+
+Firstly, let's define the clear problem statement:
+\blockquote{
+	Given a dataset where each entry consist of a group of images.
+	A certain label is asserted to every entry in a dataset. The goal is
+	to build a extensible prototype upon RAM that is capable of classifying this entries.
+}
+
+From this statement is clear that prototype should be extensible. Extensible
+means that other people (including author itself) are able to extend the
+prototype. People should comprehend the code as well as starting and configuring
+procedure in order to extend the prototype. Therefore following best practices
+to stay consistent with other modern software is an important point of
+this work.
+\subparagraph{Quality} It is indeed very important to understand what makes
+
+The prototype should be not only a good start for making further improvements
+on large scale objects but also be a piece of software that bears the
+following properties: extensible, well documented, integrable with other
+softwares, simple to configure, easy to start to work with,
+readable code.
+
+
+
+\subparagraph{Previous work} As we will build the current model upon RAM described
+in \autoref{sec:ram_model}, it makes sense to look over the existing implementations.
+The authors of RAM paper haven't provide the implementation, but
+fortunately there are few implementation built by open source community.
+One of them due to certain level of readability is more attractive for this paper.
+While the project is way more readable compared to others, it's still in the need
+of refactoring.
+This code is implemented by using tensorflow framework.
+
+\subparagraph{Tensorflow}
+
+TensorFlow framework has gained a huge popularity among machine learning
+community as well as in industry compared to another framework \cite{Goldsborough}.
+TensorFlow is an open source software library that makes computations more efcient
+by building a computation graph and deploying them to one or more CPUs or GPUs
+
+
+
+
+% in bachelor/implemntation,  http://python-guide-pt-br.readthedocs.io/en/latest/writing/structure/
+% there is written a lot about:
+% * structure
+% * testing
+% * pep008
+
+% about why did you choose tensor flow
+
+% In this chapter will be discussed the relation current work
+% to previous work
+
+% *Anwendung von Prinzipien, Methoden, Techniken und
+% Werkzeugen der Informatik* in einem Anwendungsbereich zum
+% Gegenstand haben.
+
+% System- und Anforderungsanalyse, Beschreibungen von
+% Systemfunktionen, -dynamik, -daten, -oberfläche,
+% Schnittstellendefinitionen, Festlegungen zu Qualitätsparametern
+
+% Bewertung von theoretischen Ansätzen, Konzepten, Methoden,
+% Verfahren; informelle
+% Aufgabenbeschreibung, klar formulierte Zielstellung;
+
+
+% introduction to the chapter
+
+% make a clear statement of the problem
+% data
+% Analysis of the problem
+% current data is needed to be extended
+% analysis of the existierte projects
+% whaat is needed to be done to make the
+% what will make the project great
+% tested what can be tested, shapewise. Using what?
+% tensorboard, the training should be trackable
+%
+
+
+% DATASET
+% MNIST dataset is recognised as being the simplest dataset among the neural
+% network community, hence building a dataset upon it would be easier. The
+% simplicity of dataset would help to understand problems occurring while developing
+% a model. There can be different variations for building a group of images to
+% classify from MNIST dataset. One of them can be as simple as bringing two
+% different numbers together and adding a noise picture, which shouldn't have
+% an influence on the outcome. For example: [1,0,2] will be the  first class
+% and [0, 3, 1] will be the second class. 0
+% represents noise in this example and our model in best case should understand
+% that and should not spend much time to explore pictures with noise.
+
+
+
+%
+% pay attention to Tensorboard since one of the objective of the thesis is to
+% make training experience trackable.
+% * provide a good overview of outcome. outcome should be as clear as
+%  possible.
+% * IMPORTANT: you should be able to see in a good and understandable way
+%  the selection path of the model. That is, exactly how is it in the original paper.
+%  That is, which image is chosen, which part of the image is chosen and etc.
