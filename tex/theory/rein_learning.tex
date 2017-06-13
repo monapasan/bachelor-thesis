@@ -389,6 +389,7 @@ $\pi_{*}$. The goal of the any RL task is to find the optimal policy.
 
 
 \subsection{Policy-Based Reinforcement Learning}
+\label{ss:pol_based_rl}
 % Now, when we understand how is the environment managed, we can finally
 % look at the concept of policy more accurately.
 Policy-Based Reinforcement Learning is a field in RL where agent works directly
@@ -481,13 +482,14 @@ use Gaussian distribution with fixed variance $\sigma^2$ and parametrized mean:
 where $\phi(s)^{T}$ - is a feature vector of state $s$. \\
 Feature vector normally represents the availability of certain features in
 a particular state $s$. \\
-For example, the first entry in the feature can be
-whether an robot has a wall on right side from him. In state $s_1$
-where robot actually has a close to him
-it can be equal to 1 or close to 1. In contrast to state $s_2$ where
-robot has no wall close be, this entry in the feature vector
+For example, the first entry in the feature can determine
+whether an robot is close to a wall. In state $s_1$
+where robot actually has a wall a close to him
+this first entry should be then equal to 1 or close to 1.
+In contrast to state $s_2$ where
+robot has no wall close by, this entry in the feature vector
 should be 0 or close to 0.
-The feature vector can have hundreds of entry features like this.
+The feature vector might have hundreds of entry features like this.
 
 \subparagraph{Training} Now we know the objective function, we can the gradient descent
 algorithm to maximise it.
