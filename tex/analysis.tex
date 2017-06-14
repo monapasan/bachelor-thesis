@@ -5,19 +5,23 @@ which will be built on the model of visual attention but is extended to classify
 a set of images. This chapter will explain how we can achieve that.
 
 Firstly, let's define the clear problem statement:
-\blockquote{
+
+\textit{
 	Given a dataset where each entry consist of a group of images.
 	A certain label is asserted to every entry in a dataset. The goal is
-	to build a extensible prototype upon RAM that is capable of classifying this entries.
+	to build a extensible prototype upon RAM that is capable of classifying
+	this entries. The prototype is the resemblance of the RAM model with
+	with ability to accept the above mentioned dataset.
 }
 
+\\
 From this statement is clear that prototype should be extensible. Extensible
 means that other people (including author itself) are able to extend the
 prototype. People should comprehend the code as well as starting and configuring
 procedure in order to extend the prototype. Therefore following best practices
 to stay consistent with other modern software is an important point of
 this work.
-\subparagraph{Quality} It is indeed very important to understand what makes
+\subparagraph{Quality} But what are best practices?
 
 The prototype should be not only a good start for making further improvements
 on large scale objects but also be a piece of software that bears the
@@ -27,11 +31,109 @@ readable code.
 
 
 
-\subparagraph{Previous work} As we will build the current model upon RAM described
-in \autoref{sec:ram_model}, it makes sense to look over the existing implementations.
+\section{Previous work}
+As we will build the current model upon RAM described
+in \autoref{sec:ram_model}, it makes sense to look over the existing implementations
+of the RAM model.
 The authors of RAM paper haven't provide the implementation, but
-fortunately there are few implementation built by open source community.
-One of them due to certain level of readability is more attractive for this paper.
+fortunately there are few implementations built by open source community.
+It's common to see that people, who working on a model as open source project,
+are often do that in their free time. As a consequence, it is expected that those model
+are not high-quality prototypes, therefore in order to rely on the project
+one needs to be meticulous while choosing one.
+Following criteria were considering when choosing the model for the basis
+of this work:
+
+\begin{itemize}
+	\item Structure - at least presence of the basic structure
+	\item Configuration - it should be comprehensible how one can change parameters
+		of the model
+	\item Reproducible results
+	\item Presence of basic documentation
+	\item Framework - the quality of framework the model built upon
+\end{itemize}
+
+After doing the research and taking into account the above listed criteria,
+the choice fell on the project from github user 'zhongwen'. We will refer to
+this implementation as \emph{zhongwen's implementation}.
+
+% This project is built using tensorflow framework
+\footnote{The original project is located on github: https://github.com/zhongwen/RAM}.
+
+
+
+\subsection{Analysis of the previous work}
+Building a machine learning software is not as straight forward as building
+conventional software. In machine learning, in order to achieve high accuracy
+one uses different methods which are normally hard to comprehend without knowing
+the theory behind it. Absence of testing is one another point which makes it
+harder to understand others code. Considering this circumstances careful
+analyzing of the approaches used in the zhongwen's implementation
+is desired for the success of this work.
+
+\paragraph{Inference} in the current work was performed differently from what was
+described in \cite{Ba2015}.
+% The method used in \cite{Ba2015} was to running
+% $M$ episodes on the one sample following by updating the parameters of the network.
+Let's take a look at how the gradient of objective function is calculated in \cite{Ba2015}:
+\begin{equation} \label{eq:}
+	\Delta_{\theta} J = \frac{1}{M} \sum_{i=1}^M \sum_{t=1}^T
+		\Delta_{\theta} \log \pi_{\theta}(u_t^i| s_{1:t}^i) (R_t^i - b_t)
+\end{equation}
+where $J$ - is a cost function, $M$ - number of episodes,
+$T$ - is a time step where the agent is forced to make a classification decision,
+$s_{1:t}^i$ - are interaction sequences obtained by
+running the current agent $\pi_{\theta}$ for $i = 1 . . .M$ episodes,
+$b_t$ - baseline to reduce variance.
+
+As we can see the gradient is calculated based on running $M$ episodes.
+Firstly, the agent chooses sequentially $n$ location and make a classification
+decision. Then we run $M$ similar episodes like this. After this,
+we compute the gradient. In zhongwen's implementation used slightly different
+approach. It does not run multiple episodes to update the parameters, but instead
+it does update parameters on every episode. However it duplicates the same
+samples $M$ times and then obtain $M$ different outputs and average them.
+This practice was introduced in \cite{DBLP:journals/corr/BaMK14}.
+It was also indicated that running attention model multiple times on each
+image with the classification predictions being averaged gave the best
+performance \cite{DBLP:journals/corr/BaMK14}.
+
+
+\paragraph{Adam Opmitimizer} It also worth to notice that instead of stochastic
+gradient descent that was used in RAM paper, zhongwen's implementation using Adam optimizer
+from \cite{DBLP:journals/corr/KingmaB14} with exponentially decaying learning rate.
+\\
+
+In contrast to RAM paper, Zhongwen's implementation additionally clipped gradient
+by global norm of their values to prevent the vanishing and the exploding
+gradient problems detailed \cite{Pascanu2012}.
+
+
+% \paragraph{paragraph name}
+
+
+
+
+
+
+
+
+
+\paragraph{Analysis}
+
+
+
+% Machine learning is a field where
+% But before actually building the extension upon this project,
+
+
+can have lack of documentation and b
+This can be a reason for having
+due to lack of resources
+As the implmentations provided by open source community
+often have lack of documentation and
+
+One of them due to certain level of readability is more attractive for this work.
 While the project is way more readable compared to others, it's still in the need
 of refactoring.
 This code is implemented by using tensorflow framework.
@@ -40,10 +142,21 @@ This code is implemented by using tensorflow framework.
 
 TensorFlow framework has gained a huge popularity among machine learning
 community as well as in industry compared to another framework \cite{Goldsborough}.
-TensorFlow is an open source software library that makes computations more efcient
-by building a computation graph and deploying them to one or more CPUs or GPUs
+TensorFlow is an open source software library that makes computations more
+efficient by building a computation graph and deploying them to one or more
+CPUs or GPUs.
 
 
+TensorFlow framework gives a wide variety of statistical distributions, wide
+range of loss functions, and a huge amount of neural network algorithms while
+not necessarily losing  exibility. In order to make learning process traceable,
+tensorFlow provides TensorBoard, which is a web interface for graph visualization
+built directly into TensorFlow. Aforementioned features of the framework as well
+as it's great API for Python is a great  t for this work and will help to fulfill
+the main objectives.
+
+
+\section{Extension}
 
 
 % in bachelor/implemntation,  http://python-guide-pt-br.readthedocs.io/en/latest/writing/structure/
