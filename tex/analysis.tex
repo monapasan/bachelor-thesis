@@ -15,20 +15,77 @@ Firstly, let's define the clear problem statement:
 }
 
 \\
-From this statement is clear that prototype should be extensible. Extensible
-means that other people (including author itself) are able to extend the
-prototype. People should comprehend the code as well as starting and configuring
+
+% TODO:
+% * name the section regarding the quality
+% * finish the Analysis chapter:
+% ** what is best practices in python?
+% ** what is best practices in general?
+% ** Limitations of the preivous work> fullfil the lsit belowe
+
+\section{Quality concerns}
+
+This statement make it clear that prototype should be extensible. Extensible
+means that other people(including author itself) are able to extend the
+prototype. People should comprehend the code as well as how to
+start and configure
 procedure in order to extend the prototype. Therefore following best practices
-to stay consistent with other modern software is an important point of
-this work.
-\subparagraph{Quality} But what are best practices?
+and conventions, using widely known frameworks, producing clean and readable code
+to stay consistent with other modern software is an important
+point of this work.
 
-The prototype should be not only a good start for making further improvements
-on large scale objects but also be a piece of software that bears the
+It's more convenient to talk about conventions once programming language and
+libraries are chosen for this work.
+\paragraph{TensorFlow}
+
+There is a big variety of frameworks and libraries used in machine learning.
+Among the famous libraries is library called TensorFlow. TensorFlow is an open
+source library developed and maintained by engineers from Google \cite{tensorflow2015-whitepaper}.
+
+
+TensorFlow framework has gained a huge popularity among machine learning
+community as well as in industry compared to another framework \cite{Goldsborough}.
+TensorFlow is an open source software library that makes computations more
+efficient by building a computation graph and deploying them to one or more
+CPUs or GPUs.
+
+
+TensorFlow framework gives a wide variety of statistical distributions, wide
+range of loss functions, and a huge amount of neural network algorithms while
+not necessarily losing  flexibility. In order to make learning process traceable,
+TensorFlow provides TensorBoard, which is a web interface for graph visualization
+built directly into TensorFlow.
+TensorBoard is an important and uniq feature that excels TensorFlow from similar
+libraries; it dramatically improves debugging experience as well as helps
+for understanding models developed using TensorFlow.
+Aforementioned features of the framework as well
+as it's great API for Python is a great fit for this work.
+
+The current work will use Python as programming language, as it's one of
+the most popular language among machine learning community.
+
+
+
+
+Now that we assigned interfaces, let's define conventions that this work
+will follow. As TensorFlow recommends using PEP 8 style guide to stay consistent
+with community \cite{TfWeb}. PEP 8 gives the set of rules about how to lay out
+the code, how to name function, methods and classes and others code style related
+things \cite{\cite{Rossum}. PEP 8 linter is also integrated in the project, which checks the code
+automatically on presence errors against PEP 8 style guide,
+therefore simplifies the development workflow.
+
+PEP 257 convention is also considered as this will help to avoid errors when
+generating documentation. PEP 257 convention set rule about organizing
+docstrings in Python \cite{Goodger2001}.
+In general, the work follows The Hitchhiker's Guide to Python, which advises
+about the way of testing, organizing and documenting the code \cite{Reitz}.
+
+
+To recap, the prototype should be not only a good start for making further
+improvements on large scale objects but also be a piece of software that bears the
 following properties: extensible, well documented, integrable with other
-softwares, simple to configure, easy to start to work with,
-readable code.
-
+softwares, easy configurable, readable code.
 
 
 \section{Previous work}
@@ -45,22 +102,23 @@ Following criteria were considering when choosing the model for the basis
 of this work:
 
 \begin{itemize}
-	\item Structure - at least presence of the basic structure
+	\item Structure and readability of the code - at least presence of the basic structure
 	\item Configuration - it should be comprehensible how one can change parameters
 		of the model
 	\item Reproducible results
 	\item Presence of basic documentation
-	\item Framework - the quality of framework the model built upon
+	\item Framework - as we have already chosen TensorFlow, projects built upon
+		TensorFlow are preferable.
 \end{itemize}
 
 After doing the research and taking into account the above listed criteria,
 the choice fell on the project from github user 'zhongwen'. We will refer to
-this implementation as \emph{zhongwen's implementation}.
+this implementation as \emph{
+	zhongwen's implementation
+	\footnote{The original project is located on github: https://github.com/zhongwen/RAM}.
+}.
 
-% This project is built using tensorflow framework
-\footnote{The original project is located on github: https://github.com/zhongwen/RAM}.
-
-
+This project is built using TensorFlow framework.
 
 \subsection{Analysis of the previous work}
 Building a machine learning software is not as straight forward as building
@@ -84,7 +142,8 @@ where $J$ - is a cost function, $M$ - number of episodes,
 $T$ - is a time step where the agent is forced to make a classification decision,
 $s_{1:t}^i$ - are interaction sequences obtained by
 running the current agent $\pi_{\theta}$ for $i = 1 . . .M$ episodes,
-$b_t$ - baseline to reduce variance.
+$b_t$ - baseline to reduce variance, $u_t_i$ - action at time step $t$
+of episode $t$.
 
 As we can see the gradient is calculated based on running $M$ episodes.
 Firstly, the agent chooses sequentially $n$ location and make a classification
@@ -102,11 +161,41 @@ performance \cite{DBLP:journals/corr/BaMK14}.
 \paragraph{Adam Opmitimizer} It also worth to notice that instead of stochastic
 gradient descent that was used in RAM paper, zhongwen's implementation using Adam optimizer
 from \cite{DBLP:journals/corr/KingmaB14} with exponentially decaying learning rate.
-\\
 
-In contrast to RAM paper, Zhongwen's implementation additionally clipped gradient
-by global norm of their values to prevent the vanishing and the exploding
-gradient problems detailed \cite{Pascanu2012}.
+
+\paragraph{Gradient clipping} In contrast to RAM paper, Zhongwen's implementation
+additionally clipped gradient by global norm of their values to prevent the vanishing
+and the exploding gradient problems \cite{Pascanu2012}.
+
+
+\subsection{Limitations}
+Unfortunately, the Zhongwen's implementation using old version of TensorFlow,
+which was unstable at that moment, therefore migration of the project
+to the latest TensorFlow version is required
+\footnote{
+	Migration was performed according to TensorFlow migration
+	guide: https://www.tensorflow.org/install/migration
+}
+It's very common to see that researchers don't worry much about the
+building well-engineered prototype as most of them are not software engineers.
+Mostly the are big experts at math, it's understandable since excelling both
+fields is very time consuming. Zhongwen's implementation is not an exception.
+The code is required to be refactored and cleaned, as well as restructured.
+
+Zhongwen's implementation is not capable of taking multiple patches, but only a single one.
+Without ability to take multiple patches within a glimpse,
+accuracy of inference will more likely to decrease.
+% Original project contained
+% a lot of style errors and had many inconsistencies in the code with respect
+% to code style.
+% The code is not followed by conventions therefore one can notice
+
+% tesnorflow version
+% tensorboard
+% structure
+% was not suitable for taking multiple patches
+% very start level of documentation
+% Absence of basic documentation
 
 
 % \paragraph{paragraph name}
@@ -125,38 +214,25 @@ gradient problems detailed \cite{Pascanu2012}.
 
 % Machine learning is a field where
 % But before actually building the extension upon this project,
-
-
-can have lack of documentation and b
-This can be a reason for having
-due to lack of resources
-As the implmentations provided by open source community
-often have lack of documentation and
-
-One of them due to certain level of readability is more attractive for this work.
-While the project is way more readable compared to others, it's still in the need
-of refactoring.
-This code is implemented by using tensorflow framework.
-
-\subparagraph{Tensorflow}
-
-TensorFlow framework has gained a huge popularity among machine learning
-community as well as in industry compared to another framework \cite{Goldsborough}.
-TensorFlow is an open source software library that makes computations more
-efficient by building a computation graph and deploying them to one or more
-CPUs or GPUs.
-
-
-TensorFlow framework gives a wide variety of statistical distributions, wide
-range of loss functions, and a huge amount of neural network algorithms while
-not necessarily losing  exibility. In order to make learning process traceable,
-tensorFlow provides TensorBoard, which is a web interface for graph visualization
-built directly into TensorFlow. Aforementioned features of the framework as well
-as it's great API for Python is a great  t for this work and will help to fulfill
-the main objectives.
+%
+%
+% can have lack of documentation and b
+% This can be a reason for having
+% due to lack of resources
+% As the implmentations provided by open source community
+% often have lack of documentation and
+%
+% One of them due to certain level of readability is more attractive for this work.
+% While the project is way more readable compared to others, it's still in the need
+% of refactoring.
+% This code is implemented by using tensorflow framework.
 
 
 \section{Extension}
+
+
+\section{Dataset}
+
 
 
 % in bachelor/implemntation,  http://python-guide-pt-br.readthedocs.io/en/latest/writing/structure/
@@ -212,7 +288,7 @@ the main objectives.
 
 
 %
-% pay attention to Tensorboard since one of the objective of the thesis is to
+% pay attention to TensorBoard since one of the objective of the thesis is to
 % make training experience trackable.
 % * provide a good overview of outcome. outcome should be as clear as
 %  possible.
