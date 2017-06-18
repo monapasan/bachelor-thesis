@@ -4,19 +4,21 @@
     school = "HTW Berlin",
     year   = "2017"
 }
-@article{Ba2015,
-abstract = {We present an attention-based model for recognizing multiple objects in images. The proposed model is a deep recurrent neural network trained with reinforcement learning to attend to the most relevant regions of the input image. We show that the model learns to both localize and recognize multiple objects despite being given only class labels during training. We evaluate the model on the challenging task of transcribing house number sequences from Google Street View images and show that it is both more accurate than the state-of-the-art convolutional networks and uses fewer parameters and less computation.},
-archivePrefix = {arXiv},
-arxivId = {arXiv:1412.7755v2},
-author = {Ba, Jimmy Lei and Mnih, Volodymyr and Kavukcuoglu, Koray},
-eprint = {arXiv:1412.7755v2},
-file = {:Users/olegya/Library/Application Support/Mendeley Desktop/Downloaded/Ba et al. - Unknown - MULTIPLE OBJECT RECOGNITION WITH VISUAL ATTENTION.pdf:pdf},
-isbn = {9781424465163},
-journal = {Iclr},
-pages = {1--10},
-title = {{Multiple Object Recognition With Visual Attention}},
-url = {https://arxiv.org/pdf/1412.7755.pdf},
-year = {2015}
+
+
+@article{DBLP:journals/corr/MnihHGK14,
+  author    = {Volodymyr Mnih and
+               Nicolas Heess and
+               Alex Graves and
+               Koray Kavukcuoglu},
+  title     = {Recurrent Models of Visual Attention},
+  journal   = {CoRR},
+  volume    = {abs/1406.6247},
+  year      = {2014},
+  url       = {http://arxiv.org/abs/1406.6247},
+  timestamp = {Wed, 07 Jun 2017 14:41:58 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/MnihHGK14},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
 }
 
 @article{DBLP:journals/corr/BaMK14,
@@ -33,25 +35,6 @@ year = {2015}
   bibsource = {dblp computer science bibliography, http://dblp.org}
 }
 
-@article{Mnih2014,
-abstract = {Applying convolutional neural networks to large images is computationally expensive because the amount of computation scales linearly with the number of image pixels. We present a novel recurrent neural network model that is capable of extracting information from an image or video by adaptively selecting a sequence of regions or locations and only processing the selected regions at high resolution. Like convolutional neural networks, the proposed model has a degree of translation invariance built-in, but the amount of computation it performs can be controlled independently of the input image size. While the model is non-differentiable, it can be trained using reinforcement learning methods to learn task-specific policies. We evaluate our model on several image classification tasks, where it significantly outperforms a convolutional neural network baseline on cluttered images, and on a dynamic visual control problem, where it learns to track a simple object without an explicit training signal for doing so.},
-archivePrefix = {arXiv},
-arxivId = {1406.6247},
-author = {Mnih, Volodymyr and Heess, Nicolas and Graves, Alex and Kavukcuoglu, Koray},
-doi = {ng},
-eprint = {1406.6247},
-file = {:Users/olegya/Library/Application Support/Mendeley Desktop/Downloaded/Mnih et al. - 2014 - Recurrent Models of Visual Attention.pdf:pdf},
-isbn = {078036404X},
-issn = {0157244X},
-journal = {Nips-2014},
-keywords = {main work},
-mendeley-tags = {main work},
-month = {jun},
-pages = {1--9},
-title = {{Recurrent Models of Visual Attention}},
-url = {http://arxiv.org/abs/1406.6247},
-year = {2014}
-}
 
 @article{Goldsborough,
 abstract = {— Deep learning is a branch of artificial intelligence employing deep neural network architectures that has signifi-cantly advanced the state-of-the-art in computer vision, speech recognition, natural language processing and other domains. In November 2015, Google released TensorFlow, an open source deep learning software library for defining, training and deploying machine learning models. In this paper, we review TensorFlow and put it in context of modern deep learning concepts and software. We discuss its basic computational paradigms and distributed execution model, its programming interface as well as accompanying visualization toolkits. We then compare Ten-sorFlow to alternative libraries such as Theano, Torch or Caffe on a qualitative as well as quantitative basis and finally comment on observed use-cases of TensorFlow in academia and industry.},
@@ -75,6 +58,7 @@ urldate = {2017-05-12}
     note={\url{http://www.deeplearningbook.org}},
     year={2016}
 }
+
 @book{Bishop2006,
 abstract = {Predicting the binding mode of flexible polypeptides to proteins is an important task that falls outside the domain of applicability of most small molecule and protein−protein docking tools. Here, we test the small molecule flexible ligand docking program Glide on a set of 19 non-$\alpha$-helical peptides and systematically improve pose prediction accuracy by enhancing Glide sampling for flexible polypeptides. In addition, scoring of the poses was improved by post-processing with physics-based implicit solvent MM- GBSA calculations. Using the best RMSD among the top 10 scoring poses as a metric, the success rate (RMSD ≤ 2.0 {\AA} for the interface backbone atoms) increased from 21{\%} with default Glide SP settings to 58{\%} with the enhanced peptide sampling and scoring protocol in the case of redocking to the native protein structure. This approaches the accuracy of the recently developed Rosetta FlexPepDock method (63{\%} success for these 19 peptides) while being over 100 times faster. Cross-docking was performed for a subset of cases where an unbound receptor structure was available, and in that case, 40{\%} of peptides were docked successfully. We analyze the results and find that the optimized polypeptide protocol is most accurate for extended peptides of limited size and number of formal charges, defining a domain of applicability for this approach.},
 archivePrefix = {arXiv},
@@ -487,4 +471,39 @@ author = {Reitz, Kenneth},
 title = {{The Hitchhiker's Guide to Python! — The Hitchhiker's Guide to Python}},
 url = {http://docs.python-guide.org/en/latest/},
 urldate = {2017-06-13}
+}
+
+@book{beck1997smalltalk,
+  title={Smalltalk Best Practice Patterns. Volume 1: Coding},
+  author={Beck, Kent},
+  year={1997},
+  publisher={Prentice Hall, Englewood Cliffs, NJ}
+}
+
+@book{1999:RID:311424,
+ title = {Refactoring: Improving the Design of Existing Code},
+ year = {1999},
+ isbn = {0-201-48567-2},
+ publisher = {Addison-Wesley Longman Publishing Co., Inc.},
+ address = {Boston, MA, USA},
+key = {{$\!\!$}} ,
+}
+
+@book{martin2003agile,
+  title={Agile Software Development: Principles, Patterns, and Practices},
+  author={Martin, R.C.},
+  isbn={9780135974445},
+  lccn={2003270283},
+  series={Alan Apt series},
+  url={https://books.google.nl/books?id=0HYhAQAAIAAJ},
+  year={2003},
+  publisher={Pearson Education}
+}
+
+@misc{LeCun2010,
+author = {LeCun, Yann and Cortes, Corinna and Burges, Christopher J.C.},
+title = {{MNIST handwritten digit database, Yann LeCun, Corinna Cortes and Chris Burges}},
+url = {http://yann.lecun.com/exdb/mnist/ http://yann.lecun.com/exdb/mnist/index.html},
+urldate = {2017-04-12},
+year = {2010}
 }

@@ -5,7 +5,7 @@ Attention(also known as the recurrent attention model(RAM)) is
 a computational approach presented by google Deepmind’s researchers to reduce
 and contronl computational cost while classifying images.
 \subparagraph{Note: } The theory described in this section based on the
-\cite{Ba2015}, unless otherwise stated.
+\cite{DBLP:journals/corr/MnihHGK14}, unless otherwise stated.
 
 \paragraph{Why RAM?}
 Today's state of the art approaches to classify the images is convolutional
@@ -45,7 +45,7 @@ To summarize it:
 		A) Glimpse Sensor,
 		B) Glimpse Network,
 		C) Model Architecture,
-		(Source: \cite{Ba2015})
+		(Source: \cite{DBLP:journals/corr/MnihHGK14})
 	}
 	\label{img:ram_model}
 \end{figure}
@@ -60,7 +60,7 @@ Thus, the main responsibility of the glimpse sensor
 is to build from an image $x_t$ the image representation $\rho(x_t, l_{t-1})$
 with respect to the location $l_{t-1}$. The sensor select a number of patches
  from an image $x_t$ centered at the location $l_{t-1}$ as you can see in \ref{img:ram_model}.
- The first batch is processed at high resolution, while for patches further
+ The first patch is processed at high resolution, while for patches further
  from $l_{t-1}$, progressively lower resolution is used. This representation contained
  multiple resolution patches
  of an image is known as \emph{glimpse} and is denoted as $\rho(x_t, l_{t-1})$. \cite{Larochelle2010}
@@ -108,7 +108,7 @@ Depends on the task, environment actions can vary, therefore
 we'll concentrate on the environment action that is relevant for this work.
 In our work, environment actions makes the classification decision of an image.
 It's formulated using softmax output from environment neural network
- $f_a(h_t; \theta_a)$, where $\theta_a$ - is a parameter of neural network $f_a$.
+ $f_a(h_t; \theta_a)$, where $\theta_a$ - is a set of parameters of neural network $f_a$.
 
 \subparagraph{Rewards} As we making a classification decision only after $T$
 number of steps, our reward signal will be delayed. Therefore agent is receiving
