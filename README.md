@@ -6,5 +6,7 @@
 
 
 ### TODO:
-Run against OpenStack Style Guidelines and  docstrings (pep257) 
-https://atom.io/packages/linter-flake8
+
+* Run against OpenStack Style Guidelines and  docstrings (pep257) - https://atom.io/packages/linter-flake8
+* RawDataset should extend dummydataset.
+
