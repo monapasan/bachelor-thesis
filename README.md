@@ -11,3 +11,5 @@
 * RawDataset should extend dummydataset.
 * Direct acces variable - https://github.com/monapasan/bachelor-thesis/blob/master/src/RawDataset.py#L111
 * https://github.com/monapasan/bachelor-thesis/blob/master/src/RawDataset.py#L118, dataset should have property add_sample()
+* https://github.com/monapasan/bachelor-thesis/blob/master/src/RawDataset.py#L167 , porpert get() : tuple() 
+
