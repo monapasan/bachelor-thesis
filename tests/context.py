@@ -9,5 +9,5 @@ sys.path.insert(
 )
 
 from src import IndexGenerator  # noqa: F401
-from src import RawDataset  # noqa: F401
+from src import GroupDataset  # noqa: F401
 # from nose import tool

@@ -8,8 +8,8 @@ import itertools
 import numpy as np
 
 
-class RawDataset:
-    """The class which holds raw data.
+class GroupDataset:
+    """The Dataset class where each sample holds MNIST samples in a group.
     """
     def __init__(
         self, index_generator, dataset, noise_label_index,
