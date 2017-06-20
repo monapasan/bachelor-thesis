@@ -1,2 +1,87 @@
 \chapter{Design}
-In this chapter we will discuss the design of the prototype
+In this chapter we will discuss the architecture of the prototype.
+It's divided into two section: Dataset and Model. Since
+the dataset is standalone component, this seems to be
+a reasonable separation. To make it clear, dataset would be a component
+which holds the training, validation and test data including all relevant
+functionality that can or should be performed on the
+data(this is explained more detailed in \autoref{sec:design_data}).
+Model would be a component, which accepts the data(dataset component), performs
+training on the training data, and then makes inference on the test dataset.
+In other words, model would be everything what is related to building,
+training and evaluation of neural networks and reinforcement learning environment.
+
+
+
+\section{Dataset}
+\label{sec:design_data}
+Dataset is a non-real world data, but may behave and represent similar
+task as it could in real world data.
+\paragraph{explain original MNIST data, what is there, how does this work,
+and tf class is used to provide the utility}
+
+\paragraph{Requirements} Like why do we need index generator
+
+\paragraph{Inspiration fromt the tf class dataset}
+
+inpsiration from dataset class from tensor flow: link
+% https://github.com/tensorflow/tensorflow/blob/master/tensorflow/contrib/learn/python/learn/datasets/mnist.py
+that should perform similar action to
+% The function requirement to the dataset can be formulated as
+
+\paragraph{
+	not learning any dependency,
+	explain that we want to avoid the same samples in a group to avoid that
+}
+% model will learn dependency and etc.
+
+\paragraph{
+	explain shortly about combinations of MNIST data, how to achieve the best data
+}
+
+\paragraph{then show the uml diagram of dataset}
+including: Class overview
+
+\paragraph{explain what is purpose of each of the class. }
+
+\paragraph{explain what design patter was applied on that with reference to
+the Analysis.}
+
+inderect variable access. (e.g.)
+
+\section{Model}
+\label{sec:design_model}
+
+\paragraph{Why did you choose picker network?}
+\paragraph{about why OO programming is not ALMOST suited and why it should be more functional}
+\paragraph{The architecture as a whole}
+\paragraph{Possbile classes, overview}
+\paragraph{UML diagram}
+\paragraph{back up the classes with design patterns}
+
+\paragraph{the flow of the data via function}
+
+
+\subsection{Configuration of the project, what can be configured, the complexity of the model}
+
+
+
+
+
+the curent desing is using the approach
+described in \autoref{ssec:picker_net}.
+
+Basically explain the flow of input data, all losses, and baselines, and etc.
+if there is anything relative to the structure in the code use the references to the design patters
+Show all classes, write the documentation for those, or at least briefly explain the purpose.
+The process of training, maybe explain the whole idea behind this
+	seperation of dataset into validation, test, training.
+look at the other bachelorarbeits and look of what they wrote there
+think about whether it's possible to combine the design and implemntation chapters
+
+
+
+* Entwurfsstrategie, Beschreibungen funktionaler und nich
+ funktionaler Anforderungen, Einsatz von Mustern und
+ Bibliotheken, Softwarearchitektur, Verwendung von Datentypen und
+ Datenstrukturen, Algorithmen, Mensch-Maschine-Schnittstelle;

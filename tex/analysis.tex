@@ -477,6 +477,7 @@ approach can be also augmented with following actions:
 
 
 \section{Dataset}
+\label{sec:analysis_dataset}
 
 Before starting the construction of the model, one requires to think about an appropriate
 dataset on which the model can be tested.
@@ -513,7 +514,8 @@ contain any information relevant for decision making, we'll refer to this images
 as noise images. Noise images is generated using images from classes that
 are mutually exclusive with classes of non-noise images:
 $\mathcal{T} = \mathcal{A} / \mathcal{D}$, where $\mathcal{T}$ - is a subset of classes $\mathcal{D}$
-for labeling noise images.
+for labeling noise images: $\mathcal{T}\subset \mathcal{D}$.
+% However, it's possible that $\not\subset$ TODO: finish it.
 We then decide about the amount the images in a group $n$.
 We then choose the number $k < n $ which is going to be amount of noise images
 per sample in dataset.
@@ -540,7 +542,7 @@ The conceptional idea behind this dataset, the the model should learn to
 understand that noise image does not bring any information relevant for the task.
 Practical solution for classification task of this dataset would be
 to understand what is non-noise images are,
-count them, and depends on the results
+count them, and depends on the amount of non-noise images,
 classify the sample
 . If model would work correctly on this dataset, it will confirm
  that the model works correctly
