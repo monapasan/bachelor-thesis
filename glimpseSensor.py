@@ -1,3 +1,5 @@
+"""Glimpse sensor is responsible for extracting glimpses from images"""
+
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -6,7 +8,21 @@ import tensorflow as tf
 
 
 class GlimpseSensor(object):
+    """GlimpseSensor is configurable class that extract `depth` glimpses.
+
+    This class does not hold any images, but the images should be passed
+    as paramter to the __call__ of the class.
+    """
+
     def __init__(self, config):
+        """Initialise the GlimpseSensor.
+            args:
+                config(Config) - configuration object that should posses
+                    of following properties: `glimpse_depth`, `win_size`,
+                    `num_channels`, `original_size`, `glimpse_scale`.
+                    You will find the explanation behind the properites
+                    in main.py.
+        """
         # TODO: config should have property depth/scale
         # which represents how many patches should one glimpse have.
         self.depth = config.glimpse_depth
@@ -16,7 +32,7 @@ class GlimpseSensor(object):
         self.scale = config.glimpse_scale
 
     def __call__(self, images_ph, loc):
-        """Take glimpse on the original images."""
+        """Return glimpse on the original images."""
         # loc.shape --> [batch_size, 2]
         # imgs.shape --> [batch_size, 28, 28, 1]
         batch_size = tf.shape(images_ph)[0]

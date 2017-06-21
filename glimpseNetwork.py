@@ -1,12 +1,5 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+"""The glimpse network produces features out of glimpses.
 
-import tensorflow as tf
-
-from utils import weight_variable, bias_variable
-
-"""
 The glimpse network fg(x, l) had two fully connected layers.
 Let Linear(x) de- note a linear transformation of the vector x,
 i.e. Linear(x) = Wx+b for some weight matrixW and bias vector b,
@@ -33,6 +26,14 @@ x - input image
 l - location
 """
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+import tensorflow as tf
+
+from utils import weight_variable, bias_variable
+
 
 class GlimpseNet(object):
     """Glimpse network.
@@ -42,6 +43,18 @@ class GlimpseNet(object):
     """
 
     def __init__(self, glimpse_sensor, config, images_ph):
+        """Initialise the Location Network.
+
+        Args:
+            config(Config) - configuration object that should posses
+                of following properties: `original_size`, `num_channels`,
+                `win_size`, `glimpse_depth`, `hg_size`, `hl_size`,
+                `g_size`, `loc_dim`.
+                You will find the explanation behind the properites
+                in main.py.
+            glimpse_sensor(GlimpseSensor) - to produce locations.
+            images_ph(tf.placeholder) - tf placeholder for images.
+        """
         self.glimpse_sensor = glimpse_sensor
 
         self.original_size = config.original_size
@@ -59,11 +72,13 @@ class GlimpseNet(object):
 
         self.images_ph = images_ph
 
-        self.init_weights()
+        self.__init_weights()
 
-    def init_weights(self):
-        """ Initialize all the trainable weights."""
-        """fg(.; {θ_0_g, θ_1_g, θ_2_g})"""
+    def __init_weights(self):
+        """Initialize all the trainable weights.
+
+        fg(.; {θ_0_g, θ_1_g, θ_2_g}).
+        """
         self.w_g0 = weight_variable((self.sensor_size, self.hg_size))  # 64x128
         self.b_g0 = bias_variable((self.hg_size,))
 
