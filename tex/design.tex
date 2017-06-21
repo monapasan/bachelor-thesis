@@ -31,22 +31,27 @@ Additionally, it includes label for each of the image.
 \end{figure}
 
 For example, in the figure \ref{fig:mnist} the labels are 5, 0, 4 and 1.
+Each images consist of $28\times28$ pixels, therefore an MNIST image would
+be an array of size $784$. To each of the image, a label is assigned,
+which provides the ground truth.
+
+\subparagraph{MNIST from TensorFlow}
 
 TensorFlow provides a small class \lstinline{Dataset}\footnote{
 The class is implemented here: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/contrib/learn/python/learn/datasets/mnist.py
 } which stores MNIST data and splits it into training,
 validation and test data. TensorFlow also provides functions for iterating
-over the batches.
-TensorFlow also provides the function which downloads and read the original data
+over the batches as well as the function which downloads and read
+the original data
 from MNIST web site. Taking this into account, in this work we will abstract from
 downloading and reading MNIST data by using this class. We'll refer
-to this as \emph{MNIST tf-dataset class}
+to this class as \emph{MNIST tf-dataset class}
 
-Remove this:
-\begin{lstlisting}[language=Python]
-from tensorflow.examples.tutorials.mnist import input_data
-mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
-\end{lstlisting}
+% Remove this:
+% \begin{lstlisting}[language=Python]
+% from tensorflow.examples.tutorials.mnist import input_data
+% mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
+% \end{lstlisting}
 This two lines will download the data and store into "MNIST_data/" directory.
 
 It is common knowledge that google take a special care about the quality of their code,
@@ -66,53 +71,150 @@ in this work.
 
 % To make the dataset
 % By build the dataset, we need to consider following
-To make dataset free of any dependencies, we need to make sure that two
-same noise wouldn't come up more then once in the one of the classes.
-Therefore we need 
+
 % we want the model to generalise on unseen data.
-Dataset component should be flexible enough in order to be similar to real problem,
-therefore to be able to experiment with different amount of classes, and
-different variations of noises classes. component should be
- At that point we don't know how the model will behave
 
+\subsection{Class overview}
 
+Before proceeding with the classes overview, it can be helpful
+to make a concrete example of how the dataset described in
+\autoref{sec:analysis_dataset} can look like.
 
-\paragraph{Requirements} Like why do we need index generator
-including flexibility
-\paragraph{Inspiration fromt the tf class dataset}
+\paragraph{Example} In this example we will describe dataset with two classes
+Let's first choose the parameters $n$ and $k$,
+which represents amount of images in a group and amount of noise images
+in a group respectively. While $k$
+should be different for both classes, $n$ remains the same.
+Let $n$ be equal to $5$, $k$ for the first class be and $3$: $k_1 = 3$
+for the second class be $4$: $k_2 = 4$. Let's choose the digit for the non-noise
+data: $\{1\}$. Consequentially the noise-image will
+be: $\{0, 2, 3, 4, 5, 6, 7, 8, 9\}$.
+So one sample of the above mentioned setup can look like this:
 
-inpsiration from dataset class from tensor flow: link
+\begin{lstlisting}[language=Python][h!]
+	[noise_image, non_noise_image, noise_image, non_noise_image, noise_image ] # class 1
+	[non_noise_image, noise_image, noise_image, noise_image, noise_image ] # class 2
+\end{lstlisting}
+
+Or with numbers:
+\begin{lstlisting}[language=Python][h!]
+	[9, 1, 8, 1, 7 ] # class 1
+	[1, 3, 6, 4, 3 ] # class 2
+\end{lstlisting}
+
+Hopefully, it gives you a sense how the data should appear.
+
+\paragraph{Classes}
+
+After careful analysis, it was decided that in order to implement
+the desired dataset, three classes are required:
+\begin{itemize}
+	\item IndexGenerator - the purpose of this class is to generate indexes for
+		noise images. Imagine situation, where all of noise data is placed into
+		the same indexes. Will the model learn this indexes and look only at
+		them? Or will model ignore this stability? Because this question seems
+		to be heuristic, this class will control the indexes where noise image
+		will be located at.
+	\item DummyDataset - The purpose of this class is to hold MNIST images
+		and labels. Additionally, this class provides some auxiliary functionality
+		like permutation of the data.
+	\item GroupDataset - this is our desired dataset. It should be flexible
+		enough to generate and hold the data for all classes. In terms of
+		available methods, this class behaves the same way as NIST tf-dataset class
+		once initialized.
+\end{itemize}
+
+Dataset component should be flexible enough in order to be similar to real problems,
+to be able to experiment with different amount of classes, and
+different variations of noises classes. Since we have only limited amount of MNIST data,
+we need to also make sure that this data is properly used. GroupDataset takes
+care of it by carefully choosing the data from original MNIST dataset and putting
+them into the group to avoid if possible two same samples in the dataset by building
+combinations of noise-data and non-noise data.
+
+\subsection{UML class diagram}
+
+In the figure \ref{fig:dataset_uml} you can see UML diagram of the dataset package
+as well as the it's connection to tf-dataset class. As you can see from the UML
+class diagram.
+\lstinline{GroupDataset} class holds two \lstinline{DummyDataset}, one for
+non-noise data and one for noise-data. This is exactly the way
+we described it in \autoref{sec:design_data}.
+\begin{figure}
+	\includegraphics[width=\linewidth]{Dataset_UML}
+	\caption{UML class diagram of the dataset module}
+	\label{fig:dataset_uml}
+\end{figure}
+
+\paragraph{Code pattern} As we can see from the UML class in the figure
+\ref{fig:dataset_uml}, we have three classes. It would be also possible
+merge the classes, however, this contradicts "Single Responsibility Principle"
+that one class should only have one responsibility \cite{martin2003agile}.
+Therefore, dividing this into two classes allows us to clearly
+define responsibilities. Consequently, this separations seems to be reasonable.
+
+As you might notice from UML class diagram, some of the function like
+\lstinline{add_sample} in \lstinline{DummyDataset} returns the object itself: \lstinline{DummyDataset}.
+This is an example of Cascade code pattern described in \autoref{sec:quality_concerns}.
+% As you might notice from UML class diagram, that \lstinline{GroupDataset} can inherit
+% \lstinline{DummyDataset} as they have similar properties,
+% but as "Composition over Inhertitance" states, it
+% not always a good idea.
+
+%
+% inderect variable access. (e.g.)
+
+% TODO:
+% look over the Dataset implementation,
+% write all documentation
+% draw uml diagrams
+%
+%
+%
+%
+%
+
+% \paragraph{Requirements} Like why do we need index generator
+% including flexibility
+% \paragraph{Inspiration fromt the tf class dataset}
+%
+% inpsiration from dataset class from tensor flow: link
 % https://github.com/tensorflow/tensorflow/blob/master/tensorflow/contrib/learn/python/learn/datasets/mnist.py
-that should perform similar action to
+% that should perform similar action to
 % The function requirement to the dataset can be formulated as
 
-\paragraph{
-	not learning any dependency,
-	explain that we want to avoid the same samples in a group to avoid that
-}
+% \paragraph{
+% 	not learning any dependency,
+% 	explain that we want to avoid the same samples in a group to avoid that
+% }
 % model will learn dependency and etc.
 
-\paragraph{
-	explain shortly about combinations of MNIST data, how to achieve the best data
-}
+% \paragraph{
+% 	explain shortly about combinations of MNIST data, how to achieve the best data
+% }
+%
+% \paragraph{then show the uml diagram of dataset}
+% including: Class overview
+%
+% \paragraph{explain what is purpose of each of the class. }
 
-\paragraph{then show the uml diagram of dataset}
-including: Class overview
-
-\paragraph{explain what is purpose of each of the class. }
-
-\paragraph{explain what design pattern was applied on that with reference to
-the Analysis.}
-
-inderect variable access. (e.g.)
 
 \section{Model}
 \label{sec:design_model}
 
-\paragraph{Why did you choose picker network?}
+% \paragraph{Why did you choose picker network?}
+We described three approaches of how to extend the RAM model
+in \autoref{sec:extension}. The implementation of this work
+will only concentrate on method described as picker network.
+This is because of the simplicity of this approach.
+
+%TODO: patterns https://www.toptal.com/python/python-design-patterns
+
 \paragraph{about why OO programming is not ALMOST suited and why it should be more functional}
+
+
 \paragraph{The architecture as a whole}
-\paragraph{Possbile classes, overview}
+\paragraph{Possible classes, overview}
 \paragraph{UML diagram}
 \paragraph{back up the classes with design patterns}
 

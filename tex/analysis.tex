@@ -45,7 +45,7 @@ source library developed and maintained by engineers from Google \cite{tensorflo
 
 
 TensorFlow framework has gained a huge popularity among machine learning
-community as well as in industry compared to another framework \cite{Goldsborough}.
+community as well as in industry compared to another framework \cite{DBLP:journals/corr/Goldsborough16}.
 TensorFlow is an open source software library that makes computations more
 efficient by building a computation graph and deploying them to one or more
 CPUs or GPUs.
@@ -81,22 +81,25 @@ docstrings in Python \cite{Goodger2001}.
 Overall, the work follows The Hitchhiker's Guide to Python, which advises
 about the way of testing, organizing and documenting the code \cite{Reitz}.
 
-\paragraph{Design patterns}
+\paragraph{Code patterns}
 
-Despite that a lot of code from researches are not following and not using design
+Despite that a lot of code from researches are not following and not using code
 pattern, it's really simplifies understanding and reasoning about the code, especially
-while extending or adjusting the model. Therefore using design patterns
-is highly recommended. Below is a list of design pattern recommendations:
+while extending or adjusting the model. Therefore using code patterns
+is highly recommended. Below is a list of code pattern recommendations:
 
 % design patterns
 \begin{itemize}
+	% implement
 	\item Composed method - it's saying that methods should
 		have one identifiable task as well as be on the same abstraction.
 		This will increase flexibility of the methods and prevent
 		from confusing code and mistakes. \cite{beck1997smalltalk}
+	% implement
 	\item Extract method - when one method is too long, one should try to
 		extract some part of it into another function taking into account that this
 		function should be useful on its own. \cite{1999:RID:311424}
+	% implement or throw it away
 	\item Method object -  normally applied when one can't use extract method
 	 	on a function because new function would take a lot of parameters
 		from the original method.
@@ -104,22 +107,36 @@ is highly recommended. Below is a list of design pattern recommendations:
 		as properties and then to create small methods within this class without
 		passing the parameters to it but instead access them as class properties.
 		\cite{beck1997smalltalk}
+	% implement
 	\item Method comment - instead of having a comment close to not
 		self-explanatory statement, one should rather create a function
 		with self-explanatory name that holds this statement.
 		Most comments are redundant, therefore one can simplify
 		the system by introducing small methods.
 		\cite{beck1997smalltalk}
+	% implement
 	\item Temporary variable - instead of having very long expression, it's recommended
 		to assign part of the expression to a variable. This variable can also have
 		the self-explanatory name, consequently increasing the readability of the code.\cite{beck1997smalltalk}
 	\item Simple Enumeration Parameter - having a simple name of a parameter
 		when iterating over enumeration: \lstinline{for each in plugins:} \cite{beck1997smalltalk}
+	% done below
 	\item Cascade pattern - when a method of a class doesn't return any value,
 		one can return instance of the class in order to be able to call a
 		next method of the instance in cascade way: \lstinline{self.doThis().doThat()}.\cite{beck1997smalltalk}
+	% done below
 	\item Single responsibility principle - it forces every class to have only one
 		clearly distinguishable responsibility.\cite{martin2003agile}
+	% implement
+	\item Duck Typing - is a specifically to python, a design principle that
+		says that if an object has a certain desired functionality it doesn't not matter
+		what of nature the object is.
+	% done below, no bullshit
+	\item Composition over inheritance - it's design pattern which obligates
+	 	to use composition rather than inheritance. \cite{Gamma:1995:DPE:186897}
+	% implement
+	\item Iterator - deign pattern that says to access values of a list
+	 	without exposing the list. \cite{Gamma:1995:DPE:186897}
 \end{itemize}
 
 % keep a system decoupled and thus easier to refactor, change, and redeploy
@@ -131,7 +148,8 @@ is highly recommended. Below is a list of design pattern recommendations:
 Since ML programming is more method oriented, the most pattern above concentrated
 on how to keep functions readable, precise and flexible.
 
-We will see examples of those patterns in the \autoref{ch:design}.
+We will see examples of those patterns in the \autoref{ch:design}
+and \autoref{ch:implementation}.
 
 To recap, the prototype should be not only a good start for making further
 improvements on large scale objects but also be a piece of software that bears the
@@ -171,7 +189,7 @@ this implementation as \emph{
 
 This project is built using TensorFlow framework.
 
-\subsection{Differences with original RAM paper}
+\subsection{Advantages over original RAM paper}
 Building a machine learning software is not as straight forward as building
 conventional software. In machine learning, in order to achieve high accuracy
 one uses different methods which are normally hard to comprehend without knowing
@@ -211,7 +229,8 @@ performance \cite{DBLP:journals/corr/BaMK14}.
 
 \paragraph{Adam Opmitimizer} It also worth to notice that instead of stochastic
 gradient descent that was used in RAM paper, the basic RAM implementation using Adam optimizer
-from \cite{DBLP:journals/corr/KingmaB14} with exponentially decaying learning rate.
+from \cite{DBLP:journals/corr/KingmaB14} with exponentially decaying learning rate,
+which theoretically should improve performance. \cite{DBLP:journals/corr/KingmaB14}
 
 
 \paragraph{Gradient clipping} In contrast to RAM paper, the basic RAM implementation
@@ -312,7 +331,7 @@ prerequisite for a good prototype.
 
 
 \section{Extension}
-
+\label{sec:extension}
 In order to fulfill the objective of this work, it's required to extend the basic
 RAM implementation in a following way: it should accept a group of images as input
 and based on that input make a classification decision. Group in this case means
@@ -549,7 +568,8 @@ classify the sample
 for identifying images that are irrelevant for decision making
 
 \section{Testing}
-It's well-known that unit testing in ML models is not as trivial as in conventional software,
+It's well-known that unit testing in ML models is not as trivial
+as in conventional software,
 therefore unit testing should be applied only on part of the code where
 behaviour is fully predictable. One such example for unit testing would to check whether
 certain components of the system having expected shape of vectors and matrixes.
