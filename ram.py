@@ -12,7 +12,7 @@ import numpy as np
 
 from glimpseNetwork import GlimpseNet
 from locationNetwork import LocNet
-from pickerNetwork import PickerNetwork
+from pickerNetwork import PickerNet
 from glimpseSensor import GlimpseSensor
 
 from utils import weight_variable, bias_variable, loglikelihood
@@ -44,7 +44,7 @@ def placeholder_inputs():
     return images_ph, labels_ph
 
 
-# Build the aux nets.
+# Build the auxiliar nets.
 def init_glimpse_network(images_ph):
     """Initialise glimpse network using `glimpse_net` scope and return it."""
     with tf.variable_scope('glimpse_net'):
@@ -63,12 +63,12 @@ def init_location_network(config):
 def init_picker_network(config):
     """Initialise picker netwotk using `pick_net` scope and return it."""
     with tf.variable_scope('pick_net'):
-        pick_net = PickerNetwork(config)
+        pick_net = PickerNet(config)
     return pick_net
 
 
 def init_baseline_net(outputs):
-    """Initialise value function as baseline for advantage.
+    """Initialise value function as baseline for the advantage function.
 
     Takes outputs from LSTM cells and feed it into hidden layer producing
     desired representation of the outputs, i.e. value function.

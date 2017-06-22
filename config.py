@@ -15,7 +15,6 @@ class _Config(dict):
 def init_config(parser):
     global Config
     Config = _Config(parser.__dict__)
-    # __config.update(parser.__dict__)
 
 # bandwidth = win_size**2
 # minRadius = 8 ?

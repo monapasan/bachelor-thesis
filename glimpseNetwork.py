@@ -91,7 +91,7 @@ class GlimpseNet(object):
         self.w_l1 = weight_variable((self.hl_size, self.g_size))
         self.b_l1 = weight_variable((self.g_size,))
 
-    def _get_glimpse(self, loc, n_image):
+    def __get_glimpse(self, loc, n_image):
         # self.images_ph = [batch, n_images, pixel]
         # self.images_ph = [batch, pixel]
         # n_image.shape  = [batch_size, 1]
@@ -111,7 +111,7 @@ class GlimpseNet(object):
         Hg = Linear(Rect(Linear(ρ(x, l))))
         Hl = Linear(Rect(Linear(l)))
         """
-        glimpse_input = self._get_glimpse(loc, n_image)
+        glimpse_input = self.__get_glimpse(loc, n_image)
         # glimpse_input = tf.reshape(glimpse_input,
         #                            (tf.shape(loc)[0], self.sensor_size))
         # g_0 --> batch_size, 128

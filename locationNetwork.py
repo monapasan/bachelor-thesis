@@ -46,7 +46,11 @@ class LocNet(object):
             self.b_loc = bias_variable((self.loc_dim,))
 
     def __call__(self, input):
-        """Produce next location for the glimpse network."""
+        """Produce next location for the glimpse network.
+
+        Given the output of the LSTM cell, it produces next location
+        fot the glimpse network to attend to.
+        """
         # EXTENSTION: don't clip all values, only location vals
         mean = tf.clip_by_value(
             tf.nn.xw_plus_b(input, self.w_loc, self.b_loc), -1., 1.

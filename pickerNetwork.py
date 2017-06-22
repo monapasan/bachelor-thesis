@@ -18,7 +18,7 @@ import tensorflow as tf
 from utils import weight_variable, bias_variable
 
 
-class PickerNetwork(object):
+class PickerNet(object):
     """Picker network.
 
     Takes the output from LSTM cell and produces number of the next image for
@@ -46,7 +46,10 @@ class PickerNetwork(object):
             self.b_pick = bias_variable((self.n_images,))
 
     def __call__(self, input):
-        """Produce number of the next image for the glimpse network."""
+        """Produce number of the next image for the glimpse network.
+
+        Given the output of LSTM cell.
+        """
         picker_softmax = tf.nn.softmax(
             tf.nn.xw_plus_b(input, self.w_pick, self.b_pick)
         )
