@@ -74,7 +74,7 @@ in this work.
 
 % we want the model to generalise on unseen data.
 
-\subsection{Class overview}
+\subsection{Architecture}
 
 Before proceeding with the classes overview, it can be helpful
 to make a concrete example of how the dataset described in
@@ -104,7 +104,7 @@ Or with numbers:
 
 Hopefully, it gives you a sense how the data should appear.
 
-\paragraph{Classes}
+\paragraph{Class overview}
 
 After careful analysis, it was decided that in order to implement
 the desired dataset, three classes are required:
@@ -210,37 +210,155 @@ This is because of the simplicity of this approach.
 
 %TODO: patterns https://www.toptal.com/python/python-design-patterns
 
-\paragraph{about why OO programming is not ALMOST suited and why it should be more functional}
+% \paragraph{about why OO programming is not ALMOST suited and why it should be more functional}
+It's common practices in TensorFlow to use functions for implementing the model.
+We will stick to this practice for defining the model because this can
+potentially reduce the complexity of the model as well as
+increase readability of the code.
+
+% \paragraph{The architecture as a whole}
+
+\subsection{Architecture} \label{subs:arch_model} Taking into account
+the extension that was
+described in \autoref{subs:picker_net}, we can easily derive classes
+as each of the networks has a clear task. Building the model will be
+possible using following clases:
+
+\begin{itemize}
+	\item GlimpseSensor - the class is responsible for extracting glimpses from
+		images at given location $l_t$.
+	\item PickerNet - the class is responsible for picking an image out of the
+		group of images.
+	\item GlimpseNet - given the glimpse sensor, images and number of picked image,
+		this class is responsible for producing the feature map from the image,
+		which is then fed into LSTM cell.
+	\item LocNet - the class is responsible for producing next location for
+	glimpse sensor to attend to.
+	\item Model - formally, this is not a class, but a set of function that build
+		and run the model. We will represent this set as a class in UML class diagram
+		in \autoref{subs:uml_model}. However, this set of function will also explained
+		more detailed in \autoref{subs:model_seq_diagramm}.
+		For now we'll refer to it as class.
+	\item Config - singleton class that holds all
+		configuration parameters for the model such as shape of weights
+		for hidden layers.
+\end{itemize}
 
 
-\paragraph{The architecture as a whole}
-\paragraph{Possible classes, overview}
-\paragraph{UML diagram}
-\paragraph{back up the classes with design patterns}
+\subsection{UML class diagram}
+\label{subs:uml_model}
 
-\paragraph{the flow of the data via function}
+In the figure \ref{fig:model_uml}, you can see the UML class diagram for the
+architecture we described above. As it was already mentioned the \lstinline{Config}
+class is a singleton class that holds all configuration details for the model.
+Once initialised with command-line options or default values, it's a single source
+of true for the whole application. Use of singleton design pattern here helps
+to avoid misconception that application can have more than one configuration.
+From the UML diagram we see that only class \lstinline{Model} use the
+\lstinline{Config}, this is because of the convenience sake. Without much effort
+\lstinline{Config} can be imported from other classes as well.
 
-
-\subsection{Configuration of the project, what can be configured, the complexity of the model}
-
-
-
-
-
-the curent desing is using the approach
-described in \autoref{ssec:picker_net}.
-
-Basically explain the flow of input data, all losses, and baselines, and etc.
-if there is anything relative to the structure in the code use the references to the design patters
-Show all classes, write the documentation for those, or at least briefly explain the purpose.
-The process of training, maybe explain the whole idea behind this
-	seperation of dataset into validation, test, training.
-look at the other bachelorarbeits and look of what they wrote there
-think about whether it's possible to combine the design and implemntation chapters
+\begin{figure}[H]
+	\includegraphics[width=\linewidth]{Model_UML}
+	\caption{UML class diagram of the Model component}
+	\label{fig:model_uml}
+\end{figure}
 
 
+\subsection{UML activity diagram for the Model}
+\label{subs:model_seq_diagramm}
+To prevent misunderstanding, we distinguish between \lstinline{Model} class
+and Model component. Model component is set of of classes and functions related
+to RAM and it's extension. \lstinline{Model} class is a class that we described
+in \autoref{subs:arch_model}.
+As it was mentioned earlier, the \lstinline{Model} is not an actual class, but a set of
+function. \lstinline{Model} class is core of the Model component. It instantiates
+other classes as well as runs, trains
+and evaluates the model. Since then \lstinline{Model} is contains only functions,
+it's hard to represent it as UML class diagram. However, UML activity diagram
+can be a good fit if we replace the activities in the UML notations with
+the functions. Therefore to clarify the flow of the \lstinline{Model}, you may
+find the figure \ref{fig:uml_activity_model} with the UML activity diagram helpful.
+In the lane with the name \lstinline{init_seq_rnn()}, you can see a set of functions
+related to LSTM cell initialisation. This lane means that inside \lstinline{init_seq_rnn()}
+function this set of function is called.
+The container with the name "calculate the hybrid loss", mean nothing more than
+conceptual conncetion between the function inside.
+We will take a closer look at some of details of this functions in the
+\autoref{ch:implementation}.
+% As you can see from the diagrams, the functions names can describe the
+% functionality that it does. With
+% \label{sec:quality_concerns}
 
-* Entwurfsstrategie, Beschreibungen funktionaler und nich
- funktionaler Anforderungen, Einsatz von Mustern und
- Bibliotheken, Softwarearchitektur, Verwendung von Datentypen und
- Datenstrukturen, Algorithmen, Mensch-Maschine-Schnittstelle;
+
+%  To get an idea of what \lstinline{Model} does,
+%
+% To simplify the understanding of what the \lstinline{Model}
+% consist
+
+
+\begin{figure}[H]
+	\includegraphics[width=\linewidth]{uml_activity_model}
+	\caption{UML activity diagram of the Model}
+	\caption*{This is simplified flow of the \lstinline{Model} class.
+	Each activity represent a function. For the sake of simplicity some of the function
+	are not shown here. However, it should not influence on the understanding
+	of the \lstinline{Model}}.
+	\label{fig:uml_activity_model}
+\end{figure}
+%
+% #
+% Sequence:
+% input(images)
+% Init RNN ->
+%     init_glimpse_network
+%     init_location_network
+%     init_picker_network
+%     init lstm_inputs
+%     init LSTM cell
+%     defined the next input function for LSTM (get_next_input) --> depends on the all above
+%     -> outputs
+% init_baseline_net(outputs)
+% cross_entropy(logits, groud_truth)
+% get_rewards(pred_labels, labels_ph) --> calculate rewards
+% define loglikelyhood ratio
+% defined hybrid loss
+% train the model with AdamOptimizer with respect to loss.
+% #
+% the plan:
+% draw uml diagram: represent the main run_training as a class.
+% make a note that it's actually not a class but a set of functions to
+% to represent the model.
+% then draw this main class again with the explanation of how the
+% things is working using any sequential type of diagram.
+% Config is singleton
+% \paragraph{Possible classes, overview}
+% \paragraph{UML diagram}
+% \paragraph{back up the classes with design patterns}
+%
+% \paragraph{the flow of the data via function}
+
+
+% \subsection{Configuration of the project, what can be configured, the complexity of the model}
+
+
+
+
+% write about configuration file in implementation
+% the curent desing is using the approach
+% described in \autoref{ssec:picker_net}.
+%
+% Basically explain the flow of input data, all losses, and baselines, and etc.
+% if there is anything relative to the structure in the code use the references to the design patters
+% Show all classes, write the documentation for those, or at least briefly explain the purpose.
+% The process of training, maybe explain the whole idea behind this
+% 	seperation of dataset into validation, test, training.
+% look at the other bachelorarbeits and look of what they wrote there
+% think about whether it's possible to combine the design and implemntation chapters
+%
+%
+%
+% * Entwurfsstrategie, Beschreibungen funktionaler und nich
+%  funktionaler Anforderungen, Einsatz von Mustern und
+%  Bibliotheken, Softwarearchitektur, Verwendung von Datentypen und
+%  Datenstrukturen, Algorithmen, Mensch-Maschine-Schnittstelle;

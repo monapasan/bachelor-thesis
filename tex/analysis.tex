@@ -137,6 +137,9 @@ is highly recommended. Below is a list of code pattern recommendations:
 	% implement
 	\item Iterator - deign pattern that says to access values of a list
 	 	without exposing the list. \cite{Gamma:1995:DPE:186897}
+	% done
+	\item Singleton - design pattern that obligates a class to be
+		instantiated only once. \cite{Eckel2017}
 \end{itemize}
 
 % keep a system decoupled and thus easier to refactor, change, and redeploy
@@ -347,13 +350,14 @@ was presented in \autoref{sec:ram_model}.
 
 \begin{figure}[h!]
 	\includegraphics[width=\linewidth,scale=0.4]{ram_model_arch}
-	\caption{Original architecture of RAM.}
+	\caption{Original architecture of RAMS(Source: \cite{DBLP:journals/corr/MnihHGK14}).}
 	\label{fig:ram_model_arch}
 \end{figure}
 
 \subsection{Picker network}
 \label{subs:picker_net}
-You might remember the output of LSTM cell $h_t$ in \cite{DBLP:journals/corr/MnihHGK14}.
+You might remember the output of LSTM cell $h_t$ in \cite{DBLP:journals/corr/MnihHGK14}
+which was described in \autoref{sec:ram_model}.
 The external output is used
 in the action network $f_a(\theta_a)$ as well as in location network $f_l(\theta_b)$
 as shown in figure \ref{fig:ram_model_arch} to produce a classification decision or
@@ -480,7 +484,7 @@ the output LSTM cell $h_t$:
 	from the $i$ image from the group or from the $i+1$ image.
 \end{itemize}
 
-New exploration network computes the distribution in the following way
+New exploration network computes the distribution in the following way:
 \begin{equation}
 	f_e(h_t; \theta_e) = Softmax(Linear_{\theta_e}(h_t))
 \end{equation}
