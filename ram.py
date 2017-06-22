@@ -12,6 +12,7 @@ import numpy as np
 
 from glimpseNetwork import GlimpseNet
 from locationNetwork import LocNet
+from pickerNetwork import PickerNetwork
 from glimpseSensor import GlimpseSensor
 
 from utils import weight_variable, bias_variable, loglikelihood
@@ -53,10 +54,17 @@ def init_glimpse_network(images_ph):
 
 
 def init_location_network(config):
-    """Initialise location netwotk using `loc_net` scope and return it."""
+    """Initialise location network using `loc_net` scope and return it."""
     with tf.variable_scope('loc_net'):
         loc_net = LocNet(config)
     return loc_net
+
+
+def init_picker_network(config):
+    """Initialise picker netwotk using `pick_net` scope and return it."""
+    with tf.variable_scope('pick_net'):
+        pick_net = PickerNetwork(config)
+    return pick_net
 
 
 def init_baseline_net(outputs):
@@ -132,11 +140,13 @@ def init_seq_rnn(images_ph, labels_ph):
     N = tf.shape(images_ph)[0]
     glimpse_net = init_glimpse_network(images_ph)
     loc_net = init_location_network(Config)
+    pick_net = init_picker_network(Config)
     inputs = lstm_inputs(glimpse_net, N)
     lstm_cell, init_state = init_lstm_cell(Config, N)
 
     def get_next_input(output, i):
-        loc, loc_mean, n_image = loc_net(output)
+        loc, loc_mean = loc_net(output)
+        n_image = pick_net(output)
         gl_next = glimpse_net(loc, n_image)
         loc_mean_arr.append(loc_mean)
         sampled_loc_arr.append(loc)

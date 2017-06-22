@@ -12,16 +12,17 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import numpy as np
 import tensorflow as tf
 
 from utils import weight_variable, bias_variable
 
 
-class LocNet(object):
-    """Location network.
+class PickerNetwork(object):
+    """Picker network.
 
-    Takes the output from LSTM cell and produces the next location.
-
+    Takes the output from LSTM cell and produces number of the next image for
+    glimpse network.
     """
 
     def __init__(self, config):
@@ -34,31 +35,21 @@ class LocNet(object):
                 You will find the explanation behind the properites
                 in main.py.
         """
-        self.loc_dim = config.loc_dim
         self.input_dim = config.cell_output_size
-        self.loc_std = config.loc_std
+        self.n_images = config.n_img_group
 
         self.__init_weights()
 
     def __init_weights(self):
-        with tf.variable_scope('coordinates'):
-            self.w_loc = weight_variable((self.input_dim, self.loc_dim))
-            self.b_loc = bias_variable((self.loc_dim,))
+        with tf.variable_scope('image_number'):
+            self.w_pick = weight_variable((self.input_dim, self.n_images))
+            self.b_pick = bias_variable((self.n_images,))
 
     def __call__(self, input):
-        """Produce next location for the glimpse network."""
-        # EXTENSTION: don't clip all values, only location vals
-        mean = tf.clip_by_value(
-            tf.nn.xw_plus_b(input, self.w_loc, self.b_loc), -1., 1.
+        """Produce number of the next image for the glimpse network."""
+        picker_softmax = tf.nn.softmax(
+            tf.nn.xw_plus_b(input, self.w_pick, self.b_pick)
         )
-        mean = tf.stop_gradient(mean)
-        loc = mean + tf.random_normal(tf.shape(mean), stddev=self.loc_std)
-        loc = tf.clip_by_value(loc, -1., 1.)
-        loc = tf.stop_gradient(loc)
-
-        return loc, mean
-
-
-# tf.stop_gradient
-# If you insert this op in the graph it inputs are masked from the gradient
-# generator. They are not taken into account for computing gradients.
+        # image_number = [batch_size, 1]
+        image_number = np.argmax(tf.stop_gradient(picker_softmax), 1)
+        return image_number
