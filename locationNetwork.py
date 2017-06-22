@@ -17,6 +17,7 @@ import tensorflow as tf
 
 from utils import weight_variable, bias_variable
 
+
 class LocNet(object):
     """Location network.
 
@@ -51,6 +52,7 @@ class LocNet(object):
             self.b_pick = bias_variable((self.n_images,))
 
     def __call__(self, input):
+        """Produces next location for the glimpse network."""
         # EXTENSTION: don't clip all values, only location vals
         mean = tf.clip_by_value(
             tf.nn.xw_plus_b(input, self.w_loc, self.b_loc), -1., 1.

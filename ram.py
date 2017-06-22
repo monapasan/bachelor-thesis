@@ -29,8 +29,7 @@ sampled_loc_arr = []
 
 
 def placeholder_inputs():
-    """Generate placeholder variables to represent the input tensors.
-    """
+    """Generate placeholder variables to represent the input tensors."""
     img_size = (
         Config.original_size * Config.original_size * Config.num_channels
     )
@@ -46,6 +45,7 @@ def placeholder_inputs():
 
 # Build the aux nets.
 def init_glimpse_network(images_ph):
+    """Initialise glimpse network using `glimpse_net` scope and return it."""
     with tf.variable_scope('glimpse_net'):
         gl_sensor = GlimpseSensor(Config)
         gl = GlimpseNet(gl_sensor, Config, images_ph)
@@ -53,12 +53,18 @@ def init_glimpse_network(images_ph):
 
 
 def init_location_network(config):
+    """Initialise location netwotk using `loc_net` scope and return it."""
     with tf.variable_scope('loc_net'):
         loc_net = LocNet(config)
     return loc_net
 
 
 def init_baseline_net(outputs):
+    """Initialise value function as baseline for advantage.
+
+    Takes outputs from LSTM cells and feed it into hidden layer producing
+    desired representation of the outputs, i.e. value function.
+    """
     # Time independent baselines
     baselines = []
     with tf.variable_scope('baseline'):
@@ -74,6 +80,7 @@ def init_baseline_net(outputs):
 
 
 def lstm_inputs(glimpse_net, N):
+    """Initialise inputs for LSTM cell."""
     # number of examples
     # N = tf.shape(images_ph)[0]
     # TODO: two-component Gaussian with a fixed variance
@@ -87,12 +94,14 @@ def lstm_inputs(glimpse_net, N):
 
 
 def init_lstm_cell(config, N):
+    """Initialise LSTM cell."""
     lstm_cell = rnn_cell.LSTMCell(Config.cell_size, state_is_tuple=True)
     init_state = lstm_cell.zero_state(N, tf.float32)
     return lstm_cell, init_state
 
 
 def inference(output):
+    """Initialise logits for classification task."""
     # Build classification network.
     with tf.variable_scope('cls'):
         w_logit = weight_variable(
@@ -103,8 +112,9 @@ def inference(output):
     return logits
 
 
-def fill_feed_dict(data_set, images_pl, labels_pl):
-    images, labels = data_set.next_batch(Config.batch_size)
+def fill_feed_dict(dataset, images_pl, labels_pl):
+    """Fill `images_pl` and `labels_pl` with data from `dataset`."""
+    images, labels = dataset.next_batch(Config.batch_size)
     # duplicate M times, see Eqn (2)
     # running kinda m episodes
     images_feed = np.tile(images, [Config.M, 1])
@@ -117,6 +127,7 @@ def fill_feed_dict(data_set, images_pl, labels_pl):
 
 
 def init_seq_rnn(images_ph, labels_ph):
+    """Feed locations to LSTM cells and return output of LSTM cells."""
     # Core network.
     N = tf.shape(images_ph)[0]
     glimpse_net = init_glimpse_network(images_ph)
@@ -138,6 +149,7 @@ def init_seq_rnn(images_ph, labels_ph):
 
 
 def accuracy(softmax, batch_size, labels):
+    """Calculate the accuracy of the batch based on softmax."""
     # real_labels = tf.placeholder(tf.int64, [None], name='evaluation_labels')
     softmax_acc = tf.reshape(
         softmax, [Config.M, -1, Config.num_classes]
@@ -152,44 +164,8 @@ def accuracy(softmax, batch_size, labels):
     return n_correct / batch_size
 
 
-# def n_correct_pred(softmax, batch_size, labels):
-#     softmax_acc = tf.reshape(
-#         softmax, [Config.M, -1, Config.num_classes]
-#     )
-#     softmax_mean = tf.reduce_mean(softmax_acc, 0)  # [32x10]
-#     pred_labels = tf.argmax(softmax_mean, 1)
-#
-#     n_correct = tf.reduce_sum(
-#         tf.cast(tf.equal(pred_labels, labels[:batch_size]), tf.float32)
-#     )
-#
-#     return n_correct
-
-# def evaluation(sess, dataset, softmax, images_ph, labels_ph):
-#     steps_per_epoch = dataset.num_examples // Config.eval_batch_size
-#     correct_cnt = 0
-#     num_samples = steps_per_epoch * Config.batch_size
-#     # loc_net.sampling = True
-#     for test_step in range(steps_per_epoch):
-#         images, labels = dataset.next_batch(Config.batch_size)
-#         labels_bak = labels
-#         # Duplicate M times
-#         images = np.tile(images, [Config.M, 1])
-#         labels = np.tile(labels, [Config.M])
-#         feed_dict = {images_ph: images, labels_ph: labels}
-#         softmax_val = sess.run(softmax, feed_dict=feed_dict)
-#         softmax_val = np.reshape(
-#             softmax_val, [Config.M, -1, Config.num_classes]
-#         )
-#         softmax_val = np.mean(softmax_val, 0)  # [32x10]
-#         pred_labels_val = np.argmax(softmax_val, 1)
-#         pred_labels_val = pred_labels_val.flatten()
-#         correct_cnt += np.sum(pred_labels_val == labels_bak)
-#     acc = correct_cnt / num_samples
-#     logging.info('accuracy = {}'.format(acc))
-
-
 def n_correct_pred(softmax, labels):
+    """Calculate number of correct predictions."""
     softmax_acc = np.reshape(
         softmax, [Config.M, -1, Config.num_classes]
     )
@@ -206,6 +182,10 @@ def n_correct_pred(softmax, labels):
 def evaluation(
     sess, dataset, softmax, images_ph, labels_ph, summary_writer, step, tag
 ):
+    """Evaluate result of the training.
+
+    Including the logging of results, and adding summary for TensorBoard.
+    """
     steps_per_epoch = dataset.num_examples // Config.eval_batch_size
     correct_cnt = 0
     num_samples = steps_per_epoch * Config.batch_size
@@ -222,6 +202,10 @@ def evaluation(
 
 
 def cross_entropy(logits, labels_ph):
+    """Initialise cross-entropy operation for classicatiton.
+
+    I.e. cross-entropy between logins and ground truth.
+    """
     # cross-entropy for classification decision
     xent = tf.nn.sparse_softmax_cross_entropy_with_logits(
         logits=logits, labels=labels_ph, name="x_entr_for_cls"
@@ -231,6 +215,7 @@ def cross_entropy(logits, labels_ph):
 
 
 def get_rewards(pred_labels, labels_ph):
+    """Calucalate rewards based on ground truth and predicted labels."""
     # 0/1 reward.
     with tf.variable_scope('rewards'):
         reward = tf.cast(tf.equal(pred_labels, labels_ph), tf.float32)
@@ -241,6 +226,7 @@ def get_rewards(pred_labels, labels_ph):
 
 
 def init_learning_rate(global_step, training_steps_per_epoch):
+    """."""
     starter_learning_rate = Config.lr_start
     learning_rate = tf.train.exponential_decay(
         starter_learning_rate,
@@ -252,7 +238,45 @@ def init_learning_rate(global_step, training_steps_per_epoch):
     return learning_rate
 
 
+def add_summary(writer, summary_val, step, is_custom=False, tag=None):
+    """Will add summary to the tensorboard.
+
+    Summart of either custom value in case of evaluation, or summary value
+    in case of the training process.
+    """
+    if is_custom:
+        summary_val = tf.Summary(value=[
+            tf.Summary.Value(
+                tag=tag, simple_value=summary_val
+            )
+        ])
+    writer.add_summary(summary_val, step)
+    writer.flush()
+
+
+def log_step(
+    i, duration, learning_rate,
+    reward, loss, x_entr, logllratio, baseline_mse
+):
+    """Print the current state of the model.
+
+    Including: step, duration of the step, reward value, loss, cross-entropy,
+    loglikelihood ratio.
+    """
+    logging.info('step {}: lr = {:3.6f}, duration: {:.3f} sec'.format(
+        i, learning_rate, duration)
+    )
+    info = 'step {}: reward = {:3.4f}\tloss = {:3.4f}\txent = {:3.4f}'
+    logging.info(
+        info.format(i, reward, loss, x_entr)
+    )
+    logging.info('llratio = {:3.4f}\tbaselines_mse = {:3.4f}'.format(
+        logllratio, baseline_mse)
+    )
+
+
 def run_training():
+    """Run the model."""
     mnist = input_data.read_data_sets('MNIST_data', one_hot=False)
     with tf.Graph().as_default():
         images_ph, labels_ph = placeholder_inputs()
@@ -363,28 +387,40 @@ def run_training():
                 )
 
 
-def add_summary(writer, summary_val, step, is_custom=False, tag=None):
-    if is_custom:
-        summary_val = tf.Summary(value=[
-            tf.Summary.Value(
-                tag=tag, simple_value=summary_val
-            )
-        ])
-    writer.add_summary(summary_val, step)
-    writer.flush()
 
 
-def log_step(
-    i, duration, learning_rate,
-    reward, loss, x_entr, logllratio, baseline_mse
-):
-    logging.info('step {}: lr = {:3.6f}, duration: {:.3f} sec'.format(
-        i, learning_rate, duration)
-    )
-    info = 'step {}: reward = {:3.4f}\tloss = {:3.4f}\txent = {:3.4f}'
-    logging.info(
-        info.format(i, reward, loss, x_entr)
-    )
-    logging.info('llratio = {:3.4f}\tbaselines_mse = {:3.4f}'.format(
-        logllratio, baseline_mse)
-    )
+# def n_correct_pred(softmax, batch_size, labels):
+#     softmax_acc = tf.reshape(
+#         softmax, [Config.M, -1, Config.num_classes]
+#     )
+#     softmax_mean = tf.reduce_mean(softmax_acc, 0)  # [32x10]
+#     pred_labels = tf.argmax(softmax_mean, 1)
+#
+#     n_correct = tf.reduce_sum(
+#         tf.cast(tf.equal(pred_labels, labels[:batch_size]), tf.float32)
+#     )
+#
+#     return n_correct
+
+# def evaluation(sess, dataset, softmax, images_ph, labels_ph):
+#     steps_per_epoch = dataset.num_examples // Config.eval_batch_size
+#     correct_cnt = 0
+#     num_samples = steps_per_epoch * Config.batch_size
+#     # loc_net.sampling = True
+#     for test_step in range(steps_per_epoch):
+#         images, labels = dataset.next_batch(Config.batch_size)
+#         labels_bak = labels
+#         # Duplicate M times
+#         images = np.tile(images, [Config.M, 1])
+#         labels = np.tile(labels, [Config.M])
+#         feed_dict = {images_ph: images, labels_ph: labels}
+#         softmax_val = sess.run(softmax, feed_dict=feed_dict)
+#         softmax_val = np.reshape(
+#             softmax_val, [Config.M, -1, Config.num_classes]
+#         )
+#         softmax_val = np.mean(softmax_val, 0)  # [32x10]
+#         pred_labels_val = np.argmax(softmax_val, 1)
+#         pred_labels_val = pred_labels_val.flatten()
+#         correct_cnt += np.sum(pred_labels_val == labels_bak)
+#     acc = correct_cnt / num_samples
+#     logging.info('accuracy = {}'.format(acc))
