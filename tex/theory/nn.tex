@@ -30,7 +30,8 @@ in a different way.
 They don't execute programs instructions, they don't have
 sequential semantic and normally are not
 deterministic. They acquire their "knowledge" by extracting patterns from raw data,
-which normally called training data(which normally is a set of tuple $(input, label)$
+which normally called training data(which normally is a set of tuple $(input, label)$.
+The label of the an input is also known as the ground truth.
 This approach also know as concept of statistical pattern recognition. \cite{Bishop1995}
 Artificial Neural networks have recently shown an excellent performance and
 accuracy at recognizing objects compared with other
@@ -106,28 +107,39 @@ Output being only binary value will limit the ability to make sophisticated deci
 Therefore we introduce a function known as \emph{an activation function} before
 actually outputting a value: $output = g( W \cdot x + b)$ \cite{Nielsen2015} .
 
-\paragraph{Activation function} $g(\cdot)$ is known as an activation function.
+\paragraph{Activation functions} $g(\cdot)$ is known as an activation function.
 Activation function helps to control the output and non-linearity of the network.
 Activation function also plays a crucial role in multi layer architecture, where it helps
 to prevent the values of each layer from blowing up.
-For example, let's take a look at logistic sigmoid activation function which has
-following form:
+For example, let's take a look at \emph{softmax} activation function which has
+the following form:
 \begin{equation} \label{sigmoid_function}
-	\sigma(z) = \frac{1}{1 + e^{-z}}
+	\sigma(z)_j = \frac{e^{z_j}}{\sum_{k=1}^K e^{z_k}}
 \end{equation}
+where $j = 1,2 ..., K$ - is the index of the vector $z$.
 
-TODO: write about tahn activation function
+
 
 The use of the sigmoid activation will make a network to produce output to be
 interpreted as posterior probabilities. Probability interpretation helps to provide
-more powerful and more useful results \cite{Bishop1995}. There are a good variety
-of activation functions but in this work we mainly will use the sigmoid activation function
-and \emph{rectified function}. Rectified function is fairly simple.
+more powerful and more useful results \cite{Bishop1995}.
+\\
+Second type of activation function is \emph{rectified function}.
+Rectified function is fairly simple.
 It produces $0$ when input is less than $0$, and it does not change input value if
 input is more than 0:
 \begin{equation} \label{eq:rect_function}
 	R(z) = max(0, z)
 \end{equation}
+
+\\
+% Another common type of activation function is known as a \emph{tahn} activation function.
+% Tahn function has the following form:
+
+
+% There are even more
+% of activation functions but in this work we mainly will use the sigmoid activation function
+% and \emph{rectified function}.
 Now that we derived a concept of Neural Network, we can talk more about
 what is called feedforward neural network and the terms related to it.
 \paragraph{Feedforward neural network} is a network where the output
@@ -199,6 +211,8 @@ the model is from desired outcome. If cost is big , our network does not work we
 With the cost function, it's possible
 to define our training goal more precisely: the smaller our cost, the better our
 model works, therefore the goal of the learning is to minimize the cost of our model.
+The term cost is also known as a \emph{loss} or an \emph{objective}. We will use these terms
+interchangeably throughout the work.
 
 \paragraph{Types of cost} There are a plenty of ways to define cost of the model.
 Let's consider the common type of cost function called \emph{mean squared error function}.
@@ -265,6 +279,7 @@ One important things to notice is that, we can use the gradient descent algorith
 if $f$ in equation \ref{eq:ex_cost} is differentiable. That means, if we want
 to use gradient descent algorithm our cost function should
 be differentiable \cite{Bishop1995}.
+
 
 \paragraph{Mini-batch Gradient Descent} Normally gradient descent algorithm
 is associated with the update on the loss computed with whole set of training data,

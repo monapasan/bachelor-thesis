@@ -15,7 +15,8 @@ with backpropagation for training NN is possible only with differentiable cost f
 mean squared error function or cross entropy function. However, we can't use this functions without
 the knowing the right answer, therefore defining the cost function would be a complicated task.
 This sort of tasks is studied by a field of machine learning called \emph{reinforcement
-learning(RL)}.
+learning(RL)}. The theory described in this section based on the
+\cite{Sutton2012}, unless otherwise stated.
 
 % \subsection{}
 \paragraph{What is reinforcement learning?}
@@ -27,10 +28,10 @@ The underlying idea behind RL to
 represent the nature of learning where agent learning about the the world by interacting
 with it. By performing this interactions we're observing the changes in the world
 from which we can learn about the consequences of this
-interactions, and about what interactions to perform to achieve a goal.
+interactions, and about what interactions to perform to achieve the goal.
 Reinforcement learning provides a computational approach to perform goal-directed learning
 by interacting with environment. The main difference between supervised learning and
-reinforcement learning is that in RL there is no instructions about the right answer.
+reinforcement learning is that in RL there is no instructions about the right answer,
 but a training information or reward signal is used to evaluate the taken actions.
 That is, instead of providing true label for the system instantaneously,
 system is receiving a reward signal
@@ -112,7 +113,7 @@ to contain all useful information from the history as well as possess of \emph{m
 \end{equation}
 where $S_t^a$ - is the agent's state at time step $t$.
 It means that the state is only dependent on the present state and not on
-successors states. Hence, once the state is knows, we can erase the history.
+successors states. Hence, once the state is known, we can erase the history.
 
 \paragraph{Reward} As mentioned before $R_t$ is scalar feedback signal, which
 indicates how well agent is doing at time step $t$. The job of an agent to
@@ -128,7 +129,7 @@ a \emph{model of the environment}.
 to actions to be taken by agent, when agent are in those states. Normally, the policy is
 something that we want to find. Once the best policy is known, we solved RL problem.
 Policy can be deterministic: $a = \pi (s)$
-as well as stochastic: $\pi(a|s) = P[A_t = a|S_t^a = s]$
+as well as stochastic: $\pi(a|s) = P[A_t = a|S_t^a = s]$.
 
 % \paragraph{Reward function}
 
@@ -192,7 +193,7 @@ and $W_s$, $W_o$ - appropriate weights.
 % explain reinforce
 
 \subsection{Markov Decision Processes(MDP)} \label{subs:reward_process}
-The agent is the algorithm that we trying to build, the agent is interacting with
+The agent is the algorithm that we trying to build, which interacts with
 environment. \emph{Markov Decision Process(MDP)} describes this environment.
 Markov Decision Process is an extension of a Markov chain and is one of the core
 concept that is used in reinforcement learning and almost all problems in RL
@@ -260,36 +261,50 @@ policy $\pi$:
 
 \subparagraph{Monte Carlo methods}
 
-This value functions can be estimated using Monte Carlo methods.
-The idea is to let agent play in the environment by following an
+This value functions can be estimated using Monte Carlo methods, which works
+only for episodic environments, i.e. environment with an end state.
+The idea is to let agent play in the environment by following an arbitrary policy,
+sample the rewards and eventually calculate the mean of reward with respect to state.
+Every time an agent visit state $s$, we increase the counter
+of this state by 1, as well as increase total return of this state from all episodes:
+\begin{align}
+	N(s) = N_{last}(s) + 1 \\
+	S(s) = S_{last}(s) + G_t\\
+	V(s) = N_t(s) / S_t(s)
+\end{align}
+where $N(s)$ - is the counter an agent visited state $s$,
+$G_t$ - is the return an agent got starting from state $s$,
+$V(s)$ - is the estimated value of state $s$.
+
+By the law of big numbers $V(s) \rightarrow v_{\pi}(s)$ as $N(s) \rightarrow \infinity$.
 
 
 
-% \paragraph{Bellman equations} The most important reason that MDPs is used in RL problems because
-% it give us the opportunity to use \emph{Bellman equations}. Bellman equations forms the way
-% of computing, optimizing and evaluating value functions $v_{\pi}(s)$ and $q_{\pi}(s, a)$.
-%
-% \subparagraph{Bellman expectation equation} decomposes the value functions to represent
-% in a recursive way through the value of successor state:
-%
-% \begin{align*}
-% 	v_{\pi}(s) = \mathbb{E}_{\pi} [G_t |S_t = s] \\
-% 		= \mathbb{E}_{\pi} [\sum_{k=0}^{\infty} \gamma^k R_{t+k+1} |S_t = s] \\
-% 		= \mathbb{E}_{\pi} [R_{t+1} + \gamma \sum_{k=0}^{\infty} \gamma^k R_{t+k+2} |S_t = s] \\
-% 		= \mathbb{E}_{\pi} [R_{t+1} + \gamma v_{\pi}(S_{t+1}) | S_t = s]
-% \end{align*}
-%
-% In a similar way, action-value function is decomposed:
-% \begin{align*}
-% 	q_{\pi}(s, a) = \mathbb{E}_{\pi} [G_t |S_t = s, A_t = a] \\
-% 		= \mathbb{E}_{\pi} [ |S_t = s, A_t = a] \\
-% 		= \mathbb{E}_{\pi} [R_{t+1} + \gamma \sum_{k=0}^{\infty} \gamma^k R_{t+k+2} |S_t = s, A_t = a] \\
-% 		= \mathbb{E}_{\pi} [R_{t+1} + \gamma v_{\pi}(S_{t+1}) | S_t = s, A_t = a]
-% \end{align*}
-%
-% If we look beneath the math, these equations formally telling us that the value of a state is equal to the
-% immediate reward that the agent get after leaving current state plus discounted value
-% of the state where the agent will end up after leaving current state.
+\paragraph{Bellman equations} The most important reason that MDPs is used in RL problems because
+it give the opportunity to use \emph{Bellman equations}. Bellman equations forms the way
+of computing, optimizing and evaluating value functions $v_{\pi}(s)$ and $q_{\pi}(s, a)$.
+
+\subparagraph{Bellman expectation equation} decomposes the value functions to represent it
+in a recursive way through the value of successor state:
+
+\begin{align*}
+	v_{\pi}(s) = \mathbb{E}_{\pi} [G_t |S_t = s] \\
+		= \mathbb{E}_{\pi} [\sum_{k=0}^{\infty} \gamma^k R_{t+k+1} |S_t = s] \\
+		= \mathbb{E}_{\pi} [R_{t+1} + \gamma \sum_{k=0}^{\infty} \gamma^k R_{t+k+2} |S_t = s] \\
+		= \mathbb{E}_{\pi} [R_{t+1} + \gamma v_{\pi}(S_{t+1}) | S_t = s]
+\end{align*}
+
+In a similar way, action-value function is decomposed:
+\begin{align*}
+	q_{\pi}(s, a) = \mathbb{E}_{\pi} [G_t |S_t = s, A_t = a] \\
+		= \mathbb{E}_{\pi} [ |S_t = s, A_t = a] \\
+		= \mathbb{E}_{\pi} [R_{t+1} + \gamma \sum_{k=0}^{\infty} \gamma^k R_{t+k+2} |S_t = s, A_t = a] \\
+		= \mathbb{E}_{\pi} [R_{t+1} + \gamma v_{\pi}(S_{t+1}) | S_t = s, A_t = a]
+\end{align*}
+
+If we look beneath the math, these equations formally telling us that the value of a state is equal to the
+immediate reward that the agent get after leaving current state plus discounted value
+of the state where the agent will end up after leaving the current state.
 
 % \textbf{TODO:}
 
@@ -441,12 +456,14 @@ directly from the agent's experience.
 \subparagraph{Note:}
 The representation in \ref{eq:policy_appr_func} will even allow to generalise
 the value functions from seen states to unseen.
-As we will concentrate in this work mostly on policy
-In a similar way, we can also estimate policy function:
+
+%
+% As we will concentrate in this work mostly on policy
+% In a similar way, we can also estimate policy function:
 
 
 
-\textbf{TODO: polcy approximation}
+% \textbf{TODO: polcy approximation}
 
 
 % \hat{v}(s, W) \approx v_{\pi}(s) \\
@@ -460,12 +477,14 @@ In a similar way, we can also estimate policy function:
 % a policy so the learned policy will be close to the optimal policy $/pi_{*}$.
 However in order to estimate the policy, we also need to find a way
 to measure it's quality, i.e. define the cost function $J$.
-One way to defined our cost function is to assign it
-assign to the value of the start state:
+One way to define the cost function is to assign it
+to the value of the start state:
 
 \begin{equation}
 	J(\theta) = V^{\pi_{\theta}}(S_1) = \mathbb{E}_{\pi_{\theta}}
 \end{equation}
+
+
 
 To remind you, the start value is the return that an agent will get from start state
 following policy $\pi_{\theta}$. This will work only for environment with end state.
@@ -490,9 +509,6 @@ In contrast to state $s_2$ where
 robot has no wall close by, this entry in the feature vector
 should be 0 or close to 0.
 The feature vector might have hundreds of entry features like this.
-
-\subparagraph{Training} Now we know the objective function, we can the gradient descent
-algorithm to maximise it.
 
 
 % close
@@ -522,22 +538,49 @@ algorithm to maximise it.
 
 % policy can be chosen as gaussian distribution with mean  = v(s) * \thetha
 
-\paragraph{Policy gradient theorem} says that gradient
-for any differentiable cost policy function is:
+\paragraph{Policy gradient theorem}
+Now that we know the objective function, we can use gradient ascent
+algorithm to maximise it. One normally uses Policy gradient
+algorithm to estimate the gradient:
 
 \begin{equation} \label{eq:reinforce}
 	\Delta_{\theta} J(\theta) = \mathbb{E}_{\pi_{\theta}}
-		[\Delta_{\theta} log(
-		\pi_{\theta}(s, a) )  Q_{\pi_{\theta}}(s, a)]
+		[\Delta_{\theta} \log(
+		\pi_{\theta}(s, a) )  Q^{\pi_{\theta}}(s, a)]
 \end{equation}
 
-% where $Q_{\pi_{\theta}}(s, a)$ can be computer with the help of,
+where $Q_{\pi_{\theta}}(s, a)$ - is the action-value function.
 % for example, Monte Carlo method described earlier.
 
 \paragraph{Reinforce rule}
-Using return $v_t$ as an unbiased sample from $Q_{\pi_{\theta}}(s, a)$
-in \ref{eq:reinforce} we can derive the REINFORCE rule:
+Using return $v_t$ as an unbiased sample from $Q^{\pi_{\theta}}(s, a)$
+in \ref{eq:reinforce} we can derive the REINFORCE learning rule:
 
+\begin{equation} \label{eq:reinfforce_rule}
+	\Delta \theta_t = \alpha \Delta_{\theta} \log \pi_{\theta}(s_t, a_t) v_t
+\end{equation}
+
+
+Return $v_t$ can be estimated by using Monte Carlo method.
+\subparagraph{Reducing variance} The equation \ref{eq:reinfforce_rule} still has
+a high variance. We can try to reduce it by subtracting the function knows as
+baseline $B(s)$. If we subtract this function, it won't change the expectation
+as:
+
+\begin{equation} \label{eq:bas_0}
+	\mathbb{E}_{\pi_{\delta}} [\Delta_{\delta} \log \pi_{\delta}(s, a) B(s)] = 0
+\end{equation}
+
+Therefore we can rewrite the equation \ref{eq:reinforce} in the following
+way:
+\begin{equation}
+	\Delta \theta_t = \alpha \Delta_{\theta} \log \pi_{\theta}(s_t, a_t) (Q_{\pi_{\theta}}(s, a) - B(s))
+\end{equation}
+The common practice in RL to choose baseline function $B(s)$ equal to value function:
+ $B(s) = V^{\pi_{\theta}}(s)$. The term $(Q^{\pi_{\theta}}(s, a) -  V^{\pi_{\theta}}(s)$
+ is known as advantage function. Advantage function represents how the value
+ of being in state $s$ and taking an action $a$, is better than value of being in state $s$
+ summarizing over all possible actions that can be taken in state $s$.
 %
 % As suggested by in \ref{definition_value},
 % which is unbiased sample from value function in .

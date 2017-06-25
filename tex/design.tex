@@ -20,22 +20,12 @@ Dataset is component which is responsible for data holding. It should
 accept original MNIST dataset and transform it into dataset described
 in \autoref{sec:analysis_dataset}.
 
-\paragraph{MNIST Dataset} is dataset of scanned handwritten images, each labeled
-from 0 to 9. You can see an example of 4 digits in figure \ref{fig:mnist}.
-Additionally, it includes label for each of the image.
-
-\begin{figure}[h!]
-	\includegraphics[width=\linewidth,scale=0.4]{MNIST}
-	\caption{MNIST example}
-	\label{fig:mnist}
-\end{figure}
-
 For example, in the figure \ref{fig:mnist} the labels are 5, 0, 4 and 1.
 Each images consist of $28\times28$ pixels, therefore an MNIST image would
 be an array of size $784$. To each of the image, a label is assigned,
 which provides the ground truth.
 
-\subparagraph{MNIST from TensorFlow}
+\subparagraph{MNIST dataset from TensorFlow}
 
 TensorFlow provides a small class \lstinline{Dataset}\footnote{
 The class is implemented here: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/contrib/learn/python/learn/datasets/mnist.py
@@ -52,13 +42,11 @@ to this class as \emph{MNIST tf-dataset class}
 % from tensorflow.examples.tutorials.mnist import input_data
 % mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 % \end{lstlisting}
-This two lines will download the data and store into "MNIST_data/" directory.
+% This two lines will download the data and store into "MNIST_data/" directory.
 
-It is common knowledge that google take a special care about the quality of their code,
-therefore our dataset component should have the similar
-behaviour and functionality as MNIST tf-dataset class. Another reason for that
-is that we want to stay consistent with tensorFlow practices as we use this library
-in this work.
+We want that our dataset component has a similar behaviour and functionally
+as MNIST tf-dataset class. The reason for this is that we want to stay
+consistent with tensorFlow practices as we use this library in this work.
 
 % Dataset is a non-real world data, but may behave and represent similar
 % task as it could in real world data.
@@ -102,11 +90,11 @@ Or with numbers:
 	[1, 3, 6, 4, 3 ] # class 2
 \end{lstlisting}
 
-Hopefully, it gives you a sense how the data should appear.
+
 
 \paragraph{Class overview}
 
-After careful analysis, it was decided that in order to implement
+It was decided that in order to implement
 the desired dataset, three classes are required:
 \begin{itemize}
 	\item IndexGenerator - the purpose of this class is to generate indexes for
@@ -114,7 +102,9 @@ the desired dataset, three classes are required:
 		the same indexes. Will the model learn this indexes and look only at
 		them? Or will model ignore this stability? Because this question seems
 		to be heuristic, this class will control the indexes where noise image
-		will be located at.
+		will be located at. By instantiating this class, it's possible to have
+		always the same indixes for the noise images, as well as control it by
+		providing distribution function, where this indexes should be sampled from.
 	\item DummyDataset - The purpose of this class is to hold MNIST images
 		and labels. Additionally, this class provides some auxiliary functionality
 		like permutation of the data.

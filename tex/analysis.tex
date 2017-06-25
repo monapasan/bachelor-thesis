@@ -3,7 +3,7 @@
 The main objective of this work will be to build an extensible prototype,
 which will be built on the model of visual attention and additionally
 extended to classify
-a set of images. The following chapter discusses the main concerns
+a set of images. This chapter discusses the main concerns
 that have to be taken into consideration in order to achieve the objective.
 
 Firstly, let's define the clear problem statement:
@@ -70,8 +70,8 @@ the most popular language among machine learning community.
 Now that we assigned interfaces, let's define conventions that this work
 will follow. As TensorFlow recommends using PEP 8 style guide to stay consistent
 with community \cite{TfWeb}. PEP 8 gives the set of rules about how to lay out
-the code, how to name function, methods and classes and others code style related
-things \cite{\cite{Rossum}. PEP 8 linter is also integrated in the project, which checks the code
+the code, how to name functions, methods and classes and others code style related
+aspects \cite{Rossum}. PEP 8 linter is also integrated in the project, which checks the code
 automatically on presence errors against PEP 8 style guide,
 therefore simplifies the development workflow.
 
@@ -86,16 +86,22 @@ about the way of testing, organizing and documenting the code \cite{Reitz}.
 Despite that a lot of code from researches are not following and not using code
 pattern, it's really simplifies understanding and reasoning about the code, especially
 while extending or adjusting the model. Therefore using code patterns
-is highly recommended. Below is a list of code pattern recommendations:
+is highly recommended. We will introduce the code patterns, which
+is recommended in the functional programming from \cite{beck1997smalltalk},
+because python supports the concept of functional programming.
+To follow are also general well-known code patterns that are taken from
+\cite{martin2003agile}, \cite{Eckel2017}, \cite{Gamma:1995:DPE:186897}.
+Below is a list of this code pattern recommendations:
 
 % design patterns
 \begin{itemize}
-	% implement
+	% done
 	\item Composed method - it's saying that methods should
-		have one identifiable task as well as be on the same abstraction.
+		have one identifiable task. Additionally to this, all operations
+		performed in the function should be on the same level abstraction.
 		This will increase flexibility of the methods and prevent
 		from confusing code and mistakes. \cite{beck1997smalltalk}
-	% implement
+	% done
 	\item Extract method - when one method is too long, one should try to
 		extract some part of it into another function taking into account that this
 		function should be useful on its own. \cite{1999:RID:311424}
@@ -114,10 +120,11 @@ is highly recommended. Below is a list of code pattern recommendations:
 		Most comments are redundant, therefore one can simplify
 		the system by introducing small methods.
 		\cite{beck1997smalltalk}
-	% implement
+	% done
 	\item Temporary variable - instead of having very long expression, it's recommended
 		to assign part of the expression to a variable. This variable can also have
 		the self-explanatory name, consequently increasing the readability of the code.\cite{beck1997smalltalk}
+
 	\item Simple Enumeration Parameter - having a simple name of a parameter
 		when iterating over enumeration: \lstinline{for each in plugins:} \cite{beck1997smalltalk}
 	% done below
@@ -127,16 +134,17 @@ is highly recommended. Below is a list of code pattern recommendations:
 	% done below
 	\item Single responsibility principle - it forces every class to have only one
 		clearly distinguishable responsibility.\cite{martin2003agile}
-	% implement
+	% done
 	\item Duck Typing - is a specifically to python, a design principle that
 		says that if an object has a certain desired functionality it doesn't not matter
 		what of nature the object is.
-	% done below, no bullshit
-	\item Composition over inheritance - it's design pattern which obligates
-	 	to use composition rather than inheritance. \cite{Gamma:1995:DPE:186897}
-	% implement
-	\item Iterator - deign pattern that says to access values of a list
-	 	without exposing the list. \cite{Gamma:1995:DPE:186897}
+	% % bullshit
+	% \item Composition over inheritance - it's design pattern which obligates
+	%  	to use composition rather than inheritance. \cite{Gamma:1995:DPE:186897}
+	% done
+	\item Iterator - is a design pattern that says to access values of a list
+	 	without exposing the list \cite{Gamma:1995:DPE:186897}. It's built into python language itself and
+		can be used with syntax like \lstinline{for .. in ..} or \lstinline{next()}.
 	% done
 	\item Singleton - design pattern that obligates a class to be
 		instantiated only once. \cite{Eckel2017}
@@ -149,7 +157,8 @@ is highly recommended. Below is a list of code pattern recommendations:
 % http://codebetter.com/jeremymiller/2006/12/03/composed-method-pattern/
 % inderact variable acces
 Since ML programming is more method oriented, the most pattern above concentrated
-on how to keep functions readable, precise and flexible.
+on how to keep functions readable, precise and flexible. In this work we will follow
+these patterns.
 
 We will see examples of those patterns in the \autoref{ch:design}
 and \autoref{ch:implementation}.
@@ -237,7 +246,7 @@ which theoretically should improve performance. \cite{DBLP:journals/corr/KingmaB
 
 
 \paragraph{Gradient clipping} In contrast to RAM paper, the basic RAM implementation
-additionally clipped gradient by global norm of their values to prevent the vanishing
+additionally clipped the gradient values by global norm of their values to prevent the vanishing
 and the exploding gradient problems \cite{Pascanu2012}.
 
 
@@ -341,7 +350,7 @@ and based on that input make a classification decision. Group in this case means
 more than one image(e.g. 2,3 or 5 images). More formally:
 \textit{given a group of images, extended model returns a probability distribution over
 $K$ different outcomes, where $K$ - is amount of classes in the classification problem.}
-We'll refer to amount of the image in a group as $n_i$.
+We'll refer to amount of the image in a group as $n$.
 
 This section will discuss several ways of how to achieve that.
 In the figure \ref{fig:ram_model_arch} you can see original architecture of RAM.
@@ -363,7 +372,7 @@ in the action network $f_a(\theta_a)$ as well as in location network $f_l(\theta
 as shown in figure \ref{fig:ram_model_arch} to produce a classification decision or
 next location respectively. In a similar way, we can invent a new network that takes as
 input the LSTM cell's output $h_t$, have parameters $\theta_p$ and outputs
-the probability distribution over $n_i$. We shall call this network
+the probability distribution over $n$. We shall call this network
 \emph{picker network}. The purpose of the picker network is to pick an image
 in the group to explore appropriate image, hence the name. By manifesting
 this extension, the model as a whole will have three neural networks consuming
@@ -378,7 +387,7 @@ the output of LSTM cell $h_t$:
 
 All of networks above have a similar structure:
 \begin{align} \label{eq:picker_network}
-	f_a(h_t; \theta_a) = exp(Linear_{\theta_a}(h_t))/Z \\
+	f_a(h_t; \theta_a) = Softmax(Linear_{\theta_a}(h_t)) \\
 	f_l(h_t; \theta_l) = Linear_{\theta_l}(h_t) \\
 	f_p(h_t; \theta_p) = Softmax(Linear_{\theta_p}(h_t))
 \end{align}
@@ -498,21 +507,37 @@ approach can be also augmented with following actions:
 	\item Third Action - finish, that is, stop taking glimpse and do the classification decision.
 \end{itemize}
 
-
+There is no theoretical to prove which one from the extensions will work better,
+therefore testing them with experiments is required.
 \section{Dataset}
 \label{sec:analysis_dataset}
 
 Before starting the construction of the model, one requires to think about an appropriate
 dataset on which the model can be tested.
-MNIST dataset\footnote{The MNIST data is hosted on \cite{LeCun2010}} is recognized as being the simplest dataset among the neural network
+MNIST dataset\footnote{The MNIST data is hosted on \cite{LeCun2010}} is recognized
+as being the simplest dataset among the computer vision
 community, therefore building a dataset upon it would be easier. The simplicity of dataset
 would help to understand problems occurring while developing a model.
-Additionally to this, researchers from researchers from google
+Additionally to this, from researchers from google
 Deepmind used MNIST to evaluate RAM, which indicated that MNIST data would
 be good fit for the extension as well. \cite{DBLP:journals/corr/MnihHGK14}
-MNIST dataset is dataset consist of images of handwritten digits each labeled
-from set: $\mathcal{A} = \{0 .. 9\}$, where $\mathcal{A}$ - is a set of available
-classes in MNSIT dataset.
+
+
+\paragraph{MNIST Dataset} is dataset of scanned handwritten images, each labeled
+from from set: $\mathcal{A} = \{0 .. 9\}$, where $\mathcal{A}$ - is a set of available
+classes in MNSIT dataset. You can see an example of 4 digits in figure \ref{fig:mnist}.
+Additionally, it includes label for each of the image.
+
+\begin{figure}[h!]
+	\includegraphics[width=\linewidth,scale=0.4]{MNIST}
+	\caption{MNIST example (Source: \cite{tensorFlowSite})}
+	\label{fig:mnist}
+\end{figure}
+
+For example, in the figure \ref{fig:mnist} the labels are 5, 0, 4 and 1.
+Each images consist of $28\times28$ pixels, therefore an MNIST image would
+be an array of size $784$.
+
 MNSIT dataset consist of 55,000 training samples, 10,000 test samples, 5,000 validation samples.
 Requirement for the dataset can be formulated as following:\\
 \textit{Each sample in the dataset should contain fixed number of images. Amount of images
@@ -522,11 +547,12 @@ data to train, validate and evaluate the model.}
 
 
 
-There is different variations for building the dataset of group of images from MNIST dataset.
+% There is different variations for building the dataset of group of images from MNIST dataset.
 % One of them can be as simple as bringing two different numbers together and adding a
 % noise image, which shouldn't have an influence on the outcome.
 \subparagraph{Procedure}
-One of the variations could be described as following:
+We should come up with the dataset that will fulfill the requirements above.
+One way of doing it could be described as following:
 having limit of 10 classes in MNIST dataset, we decide about the class(or classes) of images
 that hold information relevant for classification decision(it can be f.e. classes
 labeled with 4 and with 3 in MNIST),
@@ -580,6 +606,9 @@ certain components of the system having expected shape of vectors and matrixes.
 As code for producing the dataset having procedural structure,
 it should be fully tested in order to avoid
 unexpected behaviour in the model.
+\\
+To test how the performance of the model following metric should be taken into
+consideration: accuracy on the test data, time needed for the model to train.
 
 % we need take extra care of this
 % as to assure that the model works correctly.
