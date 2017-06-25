@@ -34,13 +34,11 @@ def placeholder_inputs():
     img_size = (
         Config.original_size * Config.original_size * Config.num_channels
     )
+    images_shape = [None, Config.n_img_group, img_size]
+    labels_shape = [None, Config.n_img_group]
     with tf.variable_scope('data'):
-        images_ph = tf.placeholder(
-            tf.float32, [None, Config.n_img_group, img_size], name='images'
-        )
-        labels_ph = tf.placeholder(
-            tf.int64, [None, Config.n_img_group], name='labels'
-        )
+        images_ph = tf.placeholder(tf.float32, images_shape, name='images')
+        labels_ph = tf.placeholder(tf.int64, labels_shape, name='labels')
     return images_ph, labels_ph
 
 
@@ -78,8 +76,8 @@ def init_baseline_net(outputs):
     with tf.variable_scope('baseline'):
         w_baseline = weight_variable((Config.cell_output_size, 1))
         b_baseline = bias_variable((1,))
-        for output in outputs[1:]:
-            baseline_t = tf.nn.xw_plus_b(output, w_baseline, b_baseline)
+        for each in outputs[1:]:
+            baseline_t = tf.nn.xw_plus_b(each, w_baseline, b_baseline)
             baseline_t = tf.squeeze(baseline_t)
             baselines.append(baseline_t)
         baselines = tf.stack(baselines)  # [timesteps, batch_sz]
@@ -170,7 +168,6 @@ def accuracy(softmax, batch_size, labels):
     n_correct = tf.reduce_sum(
         tf.cast(tf.equal(pred_labels, labels[:batch_size]), tf.float32)
     )
-    # accuracy = n_correct / batch_size
     return n_correct / batch_size
 
 
