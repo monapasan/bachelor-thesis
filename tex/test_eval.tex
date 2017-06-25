@@ -1,0 +1,46 @@
+\chapter{Test and evaluation}
+In this chapter we will discuss how the testing is done
+in the implementation of this work as well as how
+the current model is evaluated.
+\section{Test}
+In the current implementation we test our prototype by the means
+of unit testing. Unit testing is method of software testing,
+which verifies that individual units of the code are working
+as expected. To perform the unit testing, one should identify
+pieces of code, that are responsible for a clear task \cite{Huizinga2007}.
+In most cases,
+that are methods of classes or functions. Imagine, that we have
+a function that adds two numbers together. To test this function,
+we have to come up with the real values, calculate the expected
+return, call the function with the real value and compare
+the return of the function with the expected return:
+
+\begin{lstlisting}[language=Python, caption={TensorFlow example \cite{tensorflow2015-whitepaper}},label={list:test_ex}]
+
+	def add(x, y):
+		"""Add two numbers together."""
+		return x + y
+
+	# unit test of the function `add`
+	def test_add():
+		assert add(3, 5) == 8 # 3, 5 are real values, 8 is the expected return
+		assert add(10, 2) == 12
+\end{lstlisting}
+
+For testing purposes we
+used unit test framework called Nose. Nose simplifies unit testing
+by providing automatic test discovery. It also automatically creates a test suite,
+which is nothing more than a set of tests. One advantage of using the Nose
+over the Python’s standard unit test module is that no configuration is required
+in order to run all tests when the tests are named consistent with Nose conventions
+and are located in the \emph{\\tests} directory. Additional advantage is that
+Nose is generating well-readable report after running tests, that helps
+when debugging and fixing tests.
+\subparagraph{} The module Dataset is fully tested with unit tests. However
+the module Model is not, since it has too many non-deterministic values, which
+is way harder to test.
+
+\section{Evaluation} The model was evaluated with the dataset described
+in \autoref{sec:analysis_dataset} on server from HTW Berlin.
+
+Results of evaluation
