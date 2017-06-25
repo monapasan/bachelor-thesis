@@ -4,47 +4,78 @@ from .context import IndexGenerator
 from tensorflow.examples.tutorials.mnist import input_data
 mnist_raw = input_data.read_data_sets('../data/MNIST_data', one_hot=True)
 
+MNIST_size = 28
+images_per_sample = 5
+amount_of_classes = 3
+MNIST_classes_n = 10
+
 
 def init_indexGenerator():
-    images_per_sample = 5
+    """Initilise IndexGenerator for testing purposes."""
     class_amount = 3
     noise_sizes = [4, 3, 2]
     # myIndexGenerator.get_indexes(1) -->
     # this should return an array of shape [1, class_amount, noise_sizes]
     # [[1,5,3,1], [1,5,3], [3, 4]]
-    return IndexGenerator(images_per_sample, noise_sizes, class_amount)
+    return IndexGenerator(noise_sizes, class_amount)
 
 
 def init_raw_dataset():
+    """Initilise the GroupDataset for testing purposes."""
     noise_label_index = [1, 2]
     data_label_index = [0]
-    amount_of_classes = 3
     n_samples_per_class = [15000, 15000, 15000]
     noise_quantity = [4, 3, 2]
-    sample_size = 5
     return GroupDataset(
         init_indexGenerator(), mnist_raw.train, noise_label_index,
         data_label_index, amount_of_classes, noise_quantity,
-        n_samples_per_class, sample_size
+        n_samples_per_class, images_per_sample
     )
 
 
 myGroupDataset = init_raw_dataset()
 
+def test_images_shape():
+    """Return expected shape of images."""
+    assert myGroupDataset.length == (3, 15000, 5, 784)
+
+def test_labels_shape():
+    """Return expected shape of labels."""
+    assert myGroupDataset.length == (3, 15000, 5, 10)
+
 
 def test_rawdataset_length():
+    """Test whether the GroupDataset has the expected length."""
     assert myGroupDataset.length == 15000
 
 
 def test_get_next_batch_forClass():
-    images, labels = myGroupDataset.next_batch_for_class(1, 100)
-    assert images.shape == (100, 5, 28 * 28)
-    assert labels.shape == (100, 5, 10)
+    """Test the function `next_batch_for_class`.
 
-def test_get_next_batch():
-    images, labels = myGroupDataset.next_batch(10)
-    assert images.shape == (10, 3, 5, 28 * 28)
-    assert labels.shape == (10, 3, 5, 10)
+    As GroupDataset is use uniform distribution to choose the indexes
+    of noise images, we check only the expected shape of return value.
+    """
+    class_n = 1
+    size = 100
+    images, labels = myGroupDataset.next_batch_for_class(class_n, size)
+    assert images.shape == (size, images_per_sample, MNIST_size * MNIST_size)
+    assert labels.shape == (size, images_per_sample, MNIST_classes_n)
+
+
+# def test_get_next_batch():
+#     """Tesh the function `next_batch` of the GroupDataset instance.
+#
+#     As GroupDataset is use uniform distribution to choose the indexes
+#     of noise images, we check only the expected shape of return value.
+#     """
+#     size = 10
+#     images, labels = myGroupDataset.next_batch(size)
+#     assert images.shape == (
+#         size, amount_of_classes, images_per_sample, MNIST_size * MNIST_size
+#     )
+#     assert labels.shape == (
+#         size, amount_of_classes, images_per_sample, MNIST_classes_n
+#     )
 
 
 # myGroupDataset.next_batch(size = 1)

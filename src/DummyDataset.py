@@ -57,7 +57,7 @@ class DummyDataset(object):
     def get(self, i):
         """Return i-th sample if i is integer, otherwise list of samples."""
         # TODO: check if an array
-        return (self.get_images[i], self.get_labels(i))
+        return (self.get_images(i), self.get_labels(i))
         # if(isinstance(i, int)):
         #     return self._images[i], self._labels[i]
         # else:
