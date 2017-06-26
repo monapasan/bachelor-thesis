@@ -1,3 +1,5 @@
+"""Test IndexGenerator module."""
+
 from .context import IndexGenerator
 from nose.tools import raises
 from tensorflow.examples.tutorials.mnist import input_data

@@ -2,7 +2,9 @@
 __pycache__/
 *.py[cod]
 *$py.class
+
 .idea
+
 # C extensions
 *.so
 
@@ -20,6 +22,7 @@ lib64/
 parts/
 sdist/
 var/
+
 *.egg-info/
 .installed.cfg
 *.egg
@@ -87,3 +90,8 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Data
+MNIST_data/
+
+log/

@@ -14,21 +14,21 @@ class IndexGenerator(object):
     """Responsible for generating indexes.
 
     The class generates indexes for 'cls_amount' classes.
-    Amount of noise indexes is depends on 'noise_size'.
+    Amount of noise indexes is depends on 'noise_quantity'.
     When  keep_order is 'True' then generated indexes
     will be the same. That is, get_indexes will be
     determenistic function.
     """
 
     def __init__(
-        self, noise_size, cls_amount, keep_order=False,
+        self, noise_quantity, cls_amount, keep_order=False,
         distribution=_uniform, noise_index_order=None
     ):
         """Construct a new Index Generator.
 
         Args:
-             noise_size(list) : should be array of size 'cls_amount'. Amount
-                of noise data that one sample should have per class.
+             noise_quantity(list) : should be array of size 'cls_amount'.
+                Amount of noise data that one sample should have per class.
              cls_amount(int) : amount of classes the
                 dataset should have.
              keep_order(Boolean) : if 'True' then order will be the same across
@@ -42,27 +42,27 @@ class IndexGenerator(object):
                  'noise_index_order; is used as indexes where noise data
                  should be placed at.
         Raises:
-            ValueError: If the `noise_size` is not one-dimensional array or
-                if no noise_size was
+            ValueError: If the `noise_quantity` is not one-dimensional array or
+                if no noise_quantity was
                 passed to the contructor.
         """
-        if(noise_size is None):
+        if(noise_quantity is None):
             raise ValueError(
-                'noise_size \
+                'noise_quantity \
                 should be passed to the constructor'
             )
         if(
-            not isinstance(noise_size, int) and
-            (hasattr(noise_size, "__len__")
-                and len(noise_size) != cls_amount)
+            not isinstance(noise_quantity, int) and
+            (hasattr(noise_quantity, "__len__")
+                and len(noise_quantity) != cls_amount)
         ):
             raise ValueError(
-                'noise_size should be either one-dimensional \
+                'noise_quantity should be either one-dimensional \
                 or equal to amount of classes'
             )
 
-        self.noise_size = [noise_size] * cls_amount if isinstance(
-            noise_size, int) else noise_size
+        self.noise_quantity = [noise_quantity] * cls_amount if isinstance(
+            noise_quantity, int) else noise_quantity
         self.cls_amount = cls_amount
         if(keep_order):
             self._build_generator_with_order(noise_index_order)
@@ -75,7 +75,7 @@ class IndexGenerator(object):
         def generateOneSample():
             return [
                 distribution(self.cls_amount + 1, noise)
-                for noise in self.noise_size
+                for noise in self.noise_quantity
             ]
 
         def generate(size):
@@ -86,7 +86,7 @@ class IndexGenerator(object):
 
         def generate_for_class(class_number):
             return distribution(
-                self.cls_amount + 1, self.noise_size[class_number]
+                self.cls_amount + 1, self.noise_quantity[class_number]
             )
         self.__generate_for_class = generate_for_class
 
@@ -105,10 +105,10 @@ class IndexGenerator(object):
 
     def _check_order(self):
         for i, order in enumerate(self._order):
-            if(len(order) == self.noise_size[i]):
+            if(len(order) == self.noise_quantity[i]):
                 raise ValueError(
                     'The shape of the indexes object does not match with \
-                     shape of noise_size'
+                     shape of noise_quantity'
                 )
 
     def get_indexes(self, size=1):
