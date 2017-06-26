@@ -1,4 +1,8 @@
 """This module provides indexes of noise data fot the GroupDataset."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 from numpy.random import choice
 
 

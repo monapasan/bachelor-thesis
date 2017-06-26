@@ -49,7 +49,7 @@ def test_labels_shape():
 
 def test_rawdataset_length():
     """Test whether the GroupDataset has the expected length."""
-    assert myGroupDataset.length == 43000
+    assert myGroupDataset.length == 45000
 
 
 def test_get_next_batch_forClass():

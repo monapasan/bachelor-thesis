@@ -3,8 +3,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from IndexGenerator import IndexGenerator
-from DummyDataset import DummyDataset
+from .DummyDataset import DummyDataset
+from .IndexGenerator import IndexGenerator
 import itertools
 import numpy as np
 
