@@ -10,12 +10,14 @@ import time
 import tensorflow as tf
 import numpy as np
 
-from glimpseNetwork import GlimpseNet
-from locationNetwork import LocNet
-from pickerNetwork import PickerNet
-from glimpseSensor import GlimpseSensor
+from Model.glimpseNetwork import GlimpseNet
+from Model.locationNetwork import LocNet
+from Model.pickerNetwork import PickerNet
+from Model.glimpseSensor import GlimpseSensor
 
-from utils import weight_variable, bias_variable, loglikelihood
+from Model.utils import weight_variable, bias_variable, loglikelihood
+from Dataset.GroupDataset import GroupDataset
+
 from config import Config
 
 from tensorflow.examples.tutorials.mnist import input_data
@@ -27,6 +29,17 @@ seq2seq = tf.contrib.legacy_seq2seq
 
 loc_mean_arr = []
 sampled_loc_arr = []
+
+
+def init_dataset():
+    """Initialise dataset for the training."""
+    path = '../../' + Config.data_dir
+    mnist = input_data.read_data_sets(path, one_hot=False)
+    train = mnist.train
+    validation = mnist.validation
+    test = mnist.test
+    dataset = GroupDataset()
+    return dataset
 
 
 def placeholder_inputs():
@@ -233,7 +246,7 @@ def get_rewards(pred_labels, labels_ph):
 
 
 def init_learning_rate(global_step, training_steps_per_epoch):
-    """."""
+    """Initialise learning with exponential decay."""
     starter_learning_rate = Config.lr_start
     learning_rate = tf.train.exponential_decay(
         starter_learning_rate,
@@ -284,7 +297,7 @@ def log_step(
 
 def run_training():
     """Run the model."""
-    mnist = input_data.read_data_sets('MNIST_data', one_hot=False)
+    mnist = init_dataset()
     with tf.Graph().as_default():
         images_ph, labels_ph = placeholder_inputs()
         outputs = init_seq_rnn(images_ph, labels_ph)

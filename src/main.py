@@ -169,6 +169,12 @@ if __name__ == '__main__':
         default=5,
         help='Amount of images per group.'
     )
+    parser.add_argument(
+        '--data_dir',
+        type=str,
+        default='MNIST_data/',
+        help='Directory to store the original MNIST data'
+    )
     FLAGS, unparsed = parser.parse_known_args()
     config.init_config(FLAGS)
     tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)

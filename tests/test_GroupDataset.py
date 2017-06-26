@@ -1,3 +1,5 @@
+"""Test GroupDataset module."""
+
 from .context import GroupDataset
 from .context import IndexGenerator
 # from nose.tools import raises
