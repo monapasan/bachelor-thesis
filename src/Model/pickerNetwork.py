@@ -57,5 +57,4 @@ class PickerNet(object):
         image_number = tf.cast(
             tf.argmax(tf.stop_gradient(picker_softmax), 1), dtype=tf.int32
         )
-        print(image_number)
         return image_number

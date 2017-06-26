@@ -244,7 +244,7 @@ def evaluation(
         # correct_cnt += sess.run(correct_pred, feed_dict=feed_dict)
 
     acc = correct_cnt / num_samples
-    logging.info('{} = {}% \n'.format(tag, acc))
+    logging.info('{} = {:.4f}% \n'.format(tag, acc))
     add_summary(summary_writer, acc, step, True, tag)
 
 
@@ -303,16 +303,17 @@ def add_summary(writer, summary_val, step, is_custom=False, tag=None):
 
 def log_step(
     i, duration, learning_rate,
-    reward, loss, x_entr, logllratio, baseline_mse
+    reward, loss, x_entr, logllratio, baseline_mse, summary_writer
 ):
     """Print the current state of the model.
 
     Including: step, duration of the step, reward value, loss, cross-entropy,
     loglikelihood ratio.
     """
-    logging.info('step {}: lr = {:3.6f}, step duration: {:.3f} sec'.format(
-        i, learning_rate, duration)
+    logging.info('Step {}. Step duration: {:.3f} sec.'.format(
+        i, duration)
     )
+    logging.info('learning_rate = {:3.6f}'.format(learning_rate))
     info = 'reward = {:3.4f}\tloss = {:3.4f}\txent = {:3.4f}'
     logging.info(
         info.format(reward, loss, x_entr)
@@ -320,6 +321,15 @@ def log_step(
     logging.info('llratio = {:3.4f}\tbaselines_mse = {:3.4f}'.format(
         logllratio, baseline_mse)
     )
+    add_summary(summary_writer, learning_rate, i, True, 'Learning rate value')
+    add_summary(summary_writer, reward, i, True, 'Average reward')
+    add_summary(summary_writer, loss, i, True, 'Hybrid loss value')
+    add_summary(summary_writer, x_entr, i, True, 'Cross entropy')
+    add_summary(summary_writer, logllratio, i, True, 'Log likelihood ratio')
+    add_summary(
+        summary_writer, baseline_mse, i, True, 'Baseline mean squared error'
+    )
+
 
 
 def run_training():
@@ -379,7 +389,7 @@ def run_training():
         # Add the variable initializer Op.
         init = tf.global_variables_initializer()
 
-        # Create a saver for writing training checkpoints.
+        # TODO: Create a saver for writing training checkpoints.
         # saver = tf.train.Saver()
 
         # Create a session for running Ops on the Graph.
@@ -412,7 +422,7 @@ def run_training():
             if i and i % 100 == 0:
                 log_step(
                     i, duration, lr_val, reward_val, loss_val,
-                    xent_val, logllratio_val, baselines_mse_val
+                    xent_val, logllratio_val, baselines_mse_val, summary_writer
                 )
                 logging.info('Batch accuracy: %f%%. \n' % (acc_val))
                 summary_str, acc_sum = sess.run(
