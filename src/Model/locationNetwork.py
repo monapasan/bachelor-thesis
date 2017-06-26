@@ -14,7 +14,7 @@ from __future__ import print_function
 
 import tensorflow as tf
 
-from utils import weight_variable, bias_variable
+from .utils import weight_variable, bias_variable
 
 
 class LocNet(object):

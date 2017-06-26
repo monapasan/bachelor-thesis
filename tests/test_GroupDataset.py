@@ -46,12 +46,12 @@ def test_images_shape():
 
 def test_labels_shape():
     """Return expected shape of labels."""
-    assert myGroupDataset.labels.shape == (45000, 1, 3)
+    assert myGroupDataset.labels.shape == (45000, )
 
 
 def test_rawdataset_length():
-    """Test whether the GroupDataset has the expected length."""
-    assert myGroupDataset.length == 45000
+    """Test whether the GroupDataset has the expected number of examples."""
+    assert myGroupDataset.num_examples == 45000
 
 
 def test_get_next_batch_forClass():
@@ -63,7 +63,7 @@ def test_get_next_batch_forClass():
     size = 100
     images, labels = myGroupDataset.next_batch(size)
     assert images.shape == (size, 5, 784)
-    assert labels.shape == (size, 1, 3)
+    assert labels.shape == (size, )
     # images, labels = myGroupDataset.next_batch_for_class(class_n, size)
     # assert images.shape == (size, images_per_sample, MNIST_size * MNIST_size)
     # assert labels.shape == (size, images_per_sample, MNIST_classes_n)

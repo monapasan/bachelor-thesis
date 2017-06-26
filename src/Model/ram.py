@@ -15,8 +15,9 @@ from Model.locationNetwork import LocNet
 from Model.pickerNetwork import PickerNet
 from Model.glimpseSensor import GlimpseSensor
 
-from Model.utils import weight_variable, bias_variable, loglikelihood
+from Model.utils import weight_variable, bias_variable, loglikelihood, dotdict
 from Dataset.GroupDataset import GroupDataset
+from Dataset.IndexGenerator import IndexGenerator
 
 from config import Config
 
@@ -31,15 +32,38 @@ loc_mean_arr = []
 sampled_loc_arr = []
 
 
+def init_group_dataset(dataset, n_examples):
+    """Initilise the GroupDataset for testing purposes."""
+    noise_quantity = Config.noises_per_class
+    amount_of_classes = Config.num_classes
+
+    noise_label_index = Config.noise_label_index
+    data_label_index = Config.data_label_index
+
+    images_per_sample = Config.n_img_group
+
+    myIG = IndexGenerator(noise_quantity, amount_of_classes)
+    return GroupDataset(
+        myIG, dataset, noise_label_index,
+        data_label_index, amount_of_classes, noise_quantity,
+        n_examples, images_per_sample
+    )
+
+
 def init_dataset():
-    """Initialise dataset for the training."""
-    path = '../../' + Config.data_dir
-    mnist = input_data.read_data_sets(path, one_hot=False)
-    train = mnist.train
-    validation = mnist.validation
-    test = mnist.test
-    dataset = GroupDataset()
-    return dataset
+    """Initialise dataset for the training, validation and testing."""
+    path = Config.data_dir
+    mnist = input_data.read_data_sets(path, one_hot=True)
+    n_train = Config.num_examples_per_class
+    n_validation = Config.num_examples_per_class_test
+    n_test = Config.num_examples_per_class_val
+
+    dataset = {
+        'train': init_group_dataset(mnist.train, n_train),
+        'validation': init_group_dataset(mnist.validation, n_validation),
+        'test': init_group_dataset(mnist.test, n_test),
+    }
+    return dotdict(dataset)
 
 
 def placeholder_inputs():
@@ -48,7 +72,7 @@ def placeholder_inputs():
         Config.original_size * Config.original_size * Config.num_channels
     )
     images_shape = [None, Config.n_img_group, img_size]
-    labels_shape = [None, Config.n_img_group]
+    labels_shape = [None]
     with tf.variable_scope('data'):
         images_ph = tf.placeholder(tf.float32, images_shape, name='images')
         labels_ph = tf.placeholder(tf.int64, labels_shape, name='labels')
@@ -104,7 +128,10 @@ def lstm_inputs(glimpse_net, N):
     # N = tf.shape(images_ph)[0]
     # TODO: two-component Gaussian with a fixed variance
     init_loc = tf.random_uniform((N, 2), minval=-1, maxval=1)
-    init_glimpse = glimpse_net(init_loc)
+    init_img = tf.random_uniform(
+        [N], minval=0, maxval=(Config.n_img_group), dtype=tf.int32
+    )
+    init_glimpse = glimpse_net(init_loc, init_img)
     # amount of inputs data should be equal to amound of glimpses
     # once there is no input more, model will make a cl. decision
     inputs = [init_glimpse]
@@ -136,7 +163,7 @@ def fill_feed_dict(dataset, images_pl, labels_pl):
     images, labels = dataset.next_batch(Config.batch_size)
     # duplicate M times, see Eqn (2)
     # running kinda m episodes
-    images_feed = np.tile(images, [Config.M, 1])
+    images_feed = np.tile(images, [Config.M, 1, 1])
     labels_feed = np.tile(labels, [Config.M])
     feed_dict = {
         images_pl: images_feed,
@@ -283,12 +310,12 @@ def log_step(
     Including: step, duration of the step, reward value, loss, cross-entropy,
     loglikelihood ratio.
     """
-    logging.info('step {}: lr = {:3.6f}, duration: {:.3f} sec'.format(
+    logging.info('step {}: lr = {:3.6f}, step duration: {:.3f} sec'.format(
         i, learning_rate, duration)
     )
-    info = 'step {}: reward = {:3.4f}\tloss = {:3.4f}\txent = {:3.4f}'
+    info = 'reward = {:3.4f}\tloss = {:3.4f}\txent = {:3.4f}'
     logging.info(
-        info.format(i, reward, loss, x_entr)
+        info.format(reward, loss, x_entr)
     )
     logging.info('llratio = {:3.4f}\tbaselines_mse = {:3.4f}'.format(
         logllratio, baseline_mse)

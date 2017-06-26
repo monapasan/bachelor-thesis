@@ -15,7 +15,7 @@ from __future__ import print_function
 import numpy as np
 import tensorflow as tf
 
-from utils import weight_variable, bias_variable
+from .utils import weight_variable, bias_variable
 
 
 class PickerNet(object):
@@ -54,5 +54,8 @@ class PickerNet(object):
             tf.nn.xw_plus_b(input, self.w_pick, self.b_pick)
         )
         # image_number = [batch_size, 1]
-        image_number = np.argmax(tf.stop_gradient(picker_softmax), 1)
+        image_number = tf.cast(
+            tf.argmax(tf.stop_gradient(picker_softmax), 1), dtype=tf.int32
+        )
+        print(image_number)
         return image_number

@@ -15,7 +15,9 @@ FLAGS = None
 
 
 def main(_):
-    from ram import run_training
+    """Run the Visual Attention model with the extension."""
+
+    from Model.ram import run_training
     if tf.gfile.Exists(FLAGS.log_dir):
         tf.gfile.DeleteRecursively(FLAGS.log_dir)
     tf.gfile.MakeDirs(FLAGS.log_dir)
@@ -127,12 +129,6 @@ if __name__ == '__main__':
         a classfication decision.'
     )
     parser.add_argument(
-        '--num_classes',
-        type=int,
-        default=10,
-        help='Amount of classes for classification task.'
-    )
-    parser.add_argument(
         '--max_grad_norm',
         type=float,
         default=5.,
@@ -163,6 +159,9 @@ if __name__ == '__main__':
         default=10,
         help='Amount of episodes per image for Monte Carlo sampling.'
     )
+
+    """Dataset configuration."""
+
     parser.add_argument(
         '--n_img_group',
         type=int,
@@ -172,8 +171,50 @@ if __name__ == '__main__':
     parser.add_argument(
         '--data_dir',
         type=str,
-        default='MNIST_data/',
+        default=(_dir + '/MNIST_data/'),
         help='Directory to store the original MNIST data'
+    )
+    parser.add_argument(
+        '--num_classes',
+        type=int,
+        default=3,
+        help='Amount of classes for classification task.'
+    )
+    parser.add_argument(
+        '--noises_per_class',
+        type=list,
+        default=[4, 3, 2],
+        help='Amount of noise images per class'
+    )
+    parser.add_argument(
+        '--num_examples_per_class',
+        type=list,
+        default=[15000, 15000, 15000],
+        help='Amount of noise images per class for training dataset'
+    )
+    parser.add_argument(
+        '--num_examples_per_class_val',
+        type=list,
+        default=[1700, 1700, 1700],
+        help='Amount of noise images per class for validation dataset'
+    )
+    parser.add_argument(
+        '--num_examples_per_class_test',
+        type=list,
+        default=[3300, 3300, 3300],
+        help='Amount of noise images per class for test dataset'
+    )
+    parser.add_argument(
+        '--noise_label_index',
+        type=list,
+        default=[1, 2],
+        help='Amount of noise images per class'
+    )
+    parser.add_argument(
+        '--data_label_index',
+        type=list,
+        default=[0, 3, 4, 5, 6, 7, 8, 9],
+        help='Amount of noise images per class'
     )
     FLAGS, unparsed = parser.parse_known_args()
     config.init_config(FLAGS)

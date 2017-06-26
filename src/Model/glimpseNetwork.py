@@ -32,7 +32,7 @@ from __future__ import print_function
 
 import tensorflow as tf
 
-from utils import weight_variable, bias_variable
+from .utils import weight_variable, bias_variable
 
 
 class GlimpseNet(object):
@@ -99,8 +99,11 @@ class GlimpseNet(object):
         # EXTENSTION: choose image based on location value
         # TODO: ^^
         batch_size = tf.shape(self.images_ph)[0]
-        indicies = tf.stack([tf.range(batch_size), tf.squeeze(n_image)])
-        selected_images = tf.gather_nd(self.images_ph, indicies, axis=-1)
+        indicies = tf.stack(
+            [tf.range(batch_size, dtype=tf.int32), tf.squeeze(n_image)],
+            axis=-1
+        )
+        selected_images = tf.gather_nd(self.images_ph, indicies)
 
         return self.glimpse_sensor(selected_images, loc)
 

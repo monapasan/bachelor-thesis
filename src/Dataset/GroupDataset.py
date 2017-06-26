@@ -15,7 +15,7 @@ class GroupDataset(object):
     def __init__(
         self, index_generator, dataset, noise_label_index,
         data_label_index, amount_of_classes,
-        noises_per_class, n_samples, sample_size
+        noises_per_class, n_samples, sample_size, one_hot=False
     ):
         """Construct a new Index Generator.
 
@@ -43,6 +43,8 @@ class GroupDataset(object):
                 if the amount is the same acroll all classes.
             sample_size(int): amount of pictures in one
                 sample(i.e. size of group).
+            one_hot(Boolean): if True then labels will be one hot encoded,
+                otherwise not.
         Raises:
             ValueError:
         """
@@ -80,6 +82,7 @@ class GroupDataset(object):
             )
         self.__dataset = dataset
         self.index_generator = index_generator
+        self.one_hot = one_hot
         if(isinstance(n_samples, int)):
             self.n_samples_per_class = (
                 [n_samples] * amount_of_classes
@@ -133,7 +136,7 @@ class GroupDataset(object):
             self._build_group_for_class(i)
         self._images = np.array(self._images)
         self._labels = np.array(self._labels)
-        self.length = self._labels.shape[0]
+        self.num_examples = self._labels.shape[0]
         self.permute()
 
     def _build_group_for_class(self, class_number):
@@ -175,8 +178,11 @@ class GroupDataset(object):
         self.__information_data.permute()
 
     def _build_label_for_class(self, cls_n):
-        class_label = np.zeros((1, self.amount_of_classes))
-        class_label[np.arange(1), [cls_n]] = 1
+        if(self.one_hot):
+            class_label = np.zeros((1, self.amount_of_classes))
+            class_label[np.arange(1), [cls_n]] = 1
+        else:
+            class_label = cls_n
         return class_label
 
     def _build_combinations(self, cls_n):
@@ -197,11 +203,11 @@ class GroupDataset(object):
     def next_batch(self, batch_size):
         """Get next batch of size `batch_size`."""
         start = self._index_in_epoch
-        if start + batch_size > self.length:
+        if start + batch_size > self.num_examples:
             self._epochs_completed += 1
-            rest_num_examples = self.length - start
-            images_rest_part = self._images[start:self.length]
-            labels_rest_part = self._labels[start:self.length]
+            rest_num_examples = self.num_examples - start
+            images_rest_part = self._images[start:self.num_examples]
+            labels_rest_part = self._labels[start:self.num_examples]
             self.permute()
             start = 0
             self._index_in_epoch = batch_size - rest_num_examples
@@ -223,7 +229,7 @@ class GroupDataset(object):
 
     def permute(self):
         """Permute the dataset."""
-        perm0 = np.arange(self.length)
+        perm0 = np.arange(self.num_examples)
         np.random.shuffle(perm0)
         self._images = self._images[perm0]
         self._labels = self._labels[perm0]
