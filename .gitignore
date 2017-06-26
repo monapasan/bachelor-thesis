@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+.idea
+
 # C extensions
 *.so
 
@@ -20,8 +22,7 @@ lib64/
 parts/
 sdist/
 var/
-log/
-MNIST_data/
+
 *.egg-info/
 .installed.cfg
 *.egg
