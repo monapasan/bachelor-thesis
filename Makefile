@@ -2,4 +2,4 @@ init:
 	pip install -r requirements.txt
 
 test:
-	nosetests tests --nologcapture -d
+	nosetests tests --nologcapture --rednose -d 

@@ -1,3 +1,4 @@
+"""This module provides provides a dataset for the extension of RAM."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -14,7 +15,7 @@ class GroupDataset(object):
     def __init__(
         self, index_generator, dataset, noise_label_index,
         data_label_index, amount_of_classes,
-        noise_quantity, n_samples, sample_size
+        noises_per_class, n_samples, sample_size
     ):
         """Construct a new Index Generator.
 
@@ -31,10 +32,12 @@ class GroupDataset(object):
                 Indexes of labels where relevant for the task
                 information comes from.
             amount_of_classes(int): amount of classes the dataset should have
-            noise_quantity(list):  amount of noise labels per sample that
+            noises_per_class(list):  amount of noise labels per sample that
                 each of the class should have. Should be an array of size
                 `amount_of_classes`. This equation should be fulfilled:
-                all(amount_of_classes > noise_n for noise_n in noise_quantity)
+                all(
+                    amount_of_classes > noise_n for noise_n in noises_per_class
+                )
             n_samples(int): amount of sample in each of the class.
                 Should be an array of size `amount_of_classes` or integer
                 if the amount is the same acroll all classes.
@@ -62,9 +65,9 @@ class GroupDataset(object):
                 Noise indexes is out of range'
             )
 
-        if(max(noise_quantity) > sample_size):
+        if(max(noises_per_class) > sample_size):
             raise ValueError(
-                'noise_quantity should be less than amount of \
+                'noises_per_class should be less than amount of \
                  classes(amount_of_classes)'
             )
         if(
@@ -88,24 +91,12 @@ class GroupDataset(object):
         self.data_label_index = data_label_index
 
         self.amount_of_classes = amount_of_classes
-        self.noises_per_class = noise_quantity
+        self.noises_per_class = noises_per_class
         self.sample_size = sample_size
         self._divide_dataset()
         self._build_groups()
         self._epochs_completed = 0
         self._index_in_epoch = 0
-
-    # @property
-    # def length(self):
-    #     """Return the length of the dataset."""
-    #     return self.length
-    #
-    # @length.setter
-    # def length(self, value):
-    #     """Return the length of the dataset."""
-    #     self.length = value
-    #     return self
-    #
 
     @property
     def epochs_completed(self):
@@ -136,54 +127,30 @@ class GroupDataset(object):
                 self.__information_data.add_sample(image, label)
 
     def _build_groups(self):
-        # new_indexed_train_images = [
-        #     (i, image) for i, image in enumerate(self.__dataset.images)
-        # ]
-        self._images = [] #[None] * self.amount_of_classes
-        self._labels = [] #[None] * self.amount_of_classes
+        self._images = []
+        self._labels = []
         for i in range(self.amount_of_classes):
             self._build_group_for_class(i)
-
-        combined = list(zip(self._images, self._labels))
-        random.shuffle(combined)
-        self._images[:], self._labels[:] = zip(*combined)
         self._images = np.array(self._images)
         self._labels = np.array(self._labels)
-        # for n_samples in self.n_samples_per_class:
-
-        self.length = self._labels.shape[1]
+        self.length = self._labels.shape[0]
+        self.permute()
 
     def _build_group_for_class(self, class_number):
-        n_noise_per_class = self.noises_per_class[class_number]
-        n_data_per_class = self.sample_size - n_noise_per_class
         n_samples = self.n_samples_per_class[class_number]
-        # self._images[class_number] = []
-        # self._labels[class_number] = []
-        # self._permute_data()
-        noise_combinations_indicices = itertools.combinations(
-            range(self.__noise_data.length), n_noise_per_class
-        )
-        data_combinations_indicices = itertools.combinations(
-            range(self.__information_data.length), n_data_per_class
-        )
-        # if(n_data_per_class == 1):
-        #     self.__information_data.permute()
+        class_label = self._build_label_for_class(class_number)
+        noise_comb, data_comb = self._build_combinations(class_number)
         for i in range(n_samples):
-            group_label = []
-            group_image = []
+            group = []
             try:
-                combination_noise_i = next(noise_combinations_indicices)
-                combinations_data_i = next(data_combinations_indicices)
+                combination_noise_i = next(noise_comb)
+                combinations_data_i = next(data_comb)
             except StopIteration:
-                self._permute_data()
-                noise_combinations_indicices = itertools.combinations(
-                    range(self.__noise_data.length()), n_noise_per_class
+                noise_comb, data_comb = self._build_combinations_and_permute(
+                    class_number
                 )
-                data_combinations_indicices = itertools.combinations(
-                    range(self.__information_data.length()), n_data_per_class
-                )
-                combination_noise_i = next(noise_combinations_indicices)
-                combinations_data_i = next(data_combinations_indicices)
+                combination_noise_i = next(noise_comb)
+                combinations_data_i = next(data_comb)
 
             noise_images, noise_labels = self.__noise_data.get(
                 combination_noise_i
@@ -192,44 +159,56 @@ class GroupDataset(object):
             info_images, info_labels = self.__information_data.get(
                 combinations_data_i
             )
-            # for combinations_i in noise_combinations_indicices:
-            # noises = self.__noise_data.get(combinations_i)
-            # self._images[class_number].append()
-            # for combinations_i in data_combinations_indicices:
-            # information = self.__information_data.get(combinations_i)
-            # raise ValueError('SHIT')
             noise_indexes = self.index_generator.get_indexes_for_class(
                 class_number
             )[0]
-            # information_indexes = [
-            #     i for i in range(self.sample_size) if i not in noise_indexes
-            # ]
             for j in range(self.sample_size):
                 if(j in noise_indexes):
-                    group_image.append(noise_images.pop())
-                    group_label.append(noise_labels.pop())
+                    group.append(noise_images.pop())
                 if(j not in noise_indexes):
-                    group_image.append(info_images.pop())
-                    group_label.append(info_labels.pop())
-            self._images.append(group_image)
-            self._labels.append(group_label)
-        # TODO: permute images and labels for classes
+                    group.append(info_images.pop())
+            self._images.append(group)
+            self._labels.append(class_label)
 
-    def _permute_data(self):
+    def _permute_datasets(self):
         self.__noise_data.permute()
         self.__information_data.permute()
 
+    def _build_label_for_class(self, cls_n):
+        class_label = np.zeros((1, self.amount_of_classes))
+        class_label[np.arange(1), [cls_n]] = 1
+        return class_label
+
+    def _build_combinations(self, cls_n):
+            n_noise_per_class = self.noises_per_class[cls_n]
+            n_data_per_class = self.sample_size - n_noise_per_class
+            noise_combinations_indicices = itertools.combinations(
+                range(self.__noise_data.length), n_noise_per_class
+            )
+            data_combinations_indicices = itertools.combinations(
+                range(self.__information_data.length), n_data_per_class
+            )
+            return noise_combinations_indicices, data_combinations_indicices
+
+    def _build_combinations_and_permute(self, cls_n):
+        self._permute_datasets()
+        return self._build_combinations(cls_n)
+
     def next_batch(self, batch_size):
+        """Get next batch of size `batch_size`."""
         start = self._index_in_epoch
         if start + batch_size > self.length:
             self._epochs_completed += 1
             rest_num_examples = self.length - start
             images_rest_part = self._images[start:self.length]
             labels_rest_part = self._labels[start:self.length]
+            self.permute()
+            start = 0
             self._index_in_epoch = batch_size - rest_num_examples
             end = self._index_in_epoch
             images_new_part = self._images[start:end]
             labels_new_part = self._labels[start:end]
+
             result_images = np.concatenate(
                 (images_rest_part, images_new_part), axis=0
             )
@@ -241,71 +220,6 @@ class GroupDataset(object):
             self._index_in_epoch += batch_size
             end = self._index_in_epoch
             return self._images[start:end], self._labels[start:end]
-
-    # def next_batch_for_class(self, cls_number, batch_size):
-    #     """Return the next `batch_size` examples of class `cls_number`."""
-    #     images = self._images[cls_number]
-    #     labels = self._labels[cls_number]
-    #     start = self._index_in_epoch
-    #     if start + batch_size > self.length:
-    #         self._epochs_completed += 1
-    #         # Get the rest examples in this epoch
-    #         rest_num_examples = self.length - start
-    #         images_rest_part = images[start:self.length]
-    #         labels_rest_part = labels[start:self.length]
-    #         # TODO: permute data
-    #         self._index_in_epoch = batch_size - rest_num_examples
-    #         end = self._index_in_epoch
-    #         images_new_part = images[start:end]
-    #         labels_new_part = labels[start:end]
-    #         result_images = np.concatenate(
-    #             (images_rest_part, images_new_part), axis=0
-    #         )
-    #         result_labels = np.concatenate(
-    #             (labels_rest_part, labels_new_part), axis=0
-    #         )
-    #         return result_images, result_labels
-    #     else:
-    #         self._index_in_epoch += batch_size
-    #         end = self._index_in_epoch
-    #         return images[start:end], labels[start:end]
-    #
-    # def next_batch(self, batch_size, shuffle=True):
-    #     """Return the next `batch_size` examples from this data set."""
-    #     start = self._index_in_epoch
-    #     # Shuffle for the first epoch
-    #     # TODO: permute data
-    #     # if self._epochs_completed == 0 and start == 0 and shuffle:
-    #     #     self.permute()
-    #     # Go to the next epoch
-    #     if start + batch_size > self.length:
-    #         # Finished epoch
-    #         self._epochs_completed += 1
-    #         # Get the rest examples in this epoch
-    #         rest_num_examples = self.length - start
-    #         images_rest_part = self._images[start:self.length]
-    #         labels_rest_part = self._labels[start:self.length]
-    #         # # Shuffle the data
-    #         # TODO: permute data
-    #         # if shuffle:
-    #         #     self.permute()
-    #         # Start next epoch
-    #         start = 0
-    #         self._index_in_epoch = batch_size - rest_num_examples
-    #         end = self._index_in_epoch
-    #         images_new_part = self._images[start:end]
-    #         labels_new_part = self._labels[start:end]
-    #         result_images = np.concatenate(
-    #             (images_rest_part, images_new_part), axis=0
-    #         )
-    #         result_labels = np.concatenate(
-    #             (labels_rest_part, labels_new_part), axis=0
-    #         )
-    #         return result_images, result_labels
-    #     else:
-    #         self._index_in_epoch += batch_size
-    #         end = self._index_in_epoch
-    #         return self._images[start:end], self._labels[start:end]
 
     def permute(self):
         """Permute the dataset."""

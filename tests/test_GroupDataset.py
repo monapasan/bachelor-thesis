@@ -23,7 +23,8 @@ def init_indexGenerator():
 def init_raw_dataset():
     """Initilise the GroupDataset for testing purposes."""
     noise_label_index = [1, 2]
-    data_label_index = [0]
+    # data_label_index = [0]
+    data_label_index = [0, 3, 4, 5, 6, 7, 8, 9]
     n_samples_per_class = [15000, 15000, 15000]
     noise_quantity = [4, 3, 2]
     return GroupDataset(
@@ -35,31 +36,35 @@ def init_raw_dataset():
 
 myGroupDataset = init_raw_dataset()
 
+
 def test_images_shape():
     """Return expected shape of images."""
-    assert myGroupDataset.length == (3, 15000, 5, 784)
+    assert myGroupDataset.images.shape == (45000, 5, 784)
+
 
 def test_labels_shape():
     """Return expected shape of labels."""
-    assert myGroupDataset.length == (3, 15000, 5, 10)
+    assert myGroupDataset.labels.shape == (45000, 1, 3)
 
 
 def test_rawdataset_length():
     """Test whether the GroupDataset has the expected length."""
-    assert myGroupDataset.length == 15000
+    assert myGroupDataset.length == 43000
 
 
 def test_get_next_batch_forClass():
-    """Test the function `next_batch_for_class`.
+    """Test the function `next_batch`.
 
     As GroupDataset is use uniform distribution to choose the indexes
     of noise images, we check only the expected shape of return value.
     """
-    class_n = 1
     size = 100
-    images, labels = myGroupDataset.next_batch_for_class(class_n, size)
-    assert images.shape == (size, images_per_sample, MNIST_size * MNIST_size)
-    assert labels.shape == (size, images_per_sample, MNIST_classes_n)
+    images, labels = myGroupDataset.next_batch(size)
+    assert images.shape == (size, 5, 784)
+    assert labels.shape == (size, 1, 3)
+    # images, labels = myGroupDataset.next_batch_for_class(class_n, size)
+    # assert images.shape == (size, images_per_sample, MNIST_size * MNIST_size)
+    # assert labels.shape == (size, images_per_sample, MNIST_classes_n)
 
 
 # def test_get_next_batch():

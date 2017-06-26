@@ -1,3 +1,4 @@
+"""This module provides indexes of noise data fot the GroupDataset."""
 from numpy.random import choice
 
 

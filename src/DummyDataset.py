@@ -5,19 +5,23 @@ from __future__ import division
 from __future__ import print_function
 
 import random
-# import numpy as np
+import copy
 
 
 class DummyDataset(object):
     """Dummy Class for holding data."""
 
-    def __init__(self, images=[], labels=[]):
+    def __init__(self, images=None, labels=None):
         """Construct the dataset class.
 
         Args:
             images(list): images to store in the dataset.
             labels(list): labels to store in the dataset.
         """
+        if(images is None):
+            images = []
+        if(labels is None):
+            labels = []
         self._images = images
         self._labels = labels
 
@@ -43,8 +47,8 @@ class DummyDataset(object):
 
     def add_sample(self, image, label):
         """Add the image and label pair to the dataset."""
-        self._images.append(image)
-        self._labels.append(label)
+        self._images.append(copy.deepcopy(image))
+        self._labels.append(copy.deepcopy(label))
         return self
 
     def permute(self):
@@ -58,10 +62,6 @@ class DummyDataset(object):
         """Return i-th sample if i is integer, otherwise list of samples."""
         # TODO: check if an array
         return (self.get_images(i), self.get_labels(i))
-        # if(isinstance(i, int)):
-        #     return self._images[i], self._labels[i]
-        # else:
-        #     return [(self.get_images[j], self.get_labels(j)) for j in i]
 
     def get_images(self, i):
         """Get i-th image if i is integer, otherwise list of images."""
