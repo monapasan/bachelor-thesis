@@ -208,7 +208,7 @@ def evaluation(
     add_summary(summary_writer, acc, step, True, tag)
 
 
-def cross_entropy(logits, labels_ph):
+def cross_entropy_with_logits(logits, labels_ph):
     """Initialise cross-entropy operation for classicatiton.
 
     I.e. cross-entropy between logins and ground truth.
@@ -294,7 +294,7 @@ def run_training():
         logits = inference(outputs[-1])
         softmax = tf.nn.softmax(logits)
 
-        xent = cross_entropy(logits, labels_ph)
+        xent = cross_entropy_with_logits(logits, labels_ph)
 
         pred_labels = tf.argmax(logits, 1)
 
@@ -314,7 +314,7 @@ def run_training():
         tf.summary.scalar('loss', loss)
 
         grads = tf.gradients(loss, var_list)
-        grads, _ = tf.clip_by_global_norm(grads, Config.max_grad_norm)
+        clipped_grads, _ = tf.clip_by_global_norm(grads, Config.max_grad_norm)
         global_step = tf.get_variable(
             'global_step', [],
             initializer=tf.constant_initializer(0), trainable=False
@@ -328,9 +328,9 @@ def run_training():
             global_step, training_steps_per_epoch
         )
 
-        opt = tf.train.AdamOptimizer(learning_rate)
-        train_op = opt.apply_gradients(
-            zip(grads, var_list), global_step=global_step
+        optimizer = tf.train.AdamOptimizer(learning_rate)
+        train_op = optimizer.apply_gradients(
+            zip(clipped_grads, var_list), global_step=global_step
         )
 
         # Build the summary Tensor based on the TF collection of Summaries.
@@ -352,7 +352,7 @@ def run_training():
             softmax, Config.batch_size, labels_ph
         )
 
-        accuracy_summary = tf.summary.scalar('Batch accuracy', accuracy_op)
+        accuracy_summary = tf.summary.scalar('Batch_accuracy', accuracy_op)
 
         sess.run(init)
         for i in range(Config.n_steps):
