@@ -1,5 +1,6 @@
 """The glimpse network produces features out of glimpses.
 
+From the original RAM paper:
 The glimpse network fg(x, l) had two fully connected layers.
 Let Linear(x) de- note a linear transformation of the vector x,
 i.e. Linear(x) = Wx+b for some weight matrixW and bias vector b,
@@ -61,8 +62,6 @@ class GlimpseNet(object):
         self.num_channels = config.num_channels
 
         self.sensor_size = config.win_size**2 * config.glimpse_depth
-        # self.win_size = config.win_size
-        # self.minRadius = config.minRadius
 
         self.hg_size = config.hg_size
         self.hl_size = config.hl_size
@@ -92,12 +91,9 @@ class GlimpseNet(object):
         self.b_l1 = weight_variable((self.g_size,))
 
     def __get_glimpse(self, loc, n_image):
-        # self.images_ph = [batch, n_images, pixel]
-        # self.images_ph = [batch, pixel]
-        # n_image.shape  = [batch_size, 1]
-        # filter placholder based on the value from location network, n_images
-        # EXTENSTION: choose image based on location value
-        # TODO: ^^
+        # filter placeholder based on the value from location network, n_images
+        # self.images_ph.shape : [batch, n_images, pixel]
+        # n_image.shape  : [batch_size, 1]
         batch_size = tf.shape(self.images_ph)[0]
         indicies = tf.stack(
             [tf.range(batch_size, dtype=tf.int32), tf.squeeze(n_image)],
@@ -108,7 +104,10 @@ class GlimpseNet(object):
         return self.glimpse_sensor(selected_images, loc)
 
     def __call__(self, loc, n_image):
-        """
+        """Produce the glimpse representation of features.
+
+        Produces based on the image and location.
+        From the original RAM paper:
         GlimpseNet(x, l) = Rect(Hg + Hl)
         where:
         Hg = Linear(Rect(Linear(ρ(x, l))))

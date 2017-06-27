@@ -1,18 +1,9 @@
-"""Location network is responsible for manifesting of the locations.
-
-The retina encoding ρ(x, l) extracts k square patches centered at location l,
-with the first patch being gw ×gw pixels in size, and each successive patch
-having twice the width of the previous. The k patches are then all resized
-to gw×gw and concatenated. Glimpse locations l were encoded as
-real-valued (x, y) coordinates2 with (0, 0) being the center of the image
-x and (−1,−1) being the top left corner of x.
-"""
+"""Picker network picks an image out of group to attend to."""
 
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import numpy as np
 import tensorflow as tf
 
 from .utils import weight_variable, bias_variable

@@ -16,13 +16,14 @@ class GlimpseSensor(object):
 
     def __init__(self, config):
         """Initialise the GlimpseSensor.
-            args:
-                config(Config) - configuration object that should posses
-                    of following properties: `glimpse_depth`, `win_size`,
-                    `num_channels`, `original_size`, `glimpse_scale`.
-                    You will find the explanation behind the properites
-                    in main.py.
-        """
+
+        Args:
+            config(Config) - configuration object that should posses
+                of following properties: `glimpse_depth`, `win_size`,
+                `num_channels`, `original_size`, `glimpse_scale`.
+                You will find the explanation behind the properites
+                in main.py.
+    """
         # TODO: config should have property depth/scale
         # which represents how many patches should one glimpse have.
         self.depth = config.glimpse_depth

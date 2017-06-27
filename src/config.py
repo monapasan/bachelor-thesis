@@ -1,3 +1,5 @@
+"""Configuration object.."""
+
 import os
 
 _dir = os.getcwd()
@@ -13,8 +15,9 @@ class _Config(dict):
 
 
 def init_config(parser):
+    """Initialise the global config variable.
+
+    It holds all parameters for the configuration of the prototype.
+    """
     global Config
     Config = _Config(parser.__dict__)
-
-# bandwidth = win_size**2
-# minRadius = 8 ?

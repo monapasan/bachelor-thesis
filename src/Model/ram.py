@@ -1,4 +1,7 @@
-"""Recurrent Models of Visual Attention V. Mnih et al."""
+"""Extension to Recurrent Models of Visual Attention V. Mnih et al.
+
+Running the extension agains toy dataset example.
+"""
 
 from __future__ import absolute_import
 from __future__ import division
@@ -124,8 +127,6 @@ def init_baseline_net(outputs):
 
 def lstm_inputs(glimpse_net, N):
     """Initialise inputs for LSTM cell."""
-    # number of examples
-    # N = tf.shape(images_ph)[0]
     # TODO: two-component Gaussian with a fixed variance
     init_loc = tf.random_uniform((N, 2), minval=-1, maxval=1)
     init_img = tf.random_uniform(
@@ -161,8 +162,7 @@ def inference(output):
 def fill_feed_dict(dataset, images_pl, labels_pl):
     """Fill `images_pl` and `labels_pl` with data from `dataset`."""
     images, labels = dataset.next_batch(Config.batch_size)
-    # duplicate M times, see Eqn (2)
-    # running kinda m episodes
+    # instead of running m episodes duplicate M times
     images_feed = np.tile(images, [Config.M, 1, 1])
     labels_feed = np.tile(labels, [Config.M])
     feed_dict = {
@@ -194,58 +194,6 @@ def init_seq_rnn(images_ph, labels_ph):
         inputs, init_state, lstm_cell, loop_function=get_next_input
     )
     return outputs
-
-
-def accuracy(softmax, batch_size, labels):
-    """Calculate the accuracy of the batch based on softmax."""
-    # real_labels = tf.placeholder(tf.int64, [None], name='evaluation_labels')
-    softmax_acc = tf.reshape(
-        softmax, [Config.M, -1, Config.num_classes]
-    )
-    softmax_mean = tf.reduce_mean(softmax_acc, 0)  # [32x10]
-    pred_labels = tf.argmax(softmax_mean, 1)
-
-    n_correct = tf.reduce_sum(
-        tf.cast(tf.equal(pred_labels, labels[:batch_size]), tf.float32)
-    )
-    return n_correct / batch_size
-
-
-def n_correct_pred(softmax, labels):
-    """Calculate number of correct predictions."""
-    softmax_acc = np.reshape(
-        softmax, [Config.M, -1, Config.num_classes]
-    )
-    softmax_mean = np.mean(softmax_acc, 0)  # [32x10]
-    pred_labels = np.argmax(softmax_mean, 1).flatten()
-
-    n_correct = np.sum(pred_labels == labels[:Config.batch_size])
-    return n_correct
-    # tf.cast(tf.equal(pred_labels, labels[:batch_size]), tf.float32)
-    # )
-    # accuracy = n_correct / batch_size
-
-
-def evaluation(
-    sess, dataset, softmax, images_ph, labels_ph, summary_writer, step, tag
-):
-    """Evaluate result of the training.
-
-    Including the logging of results, and adding summary for TensorBoard.
-    """
-    steps_per_epoch = dataset.num_examples // Config.eval_batch_size
-    correct_cnt = 0
-    num_samples = steps_per_epoch * Config.batch_size
-    # loc_net.sampling = True
-    for test_step in range(steps_per_epoch):
-        feed_dict = fill_feed_dict(dataset, images_ph, labels_ph)
-        softmax_val = sess.run(softmax, feed_dict=feed_dict)
-        correct_cnt += n_correct_pred(softmax_val, feed_dict[labels_ph])
-        # correct_cnt += sess.run(correct_pred, feed_dict=feed_dict)
-
-    acc = correct_cnt / num_samples
-    logging.info('{} = {:.4f}% \n'.format(tag, acc))
-    add_summary(summary_writer, acc, step, True, tag)
 
 
 def cross_entropy_with_logits(logits, labels_ph):
@@ -280,16 +228,64 @@ def init_learning_rate(global_step, training_steps_per_epoch):
         global_step,
         training_steps_per_epoch,
         0.97,
-        staircase=True)
+        staircase=True
+    )
     learning_rate = tf.maximum(learning_rate, Config.lr_min)
     return learning_rate
 
 
-def add_summary(writer, summary_val, step, is_custom=False, tag=None):
-    """Will add summary to the tensorboard.
+def accuracy(softmax, batch_size, labels):
+    """Calculate the accuracy of the batch based on softmax."""
+    # real_labels = tf.placeholder(tf.int64, [None], name='evaluation_labels')
+    softmax_acc = tf.reshape(
+        softmax, [Config.M, -1, Config.num_classes]
+    )
+    softmax_mean = tf.reduce_mean(softmax_acc, 0)  # [32x10]
+    pred_labels = tf.argmax(softmax_mean, 1)
 
-    Summart of either custom value in case of evaluation, or summary value
-    in case of the training process.
+    n_correct = tf.reduce_sum(
+        tf.cast(tf.equal(pred_labels, labels[:batch_size]), tf.float32)
+    )
+    return n_correct / batch_size
+
+
+def n_correct_pred(softmax, labels):
+    """Calculate number of correct predictions."""
+    softmax_acc = np.reshape(
+        softmax, [Config.M, -1, Config.num_classes]
+    )
+    softmax_mean = np.mean(softmax_acc, 0)  # [32x10]
+    pred_labels = np.argmax(softmax_mean, 1).flatten()
+
+    n_correct = np.sum(pred_labels == labels[:Config.batch_size])
+    return n_correct
+
+
+def evaluation(
+    sess, dataset, softmax, images_ph, labels_ph, summary_writer, step, tag
+):
+    """Evaluate result of the training.
+
+    Including the logging of results, and adding summary for TensorBoard.
+    """
+    steps_per_epoch = dataset.num_examples // Config.eval_batch_size
+    correct_cnt = 0
+    num_samples = steps_per_epoch * Config.batch_size
+    for test_step in range(steps_per_epoch):
+        feed_dict = fill_feed_dict(dataset, images_ph, labels_ph)
+        softmax_val = sess.run(softmax, feed_dict=feed_dict)
+        correct_cnt += n_correct_pred(softmax_val, feed_dict[labels_ph])
+
+    acc = correct_cnt / num_samples
+    logging.info('{} = {:.4f}% \n'.format(tag, acc))
+    add_summary(summary_writer, acc, step, True, tag)
+
+
+def add_summary(writer, summary_val, step, is_custom=False, tag=None):
+    """Add summary to the tensorboard.
+
+    The Summary of either custom value(in case of evaluation), or summary value
+    (in case of the training process).
     """
     if is_custom:
         summary_val = tf.Summary(value=[
@@ -329,7 +325,6 @@ def log_step(
     add_summary(
         summary_writer, baseline_mse, i, True, 'Baseline mean squared error'
     )
-
 
 
 def run_training():
@@ -442,42 +437,3 @@ def run_training():
                     sess, mnist.test, softmax, images_ph, labels_ph,
                     summary_writer, i, 'accuracy on test data'
                 )
-
-
-
-
-# def n_correct_pred(softmax, batch_size, labels):
-#     softmax_acc = tf.reshape(
-#         softmax, [Config.M, -1, Config.num_classes]
-#     )
-#     softmax_mean = tf.reduce_mean(softmax_acc, 0)  # [32x10]
-#     pred_labels = tf.argmax(softmax_mean, 1)
-#
-#     n_correct = tf.reduce_sum(
-#         tf.cast(tf.equal(pred_labels, labels[:batch_size]), tf.float32)
-#     )
-#
-#     return n_correct
-
-# def evaluation(sess, dataset, softmax, images_ph, labels_ph):
-#     steps_per_epoch = dataset.num_examples // Config.eval_batch_size
-#     correct_cnt = 0
-#     num_samples = steps_per_epoch * Config.batch_size
-#     # loc_net.sampling = True
-#     for test_step in range(steps_per_epoch):
-#         images, labels = dataset.next_batch(Config.batch_size)
-#         labels_bak = labels
-#         # Duplicate M times
-#         images = np.tile(images, [Config.M, 1])
-#         labels = np.tile(labels, [Config.M])
-#         feed_dict = {images_ph: images, labels_ph: labels}
-#         softmax_val = sess.run(softmax, feed_dict=feed_dict)
-#         softmax_val = np.reshape(
-#             softmax_val, [Config.M, -1, Config.num_classes]
-#         )
-#         softmax_val = np.mean(softmax_val, 0)  # [32x10]
-#         pred_labels_val = np.argmax(softmax_val, 1)
-#         pred_labels_val = pred_labels_val.flatten()
-#         correct_cnt += np.sum(pred_labels_val == labels_bak)
-#     acc = correct_cnt / num_samples
-#     logging.info('accuracy = {}'.format(acc))

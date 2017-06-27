@@ -68,23 +68,6 @@ def test_get_next_batch_forClass():
     # assert images.shape == (size, images_per_sample, MNIST_size * MNIST_size)
     # assert labels.shape == (size, images_per_sample, MNIST_classes_n)
 
-
-# def test_get_next_batch():
-#     """Tesh the function `next_batch` of the GroupDataset instance.
-#
-#     As GroupDataset is use uniform distribution to choose the indexes
-#     of noise images, we check only the expected shape of return value.
-#     """
-#     size = 10
-#     images, labels = myGroupDataset.next_batch(size)
-#     assert images.shape == (
-#         size, amount_of_classes, images_per_sample, MNIST_size * MNIST_size
-#     )
-#     assert labels.shape == (
-#         size, amount_of_classes, images_per_sample, MNIST_classes_n
-#     )
-
-
 # myGroupDataset.next_batch(size = 1)
 
 # [[size x images], [size x labels]]
