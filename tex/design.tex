@@ -1,22 +1,23 @@
 \chapter{Design}
+\label{ch:design}
 In this chapter we will discuss the architecture of the prototype.
-It's divided into two section: Dataset and Model. Since
+It's divided into two sections: Dataset and Model. Since
 the dataset is standalone component, this seems to be
 a reasonable separation. To make it clear, dataset would be a component
-which holds the training, validation and test data including all relevant
+that holds the training, validation and test data including all relevant
 functionality that can or should be performed on the
-data(this is explained more detailed in \autoref{sec:design_data}).
-Model would be a component, which accepts the data(dataset component), performs
+data(this is explained in more detail in \autoref{sec:design_data}).
+The model is a component, which accepts the data(dataset component), performs
 training on the training data, and then makes inference on the test dataset.
-In other words, model would be everything what is related to building,
-training and evaluation of neural networks and reinforcement learning environment.
+In other words, the model would be everything that is related to building,
+training and the evaluation of neural networks and reinforcement learning environment.
 
 
 
 \section{Dataset}
 \label{sec:design_data}
 
-Dataset is component which is responsible for data holding. It should
+The dataset is component that is responsible for data holding. It should
 accept original MNIST dataset and transform it into dataset described
 in \autoref{sec:analysis_dataset}.
 
@@ -70,7 +71,7 @@ to make a concrete example of how the dataset described in
 
 \paragraph{Example} In this example we will describe dataset with two classes
 Let's first choose the parameters $n$ and $k$,
-which represents amount of images in a group and amount of noise images
+which represents the number of images in a group and the amount of noise images
 in a group respectively. While $k$
 should be different for both classes, $n$ remains the same.
 Let $n$ be equal to $5$, $k$ for the first class be and $3$: $k_1 = 3$
@@ -99,7 +100,7 @@ the desired dataset, three classes are required:
 \begin{itemize}
 	\item IndexGenerator - the purpose of this class is to generate indexes for
 		noise images. Imagine situation, where all of noise data is placed into
-		the same indexes. Will the model learn this indexes and look only at
+		the same indexes. Will this model learn this indexes and look only at
 		them? Or will model ignore this stability? Because this question seems
 		to be heuristic, this class will control the indexes where noise image
 		will be located at. By instantiating this class, it's possible to have
@@ -116,7 +117,7 @@ the desired dataset, three classes are required:
 
 Dataset component should be flexible enough in order to be similar to real problems,
 to be able to experiment with different amount of classes, and
-different variations of noises classes. Since we have only limited amount of MNIST data,
+different variations of noises classes. Since we have only a limited amount of MNIST data,
 we need to also make sure that this data is properly used. GroupDataset takes
 care of it by carefully choosing the data from original MNIST dataset and putting
 them into the group to avoid if possible two same samples in the dataset by building
@@ -138,10 +139,10 @@ we described it in \autoref{sec:design_data}.
 
 \paragraph{Code pattern} As we can see from the UML class in the figure
 \ref{fig:dataset_uml}, we have three classes. It would be also possible
-merge the classes, however, this contradicts "Single Responsibility Principle"
-that one class should only have one responsibility \cite{martin2003agile}.
+to merge the classes, however, this contradicts the "Single Responsibility Principle"
+as one class should only have one responsibility \cite{martin2003agile}.
 Therefore, dividing this into two classes allows us to clearly
-define responsibilities. Consequently, this separations seems to be reasonable.
+define responsibilities. Consequently, these separations seem to be reasonable.
 
 As you might notice from UML class diagram, some of the function like
 \lstinline{add_sample} in \lstinline{DummyDataset} returns the object itself: \lstinline{DummyDataset}.
@@ -195,7 +196,7 @@ This is an example of Cascade code pattern described in \autoref{sec:quality_con
 % \paragraph{Why did you choose picker network?}
 We described three approaches of how to extend the RAM model
 in \autoref{sec:extension}. The implementation of this work
-will only concentrate on method described as picker network.
+will only concentrate on the method described as picker network.
 This is because of the simplicity of this approach.
 
 %TODO: patterns https://www.toptal.com/python/python-design-patterns
@@ -217,7 +218,7 @@ possible using following clases:
 \begin{itemize}
 	\item GlimpseSensor - the class is responsible for extracting glimpses from
 		images at given location $l_t$.
-	\item PickerNet - the class is responsible for picking an image out of the
+	\item PickerNet - this class is responsible for picking an image out of the
 		group of images.
 	\item GlimpseNet - given the glimpse sensor, images and number of picked image,
 		this class is responsible for producing the feature map from the image,
@@ -226,9 +227,9 @@ possible using following clases:
 	glimpse sensor to attend to.
 	\item Model - formally, this is not a class, but a set of function that build
 		and run the model. We will represent this set as a class in UML class diagram
-		in \autoref{subs:uml_model}. However, this set of function will also explained
+		in \autoref{subs:uml_model}. However, this set of functions will also be explained
 		more detailed in \autoref{subs:model_seq_diagramm}.
-		For now we'll refer to it as class.
+		For now, we'll refer to it as a class.
 	\item Config - singleton class that holds all
 		configuration parameters for the model such as shape of weights
 		for hidden layers.
@@ -242,10 +243,10 @@ In the figure \ref{fig:model_uml}, you can see the UML class diagram for the
 architecture we described above. As it was already mentioned the \lstinline{Config}
 class is a singleton class that holds all configuration details for the model.
 Once initialised with command-line options or default values, it's a single source
-of true for the whole application. Use of singleton design pattern here helps
+of truth for the whole application. The use of singleton design pattern here helps
 to avoid misconception that application can have more than one configuration.
 From the UML diagram we see that only class \lstinline{Model} use the
-\lstinline{Config}, this is because of the convenience sake. Without much effort
+\lstinline{Config}, this is because of the convenience sake. Without much effort the
 \lstinline{Config} can be imported from other classes as well.
 
 \begin{figure}[H]
@@ -257,16 +258,16 @@ From the UML diagram we see that only class \lstinline{Model} use the
 
 \subsection{UML activity diagram for the Model}
 \label{subs:model_seq_diagramm}
-To prevent misunderstanding, we distinguish between \lstinline{Model} class
-and Model component. Model component is set of of classes and functions related
-to RAM and it's extension. \lstinline{Model} class is a class that we described
+To prevent misunderstanding, we distinguish between the \lstinline{Model} class
+and the Model component. Model component is a set of classes and functions related
+to RAM and it's extension. The \lstinline{Model} class is a class that we described
 in \autoref{subs:arch_model}.
 As it was mentioned earlier, the \lstinline{Model} is not an actual class, but a set of
-function. \lstinline{Model} class is core of the Model component. It instantiates
+functions. The \lstinline{Model} class is the core of the Model component. It instantiates
 other classes as well as runs, trains
-and evaluates the model. Since then \lstinline{Model} is contains only functions,
+and evaluates the model. Since the \lstinline{Model} contains only functions,
 it's hard to represent it as UML class diagram. However, UML activity diagram
-can be a good fit if we replace the activities in the UML notations with
+can be a good fit if we replace the activities in the UML notation with
 the functions. Therefore to clarify the flow of the \lstinline{Model}, you may
 find the figure \ref{fig:uml_activity_model} with the UML activity diagram helpful.
 In the lane with the name \lstinline{init_seq_rnn()}, you can see a set of functions

@@ -13,7 +13,7 @@ Firstly, let's define the clear problem statement:
 	A certain label is asserted to every sample in a dataset. The goal is
 	to build a extensible prototype upon RAM that is capable of classifying
 	this samples. The prototype is the resemblance of the RAM model with
-	with ability to accept the above mentioned dataset.
+	with the ability to accept the above mentioned dataset.
 }
 
 \\
@@ -27,10 +27,10 @@ Firstly, let's define the clear problem statement:
 
 \section{Quality concerns}
 \label{sec:quality_concerns}
-This statement make it clear that prototype should be extensible. Extensible
+This statement makes it clear that the prototype should be extensible. Extensible
 means that other people(including author itself) are able to extend the
 prototype. People should comprehend the code as well as start and configure
-procedures in order to extend the prototype. Therefore following best practices
+the procedures in order to extend the prototype. Therefore following the best practices
 and conventions, using widely known frameworks, producing clean and readable code
 to stay consistent with other modern software is an important
 point of this work.
@@ -63,11 +63,11 @@ Aforementioned features of the framework as well
 as it's great API for Python is a great fit for this work.
 
 The current work will use Python as programming language, as it's one of
-the most popular language among machine learning community.
+the most popular languages among machine learning community.
 
 
 \paragraph{Code conventions}
-Now that we assigned interfaces, let's define conventions that this work
+Now that we assigned interfaces, let's define the conventions that this work
 will follow. As TensorFlow recommends using PEP 8 style guide to stay consistent
 with community \cite{TfWeb}. PEP 8 gives the set of rules about how to lay out
 the code, how to name functions, methods and classes and others code style related
@@ -84,7 +84,7 @@ about the way of testing, organizing and documenting the code \cite{Reitz}.
 \paragraph{Code patterns}
 
 Despite that a lot of code from researches are not following and not using code
-pattern, it's really simplifies understanding and reasoning about the code, especially
+pattern, it really simplifies the understanding and reasoning about the code, especially
 while extending or adjusting the model. Therefore using code patterns
 is highly recommended. We will introduce the code patterns, which
 is recommended in the functional programming from \cite{beck1997smalltalk},
@@ -109,7 +109,7 @@ Below is a list of this code pattern recommendations:
 	\item Method object -  normally applied when one can't use extract method
 	 	on a function because new function would take a lot of parameters
 		from the original method.
-		The idea is to create a small class that will hold this parameters
+		The idea is to create a small class that will hold the parameters
 		as properties and then to create small methods within this class without
 		passing the parameters to it but instead access them as class properties.
 		\cite{beck1997smalltalk}
@@ -136,7 +136,7 @@ Below is a list of this code pattern recommendations:
 		clearly distinguishable responsibility.\cite{martin2003agile}
 	% done
 	\item Duck Typing - is a specifically to python, a design principle that
-		says that if an object has a certain desired functionality it doesn't not matter
+		says that if an object has a certain desired functionality it doesn't matter
 		what of nature the object is.
 	% % bullshit
 	% \item Composition over inheritance - it's design pattern which obligates
@@ -156,7 +156,7 @@ Below is a list of this code pattern recommendations:
 % https://refactoring.com/catalog/extractMethod.html
 % http://codebetter.com/jeremymiller/2006/12/03/composed-method-pattern/
 % inderact variable acces
-Since ML programming is more method oriented, the most pattern above concentrated
+Since ML programming is more method oriented, most patterns above concentrate
 on how to keep functions readable, precise and flexible. In this work we will follow
 these patterns.
 
@@ -170,16 +170,16 @@ softwares, easy configurable, readable code.
 
 
 \section{Analysis of the previous work}
-As we will build the current model upon RAM described
+As we will build the current model upon the RAM described
 in \autoref{sec:ram_model}, it makes sense to look over the existing implementations
 of the RAM model.
-The authors of RAM paper haven't provide the implementation, but
-fortunately there are few implementations built by open source community.
-It's common to see that people, who working on a model as open source project,
-are often do that in their free time. As a consequence, it is expected that those model
+The authors of RAM paper haven't provided the implementation, but
+fortunately there are some implementations built by the open source community.
+It's common to see that people, who are working on a model as open source project,
+often do it in their free time. As a consequence, it is expected that those model
 are not high-quality prototypes, therefore in order to rely on the project
 one needs to be meticulous while choosing one.
-Following criteria were considering when choosing the model for the basis
+This is the following criteria we're considering when choosing the model for the basis
 of this work:
 
 \begin{itemize}
@@ -205,9 +205,9 @@ This project is built using TensorFlow framework.
 Building a machine learning software is not as straight forward as building
 conventional software. In machine learning, in order to achieve high accuracy
 one uses different methods which are normally hard to comprehend without knowing
-the theory behind it. Absence of testing is one another point which makes it
-harder to understand others code. Considering this circumstances careful
-analyzing of the approaches used in the basic RAM implementation
+the theory behind them. Absence of testing is another point which makes it
+harder to understand others code. Considering the circumstances and careful
+analyses the approaches used in the basic RAM implementation
 is desired for the success of this work.
 
 \paragraph{Inference} in the current work was performed differently from what was
@@ -227,7 +227,7 @@ $b_t$ - baseline to reduce variance, $u_t_i$ - action at time step $t$
 of episode $t$.
 
 As we can see the gradient is calculated based on running $M$ episodes.
-Firstly, the agent chooses sequentially $n$ location and make a classification
+Firstly, the agent chooses sequentially $n$ location and makes a classification
 decision. Then we run $M$ similar episodes like this. After this,
 we compute the gradient. The basic RAM implementation used slightly different
 approach. It does not run multiple episodes to update the parameters, but instead
@@ -259,7 +259,7 @@ to the latest TensorFlow version is required\footnote{
 }
 
 Looking at basic RAM implementation purely from software engineering side,
-one can observe severals flaws. Not following python conventions as well
+one can observe several flaws. Not following python conventions as well
 as lack of design patterns and partial presence of incoherent structures in the code
 are known obstacles when analyzing and extending the code.
 Therefore code is required to be refactored and cleaned,
@@ -272,12 +272,12 @@ practices described in \autoref{sec:quality_concerns}.
 % fields is very time consuming. The basic RAM implementation is not an exception.
 % The code is required to be refactored and cleaned, as well as restructured.
 
-As of functional requirements, lack of one feature was detected in basic RAM implementation.
+As for functional requirements, the lack of one feature was detected in basic RAM implementation.
 As you can remember from \autoref{sec:ram_model}, glimpse sensor is taking
 multiple patches from an image, where each patch is taken at different resolution.
 The basic RAM implementation is not capable of taking multiple patches,
-but only a single one. Without ability of taking multiple patches within a glimpse,
-accuracy of inference will more likely to decrease. Therefore this functionality
+but only a single one. Without the ability of taking multiple patches within a glimpse,
+accuracy of inference will be ore likely to decrease. Therefore this functionality
 should be available in the work in order to achieve better results.
 
 Additionally to this, TensorBoard wasn't configured in basic RAM implementation.
@@ -400,7 +400,7 @@ $W_{\theta}$ and bias $b_{\theta}$.
 \subsection{Deep attention model}
 \label{subs:deep_att_model}
 This idea was inspired by the approach used in \cite{DBLP:journals/corr/BaMK14}.
-Idea is to completely separate classification network from location network
+The idea is to completely separate classification network from location network
 by introducing new RNN layer on top of the current RNN layer.
 
 \begin{figure}
@@ -411,7 +411,7 @@ by introducing new RNN layer on top of the current RNN layer.
 
 In figure \ref{fig:deep_att_model} you can observe first RNN denoted $r^{(1)}$ which works
 the same way as was described in \autoref{sec:ram_model}. Output of RNN $r^{(1)}$
-was consumed by location network and classification network in \cite{DBLP:journals/corr/MnihHGK14}.
+was consumed by the location network and classification network in \cite{DBLP:journals/corr/MnihHGK14}.
 This will be different in current approach. We can describe it as following:
 We introduce new RNN $r^{(2)}$ on top of first RNN:
 \begin{itemize}
@@ -424,7 +424,7 @@ We introduce new RNN $r^{(2)}$ on top of first RNN:
 		The reason behind it was described in \cite{DBLP:journals/corr/BaMK14}:
 		\blockquote{The existence of the contextual information(feature vector),
 		however, provides a
-		“short cut” solution such that it is much easier for the model to
+		“short cut” solution that is much easier for the model to
 		learn from contextual information than by combining information
 		from different glimpses}
 	\item The new RNN takes as input the output of RNN $r^{(1)}$:
@@ -446,13 +446,13 @@ prevent using location information in classification. Separation is crucial:
 first RNN network is responsible for
 classification, while second one for choosing the right location.
 One state will hold information about classification, while the state of
-RNN cell on the top will hold information about locations.
-Advantage of this work is having this separation of concerns between
+the RNN cell on the top will hold information about locations.
+One advantage of this work is that having this separation of concerns between
 location and classification information which theoretically should improve the model.
 This approach we will call \emph{Deep attention model}.
 
 \subsection{Exploration network}
-In original RAM paper, model is required to execute a number of
+In original RAM paper, the model is required to execute a number of
 steps before making classification decision:
 \blockquote{
 The attention network used in the following classification experiments made
@@ -468,12 +468,12 @@ it takes, forcing it to trade off making correct classifications with the cost o
 taking more. \cite{DBLP:journals/corr/MnihHGK14}
 }
 
-We can use alter this suggestion by introducing a new action which
+We can alter this suggestion by introducing a new action which
 instead of indicating when the model should stop taking new glimpse, will
-indicate when model should take a next image in a group. Once there is no more images
+indicate when the model should take a next image in a group. Once there is no more images
 we can force the model to make a classification decision.
 
-We introduce new network which take as input the state of RNN cell, and outputs
+We introduce a new network which takes an input of the state of RNN cell, and outputs
 probability distribution over two actions which correspond to whether the model
 will stop taking new glimpses
 or continue to explore image.
@@ -518,15 +518,15 @@ MNIST dataset\footnote{The MNIST data is hosted on \cite{LeCun2010}} is recogniz
 as being the simplest dataset among the computer vision
 community, therefore building a dataset upon it would be easier. The simplicity of dataset
 would help to understand problems occurring while developing a model.
-Additionally to this, from researchers from google
+Additionally to this, researchers from google
 Deepmind used MNIST to evaluate RAM, which indicated that MNIST data would
 be good fit for the extension as well. \cite{DBLP:journals/corr/MnihHGK14}
 
 
-\paragraph{MNIST Dataset} is dataset of scanned handwritten images, each labeled
+\paragraph{MNIST Dataset} MNIST dataset consist of scanned handwritten images, each labeled
 from from set: $\mathcal{A} = \{0 .. 9\}$, where $\mathcal{A}$ - is a set of available
 classes in MNSIT dataset. You can see an example of 4 digits in figure \ref{fig:mnist}.
-Additionally, it includes label for each of the image.
+Additionally, it includes a label for each of the image.
 
 \begin{figure}[h!]
 	\includegraphics[width=\linewidth,scale=0.4]{MNIST}
@@ -558,9 +558,9 @@ that hold information relevant for classification decision(it can be f.e. classe
 labeled with 4 and with 3 in MNIST),
 we'll refer to those images as non-noise images. Subset of classes of non-noise image
 we denote as: $\mathcal{D} = \{d_1,..., d_n\}$.
-We'll have also images which does not
+We'll have also images which do not
 contain any information relevant for decision making, we'll refer to this images
-as noise images. Noise images is generated using images from classes that
+as noise images. Noise images are generated using images from classes that
 are mutually exclusive with classes of non-noise images:
 $\mathcal{T} = \mathcal{A} / \mathcal{D}$, where $\mathcal{T}$ - is a subset of classes $\mathcal{D}$
 for labeling noise images: $\mathcal{T}\subset \mathcal{D}$.
@@ -583,25 +583,26 @@ We then divide the original MNIST dataset into two:
 We then create a new dataset and fill the sample that is a concatenation of sample
 from first dataset with sample of second dataset described above.
 This way we're getting a new dataset
-where each sample has a size of $n$. Using this method we can create two dataset with
+where each sample has a size of $n$. Using this method we can create two datasets with
 different $k$, but the same $n$ and label them as dataset of first class, and
 dataset of second class.
 
 The conceptional idea behind this dataset, the the model should learn to
-understand that noise image does not bring any information relevant for the task.
+understand that noise image and that it does not bring any information relevant for the task.
 Practical solution for classification task of this dataset would be
-to understand what is non-noise images are,
+to understand what non-noise images are,
 count them, and depends on the amount of non-noise images,
 classify the sample
-. If model would work correctly on this dataset, it will confirm
+. If the model work correctly on this dataset, it will confirm
  that the model works correctly
 for identifying images that are irrelevant for decision making
 
 \section{Testing}
 It's well-known that unit testing in ML models is not as trivial
 as in conventional software,
-therefore unit testing should be applied only on part of the code where
-behaviour is fully predictable. One such example for unit testing would to check whether
+therefore unit testing should be applied to only one part of the code where
+behaviour is fully predictable. One such example for unit testing would to
+check whether
 certain components of the system having expected shape of vectors and matrixes.
 As code for producing the dataset having procedural structure,
 it should be fully tested in order to avoid
@@ -609,7 +610,11 @@ unexpected behaviour in the model.
 \\
 To test how the performance of the model following metric should be taken into
 consideration: accuracy on the test data, time needed for the model to train.
-
+% name: Tesla M40
+% major: 5 minor: 2 memoryClockRate (GHz) 1.112
+% pciBusID 0000:03:00.0
+% Total memory: 11.92GiB
+% Free memory: 11.82GiB
 % we need take extra care of this
 % as to assure that the model works correctly.
 

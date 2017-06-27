@@ -16,7 +16,7 @@ on your belief that an image(or a group of images) belongs to a specific class.
 % }
 This problem is known as pattern recognition problem or in our case
 visual pattern recognition problem \cite{Bishop1995}.
-The solve this problem it's required to develop ability for a machine
+In order to solve this problem it's required to develop ability for the machine
 to recognize patterns that will help to make a decision about a class.
 The obstacles that can appear by solving this problem can be more visible
 if we will try to write a conventional computer program, i.e. bunch of rules
@@ -30,7 +30,7 @@ in a different way.
 They don't execute programs instructions, they don't have
 sequential semantic and normally are not
 deterministic. They acquire their "knowledge" by extracting patterns from raw data,
-which normally called training data(which normally is a set of tuple $(input, label)$.
+which is normally called training data(which normally is a set of tuple $(input, label)$.
 The label of the an input is also known as the ground truth.
 This approach also know as concept of statistical pattern recognition. \cite{Bishop1995}
 Artificial Neural networks have recently shown an excellent performance and
@@ -39,12 +39,12 @@ machine learning techniques \cite{Krizhevsky2012}.
 
 \paragraph{What is Neural Network?}
 Artificial Neural Network(ANN), often referred just as Neural Network(NN),
-in simply words is a computational model, which was inspired by how human/animal
+in simple words is a computational model, which was inspired by how human/animal
 brain works. Artificial NN is modeled based on the neuronal structure in the brain's
 cortex. Though the inspiration was from the brain,
-it's indeed much much simpler than brain in terms of number of neurons that is used
+it's indeed much much simpler than brain in terms of number of neurons that are used
 in ANN \cite{Goodfellow-et-al-2016}.
-To understand how neural networks works it is crucial to understand first the
+To understand how neural networks work it is crucial to understand first the
 way a \emph{perceptron} work.
 
 \paragraph{Perceptron} is a simple type of an artificial neuron.
@@ -56,14 +56,15 @@ Given several binary inputs, perceptron is meant to produce a single binary outp
 \end{figure}
 In the figure \ref{img:model} the perceptron has three inputs: $x_1, x_2, x_3$.
 To produce an output the perceptron posses of \emph{weights}: $w_1, w_2, w_3$ which represents
-connection between input and output. Weights determine how important is an input to the output.
+the connection between input and output. The weights determine the
+extent of the influence that input has on output.
 That said, the perceptron output is determined by whether the weighted sum $\sum_j w_j x_j$ is more or less
 than some \emph{threshold} value:
 \begin{equation} \label{perc:out}
 	output = \begin{cases} 0, & \mbox{if } \sum_j w_j x_j \leq threshold \\ 1, & \mbox{if } \sum_j w_j x_j > threshold \end{cases}
 \end{equation}
 
-In shortly, this is a computational model which make a decision by weighting up
+In short, this is a computational model which make a decision by weighting up
 the evidence(input data) \cite{rosenblatt1962principles}.
 
 Of course such a model is not capable of making complicated decisions, but
@@ -79,13 +80,13 @@ In the network shown on figure \ref{img:layer_perc}, we can observe
 two layer of perceptrons. First layer will correspond to the first column of perceptrons
 and will be responsible for the weighting up input, in contrast to second layer
 (second column of perceptrons) which determines output by weighting up the result from
-the first layer. Therefore second layer is located on more abstract level from input data
-compared and can make more complicated decisions. Further layers might be capable
+the first layer. Therefore, the second layer is located on more abstract level from input data
+compared and can make more complicated decisions. Further layers may be capable
 of making even more sophisticated decisions.
 \subsection{The Basics of Neural Networks}
 
 \paragraph{Neural Network} Now that we know the way perceptrons work,
-it's fairly easy to understand Neural Network. However we need to change
+it's fairly easy to understand Neural Network. However, we need to change
 the mathematical notation a bit. For the sake of convenience, let's move
 $threshold$ in equation \ref{perc:out} to the left part and replace it
 with a variable known as the \epmh{bias} : $b = -threshold$. Let's also simplify
@@ -100,7 +101,7 @@ equation \ref{perc:out} as following:
 
 \emph{Bias} is a measure of how influential is a certain neuron on making output 1.
 Some people also use more biological terms: the bias is a measure of how easy it is
-to get an neuron to fire. To devise the neural network
+to get a neuron to fire. To devise the neural network
 next improvement over the perceptron network is that network should not be limited
 to have an input only binary value, but any value. The same applies on the output.
 Output being only binary value will limit the ability to make sophisticated decision.
@@ -111,7 +112,7 @@ actually outputting a value: $output = g( W \cdot x + b)$ \cite{Nielsen2015} .
 Activation function helps to control the output and non-linearity of the network.
 Activation function also plays a crucial role in multi layer architecture, where it helps
 to prevent the values of each layer from blowing up.
-For example, let's take a look at \emph{softmax} activation function which has
+For example, let's look at the \emph{softmax} activation function which has
 the following form:
 \begin{equation} \label{sigmoid_function}
 	\sigma(z)_j = \frac{e^{z_j}}{\sum_{k=1}^K e^{z_k}}
@@ -180,7 +181,7 @@ For example, the Neural network in figure \ref{img:mult_layer} consist of
 
 \subsection{Training an Artificial Neural Network}
 As mentioned above Neural Network is capable of solving complicated
-pattern recognition problems. However designing an neural network is not sufficient
+pattern recognition problems. However designing a neural network is not sufficient
 for this. It's also requiring to train an network. In this paragraph we will
 introduce learning procedure. But before going into learning, let's recap
 how our neural network model looks like:
@@ -204,7 +205,7 @@ should be able to generalise the output on unseen input data.
 The goal of the learning is to train network on training data and make it to capable of generalizing the output on unseen input data.
 
 \paragraph{Cost} In order to teach the model, it's essential to understand
-what does it mean for an neural network to be good or to be bad. For this purpose
+what it means for an neural network to be good or to be bad. For this purpose
 it's required first to define a \epmh{cost function}. Cost(also knows as error) is the metric
 for the NN(or any other function approximation method), which represents how far of
 the model is from desired outcome. If cost is big , our network does not work well.
@@ -266,13 +267,13 @@ we can devise the new set of parameters $\Theta^{(new)}$:
 \begin{equation} \label{eq:gd_update}
 	\vec{v_i^{new}} = \vec{v_i} - \alpha \frac{df(\vec{v_i})}{d\vec{v_i}}
 \end{equation}
-where $\alpha$ - is a small positive number knows as \emph{learning rate}.
+where $\alpha$ - is a small positive number known as the \emph{learning rate}.
 Learning rate determines the smoothness of updates and it's very important to choose
 it appropriately since if learning rate is too small the learning can be too slow, while, if
 learning rate is too big, algorithm updates can be too big to achieve the minimum
 (it can overstep the minimum).
 
-Depends on the conditions this will converge to the parameters $\Theta$ where the function
+Depends on the conditions this will converge to the parameters $\Theta$ where function
 $f$ is minimized.
 % Let's now substitute our loss function into gradient descent algorithm
 One important things to notice is that, we can use the gradient descent algorithm only
@@ -313,38 +314,38 @@ Much faster convergence can be achieved in practice using mini-batch gradient de
 \paragraph{Backpropagation} In order to compute gradients in gradient descent algorithm
 backpropagation algorithm is normally used. Backpropagation is the procedure of computing
 gradients applying a gradient chain rules and updating the weights accordingly.
-It performs first an forward update to receive the network's error value. This error
+It performs first a forward update to receive the network's error value. This error
 value then is back propagated beginning from output layer(neuron) through all neurons
 till the input in order to associate it with extent of this error($\Delta$)
-which an certain neuron is responsible
-for. Once this extent is calculated, it performs weights update \cite{Rumelhart1986}.
+which a certain neuron is responsible
+for. Once this extent is calculated, it performs a weights update \cite{Rumelhart1986}.
 
 
 \section{Recurrent Neural Network} \label{sec:rec_NN}
 
-\paragraph{Why recurrent NN?} Motivation for recurrent neural network(RNN) is that
-in contrast to feedforward neural network, RNNs are capable of having internal memory,
+\paragraph{Why recurrent NN?} Motivation for recurrent neural network(RNN) is
+in contrast to feedforward neural network, as RNNs are capable of having internal memory,
 i.e. capable of memorizing information, therefore deal better with sequential input data.
 RNNs are closer to the way human's brain works. We don't start our thinking from scratch,
-all of us have different background, memories and experience and based on this
+all of us have different background, memories and experience; based on this
 we're making our own decision and actions. \\
 As already mentioned in \autoref{chap:intro}, in this work
 the network should be able attend to different locations within an image, i.e.
-choose a location and process only area with respect to this location. The network then
-incrementally combines the information from different location and based
+choose a location and only process this area with respect to the location. The network then
+incrementally combines the information from a different location and based
 on the knowledge(memory) extracted from a location, network chooses a new location to
 attend. As you might notice since more steps need to be required, we will have sequential
-data. Hence, RNNs are underlying concept for this work.
+data. Hence, RNNs are an underlying concept for this work.
 
 \paragraph{What is RNN} RNN is a special type of neural network architecture, which can
 accept a sequence with an arbitrary length without changing weights of a network.
 % Essentially, they are network who is capable of
 RNN are capable of persisting the information by means of recurrences, i.e. including
-the output of the network into next computational steps and summarizing this information
+the output of the network into the next computational steps and summarizing this information
 into an object called \emph{state}.
  \cite{Kriesel2007NeuralNetworks}.
 \\
-To simplify the understanding you can imagine RNN as an composition of identical
+To simplify the understanding you can imagine RNN as a composition of identical
 feedforward network, one for each step in time, passing the message to a successor.
 Essentially, it's a computational unit that is repeated over and over again and
 can be also thought as an for-loop.
@@ -381,8 +382,8 @@ where:
 	\item $f$ - is a recurrent function(normally called as RNN cell).
 \end{itemize}
 
-As you might notice, the all calculations responsible for extracting and
-memorising information performed in $f$, which provide knowledge about
+As you might notice, all calculations responsible for extracting and
+memorising information performed in $f$, provide knowledge about
 specific \emph{RNN architecture(RNN cell)}.
 Thus the choice of recurrent function $f$(RNN cell)
 is essential for RNNs to work and remember information. There are a lot of variations
@@ -397,18 +398,18 @@ most widely known architecture called \emph{Long Short-Term Memory (LSTM)}.
 % problem \cite{Hochreiter1991}.
 \paragraph{Long Short Term Memory networks(LSTMs)} are a special architecture of RNN cell,
 capable of learning long-term dependencies. \cite{Hochreiter:1997:LSM:1246443.1246450}
-LSTMs have the ability to remember new information and forgetting old, unnecessary information
-using concept of gates. LSTM cell holds information in the object called \emph{state($C_t$)}
+LSTMs have the ability to remember new information and forget old, unnecessary information
+using the concept of gates. LSTM cell holds information in the object called \emph{state($C_t$)}
 and only the gates are permitted to manipulate and change this state.
 % These gates are responsible for the data in \emph{state}.
-Gates are represented as an sigmoid layer and pointwise operation and will be explained
+Gates are represented as a sigmoid layer and pointwise operation and will be explained
 below.
 
 \begin{figure}[H]
 	\includegraphics[width=\linewidth]{LSTM_inside.png}
 	\caption{
 		Structure of LSTM cell(Source: \cite{ColahChristopher2015}) \\
-		An yellow square with $\sigma$ inside represents a neural
+		The yellow square with $\sigma$ inside represents a neural
 		network with sigmoid activation function, while yellow square with $tahn$ inside represents
 		a neural network with $tahn$ activation function.}
 
@@ -435,10 +436,10 @@ the information in the state:
 	f_t = \sigma (W_f \cdot [h_{t-1}, x_t] + b_f)
 \end{equation}
 
-\subparagraph{Input gate layer} composed of two networks: networks with sigmoid
-and tahn activation functions. The first sigmoid network decides which values needed
-to be updated and till what extent, while the network with tahn activation function creates a
-new candidate state value. Then the outputs from then networks are multiplied with each other
+\subparagraph{Input gate layer} This is composed of two networks: networks with sigmoid
+and tahn activation functions. The first sigmoid network decides which values needs
+to be updated and to what extent, while the network with tahn activation function creates a
+new candidate state value. Then the outputs from the networks are multiplied with each other
 to create an update for the LSTM cell's state:
 
 \begin{align} \label{eq:input_gate}
@@ -448,7 +449,7 @@ to create an update for the LSTM cell's state:
 
 \subparagraph{Updating the state}
 It's fairly simple now to update the old state $C_{t-1}$ using $f_t$ from equation
-\ref{eq:forget_gate} to forget information and using new state candidate values
+\ref{eq:forget_gate} to forget information and use new state candidate values
 $C_t^{(candidate)}$ and it's extent $i_t$ from equation \ref{eq:input_gate}:
 
 \begin{equation} \label{eq:update_state}
@@ -456,7 +457,7 @@ $C_t^{(candidate)}$ and it's extent $i_t$ from equation \ref{eq:input_gate}:
 \end{equation}
 
 \subparagraph{Output gate layer} is responsible for the cell's output $h_t$.
-This layer is allowed to read information from the state $C_t$ and decides what information
+This layer is allowed to read information from state $C_t$ and decides what information
 should be outputted.
 
 \begin{figure}[H]
@@ -467,8 +468,8 @@ should be outputted.
 	\label{img:lstm_out}
 \end{figure}
 
-As you can see from figure \ref{img:lstm_out}: firstly, state cell goes
-through tahn function and then multiplied
+As you can see from figure \ref{img:lstm_out}: firstly, the state cell goes
+through tahn function and then is multiplied
 with output from the neural network of output gate layer:
 
 \begin{align} \label{eq:out_gate}
@@ -497,7 +498,7 @@ that's the reason it's called BPTT. \cite{werbos:bptt}
 
 We can think about it as using feedforward neural network's backpropagation
 but with the constrain that the weights of the layers should be the same.
-However as RNN might have a hundred of thousands time steps it is common
+However as RNN might have a hundreds of thousands time steps it is common
 practice to truncate the backpropagation only back to few time steps, instead
 of backpropagating it to the first time step.
 

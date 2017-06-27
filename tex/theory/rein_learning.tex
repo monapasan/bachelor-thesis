@@ -6,36 +6,36 @@ extracting information from a picture by attending to certain locations of the p
 and aggregating the information from these locations. This property will make our network
 avoid locations with insignificant information, hence ignore locations with clutter.
 In order to teach the network
-output next location to attend given previous location, we need to provide training data to
-the neural network. The problem is here, that we don't know the right answer for this.
+outputs next location to attend given previous location, we need to provide training data to
+the neural network. The problem is, that we don't know the right answer for this.
 We can only say whether the network made a right classification decision after the network
 has already chosen several locations. Consequently, the training of the network parameters will
 be a very difficult task. As previously mentioned in \autoref{par:grad_desc}, using gradient descent
 with backpropagation for training NN is possible only with differentiable cost function like
-mean squared error function or cross entropy function. However, we can't use this functions without
-the knowing the right answer, therefore defining the cost function would be a complicated task.
+mean squared error function or cross entropy function. However, we can't use these functions without
+knowing the right answer, therefore defining the cost function would be a complicated task.
 This sort of tasks is studied by a field of machine learning called \emph{reinforcement
 learning(RL)}. The theory described in this section based on the
 \cite{Sutton2012}, unless otherwise stated.
 
 % \subsection{}
 \paragraph{What is reinforcement learning?}
-Reinforcement learning concerned with teaching an agent to take actions based on
+Reinforcement learning concerns with teaching an agent to take actions based on
 reward signal, even if this signal is delayed.
 These agents are trained to maximise the total
 sum of such reward signals.
-The underlying idea behind RL to
+The underlying idea behind RL is to
 represent the nature of learning where agent learning about the the world by interacting
-with it. By performing this interactions we're observing the changes in the world
-from which we can learn about the consequences of this
+with it. By performing these interactions we're observing the changes in the world
+from which we can learn about the consequences of these
 interactions, and about what interactions to perform to achieve the goal.
 Reinforcement learning provides a computational approach to perform goal-directed learning
 by interacting with environment. The main difference between supervised learning and
-reinforcement learning is that in RL there is no instructions about the right answer,
-but a training information or reward signal is used to evaluate the taken actions.
-That is, instead of providing true label for the system instantaneously,
+reinforcement learning is that in RL there is no instructions about the right answer.
+Instead, training information or reward signal is used to evaluate the taken actions.
+That is, rather than providing true label for the system instantaneously,
 system is receiving a reward signal
-after each performed action and the goal of RL system is to teach an agent using his own
+after each performed action and the goal of RL system is to teach an agent using its own
 experience to achieve a certain goal.
 
 % The difference between
@@ -79,14 +79,14 @@ needed to learn how to play Atari 2600 games.
 	\label{img:atari_rl}
 \end{figure}
 % The rl system have 4 main compoentn s
-In the figure \ref{img:atari_rl}, the brain represents the agent. Agent is our
+In the figure \ref{img:atari_rl}, the brain represents the agent. The Agent is our
 computational system or decision making system.
-Agent in RL interacts with environment by performing actions. An action would be moving a joystick in the right.
-By moving a joystick
+The Agent in RL interacts with environment by performing actions. An action would be moving a joystick to the right.
+By moving the joystick
 we interact with the environment, which in this case is the true state of the Atari game engine.
 After the environment receives an action, it gives back to the agent an observation
 in the form of the video frame shown on the screen
-and reward signal which reflects the points scored.
+and a reward signal which reflects the points scored.
 \\
 \paragraph{State} \label{sec:comp_rl}
 Let's now abstract from our example and describe the flow of RL system more precisely.
@@ -95,7 +95,7 @@ and receives scalar reward $R_t$. The environment receives an action $A_t$,
 emits observation $O_{t+1}$, emits scalar reward $R_{t+1}$. Then $t$ is incremented
 after the environment's step. In RL instead of working with observations, one works
 with the \emph{state} or \emph{agent state}. The agent state is the data the agent uses
-to pick the next action. State is formally a function of the
+to pick the next action. The state is formally a function of the
 history(data that agent received so far):
 
 \begin{align} \label{eq:rl_state}
@@ -120,15 +120,15 @@ indicates how well agent is doing at time step $t$. The job of an agent to
 maximise the sum of rewards received after $t$ steps. This sum is also known as
 cumulative reward.
 
-Additionally to this an agent may possess of following components:
+Additionally to this an agent may possess the following components:
 a \emph{policy},
 a \emph{value function}, and
 a \emph{model of the environment}.
 
-\paragraph{A Policy} is agent's behaviour function. It maps agent's state
-to actions to be taken by agent, when agent are in those states. Normally, the policy is
-something that we want to find. Once the best policy is known, we solved RL problem.
-Policy can be deterministic: $a = \pi (s)$
+\paragraph{A Policy} is an agent's behaviour function. It maps the agent's state
+to actions to be taken by agent, when agent is in those states. Normally, the policy is
+something that we want to find. Once the best policy is known, we have solved RL problem.
+The Policy can be deterministic: $a = \pi (s)$
 as well as stochastic: $\pi(a|s) = P[A_t = a|S_t^a = s]$.
 
 % \paragraph{Reward function}
@@ -145,15 +145,16 @@ to receive when following policy $\pi$, starting from that state:
 where $\mathbb{E}_{\pi}$ is the expectation of the cumulative reward from time step $t$
 following policy $\pi$ given the state $s$, $\gamma$ - is a discount factor [0, 1].
  which will be explained in \autoref{subs:reward_process}\\
-While reward determines how well is current action at given time step, value of a state
-give us more information about long term desirability of a state taking into account
+While the reward determines how well the current action is at given time step, value of a state
+gives us more information about long term desirability of a state, that is
+taking into account
 the values of all possible states an agent can end up in after leaving this state.
 It's crucial to understand the difference between reward and value: reward is immediate,
 while the value giving us insights about the cumulative reward the agent can possibly get
 from this state on.
 
-\paragraph{Model of the environment} represents what the environment will do next. Given
-the current state $s$ and action $a$, model defines the probability of an agent to end up in
+\paragraph{Model of the environment} This represents what the environment will do next. Given
+the current state $s$ and action $a$, this model defines the probability of an agent to end up in
 a state $s^\prime$:
 \begin{align} \label{eq:model_env}
 P^a_{ss^{\prime}} = P[S_{t+1} = s_0 | S_t^a = s, A_t = a] \\
@@ -175,7 +176,7 @@ In partially observable environments the agent's state is not equal to environme
 instead the agent is constructing his own representation of environment state from
 the the external input(observations) that the environment provide.
 Partially observable environments is a special instance of what is known in RL community
-as partially observable Markov decision process (POMDP). In our work we are constructing
+as a partially observable Markov decision process (POMDP). In our work we are constructing
 the agent's state by injection the input provided by environment into RNN:
 \begin{equation} \label{eq:rnn_state}
 	S_t^a = \sigma(S_{t-1}^a \cdot W_s + O_t \cdot W_o)
@@ -194,13 +195,13 @@ and $W_s$, $W_o$ - appropriate weights.
 
 \subsection{Markov Decision Processes(MDP)} \label{subs:reward_process}
 The agent is the algorithm that we trying to build, which interacts with
-environment. \emph{Markov Decision Process(MDP)} describes this environment.
+the environment. \emph{Markov Decision Process(MDP)} describes this environment.
 Markov Decision Process is an extension of a Markov chain and is one of the core
-concept that is used in reinforcement learning and almost all problems in RL
+concepts that is used in reinforcement learning and almost all problems in RL
 can be described by using MDP. We have already defined some elements of MDP in \autoref{sec:comp_rl},
-however MDP's theory gives our a way to solve problems.
+however MDP's theory gives us a way to solve problems.
 
-\paragraph{Main components of MDP} The MDP is defined using following elements:
+\paragraph{Main components of MDP} The MDP is defined as using following elements:
 \begin{itemize}
 	\item \emph{Finite set of state}s $\mathcal{S}$ - a set of Markov states that we described in \autoref{sec:comp_rl}
 	\item \emph{Finite set of actions} $\mathcal{A}$ - a set of all possible actions.
@@ -238,7 +239,7 @@ to use discounts as this will prevent the return value from being exploded to in
 Secondly, discount give us a way to tune the model to prefer the immediate reward over
 delayed or vice versa.
 \paragraph{Value functions in MDP} MDP distinguishes between two types of value functions:
-\emph{state-value function} and \emph{action-value function}.
+\emph{the state-value function} and \emph{the action-value function}.
 
 State-value function is basically the same value function that we defined in \autoref{sec:comp_rl}:
 it describes the \emph{value} of state $S_t$ if following policy $\pi$ which is expected return
@@ -313,7 +314,7 @@ of the state where the agent will end up after leaving the current state.
 
 Now that we know how to represent the value of
 a state, we can concentrate on the problem that we really care about:
-find a best behaviour for the MDP. That is, the policy that achieves more of reward
+find the best behaviour for the MDP. That is, the policy that achieves more of reward
 compared with other policies.
 MDP literature give us a definition of the what is
 known as optimal policy:
@@ -423,7 +424,7 @@ convergent properties more efficient for high-dimensional action space.
 Firstly, We need to find a way to represent the policy. With the near continuous
 action space to store
 all states will require a lot of memory. Therefore for problems with large
-state space is recommended using function approximation methods.
+state space it's recommended to use function approximation methods.
 
 Using function approximators such as neural network will allow to
 estimate policy function:
@@ -502,9 +503,9 @@ where $\phi(s)^{T}$ - is a feature vector of state $s$. \\
 Feature vector normally represents the availability of certain features in
 a particular state $s$. \\
 For example, the first entry in the feature can determine
-whether an robot is close to a wall. In state $s_1$
-where robot actually has a wall a close to him
-this first entry should be then equal to 1 or close to 1.
+whether a robot is close to a wall. In state $s_1$
+where the robot actually has a wall a close to him
+the first entry should be then equal to 1 or close to 1.
 In contrast to state $s_2$ where
 robot has no wall close by, this entry in the feature vector
 should be 0 or close to 0.

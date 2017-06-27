@@ -1,13 +1,13 @@
 \chapter{Implementation}
 \label{ch:implementation}
 In this chapter we will discuss several implementation details that
-is important for understanding of the work. We will also show
+is important for understanding the work. We will also show
 the code patterns examples that were mentioned in the \auroref{sec:quality_concerns}.
 
 \section{TensorFlow}
 In the figure \ref{fig:model_uml}, you might notice that some of the functions
-return \lstinline{tf.Tensor} object. In order to understand what is is,
-let's make a small example of how an TensorFlow program can look like.
+return \lstinline{tf.Tensor} object. In order to understand what it is,
+let's make a small example to show how a TensorFlow program can look.
 In the listing \ref{list:tf_graph}, you can find a small TensorFlow program.
 
 
@@ -28,9 +28,9 @@ for step in xrange(0, 10):
 \end{lstlisting}
 
 
-In TensotFlow computations are represented as a directed graph, which is composed
+In TensorFlow, computations are represented as a directed graph that is composed
 of nodes. The computational graph of the listing \ref{list:tf_graph}, is shown
-in the figure \ref{fig:comp_graph_tf}. Values that flow along the graph is denoted
+in the figure \ref{fig:comp_graph_tf}. Values that flow along the graph are denoted
 as \emph{Tensor}, which is a TensorFlow representation of primitive values shaped
 into an array. Another important concept in TensorFlow is an operation, which represent
 an abstract computation. For example, in figure \ref{fig:comp_graph_tf} you can see
@@ -45,14 +45,15 @@ such operations: 'ReLU', 'Add', 'MatMul'.
 
 To execute a TensorFlow program, one needs to build the computational graph,
 and then execute it. We're building
-the computation graph by instantiating the TensorFlow operations like
-\lstinline{tf.Variable}. But to actual run the computation and output actual values
-of the graph we need to execute this graph by using concept of Session. Session is
-responsible for the executing of the computational graph; it takes the graph
-as well as oper
-and execute it on desired environment(e.g. GPU, CPU). One also passes parameter
-\lstinline{feed_dict}, which is a dictionary object where a key is name of
-\lstinline{tf.placeholder} and value is the data that placeholder should be substituted
+the computation graph by instantiating the TensorFlow classes like the
+\lstinline{tf.Variable}. But to actually compute this and obtain the correct output values
+we need to execute this using the \lstinline{tf.Session}. The \lstinline{tf.Session}
+is
+responsible for the execution of the computational graph; it takes the graph
+as well as the data
+to execute it on desired environment(e.g. GPU, CPU). One also passes the parameter
+\lstinline{feed_dict} that is a dictionary object where the key has the name of
+\lstinline{tf.placeholder} and the value is the data that the placeholder should be substituted
 with. A \emph{placeholder} is a promise to provide the value later in the program.
 
 
@@ -72,9 +73,9 @@ These recommendation were carefully followed in the implementation of this work.
 helpful for understanding and reasoning about the code. Here we will show
 examples of how this code patterns can be applied.
 
-\subparagraph{Method comment} It would be perfect, if the code would
+\subparagraph{Method comment} Would be perfect, if the code would
 be so clear and readable that we could avoid unnecessary comments in it.
-The method comment can help with that. Instead of having a comment in the code,
+The method comment can help with this. Instead of having a comment in the code,
 it encourages to write a function with self-explanatory name:
 \begin{lstlisting}[language=Python, caption={Method comment example},label={list:method_comment}]
 def init_location_network(config):
@@ -122,13 +123,13 @@ In the listing \ref{list:composed}, you can see the example of the composed meth
 As you might guess from the function name \lstinline{init_seq_rnn}, the
 function
 is initialising the sequence of RNN cells, which is indeed an identifiable task.
-Additionally to this, all operation performed in the function
+Additionally, all of the operations performed in the function
 have a high level of abstraction: for example to
 create LSTM inputs or to initialise glimpse network, it uses helper functions
 \lstinline{lstm_inputs} and \lstinline{init_glimpse_network} respectively.
 For the understanding the composed method, one can skip the function \lstinline{get_next_input}.
 
-\subparagraph{Temporary variable} This pattern recommends to use a temporary
+\subparagraph{Temporary variable} This pattern recommends using a temporary
 variable with self-explanatory name instead of having very long expression
 in the code. One of the example of this pattern you can see
 in the listing \ref{list:comment_method}.
@@ -149,7 +150,7 @@ increase readability by avoiding very long expressions in the lines after.
 The names make it also more ease to comprehend for those who are unfamiliar
 with the code.
 
-\subparagraph{Duck typing} It's a concept which is used by dynamic typed languages.
+\subparagraph{Duck typing} This a concept that is used by dynamic typed languages.
 The idea behind it is that to use an object, it has to have a certain desired functionality,
 but it does not matter the nature of this object.
 \begin{lstlisting}[language=Python, caption={Method comment example},label={list:duck_typing}]
@@ -178,16 +179,16 @@ the conventions of how to configure, structure, test and document the code.
 The purpose of this section is to show the implementation details that
 are important to understand the code and the model.
 
-\paragraph{Hybrid loss} One of the essential thing in machine learning to
-defined the loss function carefully. As in this work to train the model
-we use some of reinforcement learning aspects, our loss function is compose
+\paragraph{Hybrid loss} One of the essential aspect in machine learning is to
+define the loss function carefully. As this works to train the model,
+we use some of reinforcement learning aspects, as our loss function is compose
 of multiple loss function:
 \begin{itemize}
 	\item loss function to train the location network with
 		help of reinforcement learning algorithms by increasing rewards.
-	\item loss function to train the baseline function, which is used to
-		reduce variance when computing the gradient of loss function for
-		location and picker networks.
+	\item loss function to train the baseline function that is used to
+		reduce the variance when computing the gradient of loss function for
+		the location and picker networks.
 	\item loss function to train the classification network based on the ground truth.
 \end{itemize}
 
@@ -242,8 +243,8 @@ where \lstinline{var_list} - is the variables with respect to which the gradient
 be computed.
 
 We get the \lstinline{var_list} by using TensorFlow function \lstinline{tf.trainable_variables()},
-which return the all trainable variables in the graph. One thing to notice is
+which return all of the trainable variables in the graph. One thing to notice is
 that for some variables like location or baselines we use function \lstinline{tf.stop_gradient},
-which prevent the contribution of those variable to be taken into account when computing a
-gradient. The function \lstinline{tf.trainable_variables()} return the variables excluding
-the variables the function \lstinline{tf.stop_gradient} was applied on.
+these prevent the contribution of the variable to be taken into account when computing a
+gradient. The function \lstinline{tf.trainable_variables()} returns the trainable variables excluding
+the variables where the function \lstinline{tf.stop_gradient} was applied on.
