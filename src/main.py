@@ -35,7 +35,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--batch_size',
         type=int,
-        default=32,
+        default=20,
         help='Batch size.  Must divide evenly into the dataset sizes.'
     )
     parser.add_argument(
@@ -123,7 +123,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--num_glimpses',
         type=int,
-        default=30,
+        default=15,
         help='Amount of glimpses needs to be taken before making \
         a classfication decision.'
     )
@@ -206,13 +206,13 @@ if __name__ == '__main__':
     parser.add_argument(
         '--noise_label_index',
         type=list,
-        default=[1, 2],
+        default=[0],
         help='Amount of noise images per class'
     )
     parser.add_argument(
         '--data_label_index',
         type=list,
-        default=[0, 3, 4, 5, 6, 7, 8, 9],
+        default=[1, 2, 3, 4, 5, 6, 7, 8, 9],
         help='Amount of noise images per class'
     )
     FLAGS, unparsed = parser.parse_known_args()
