@@ -74,5 +74,4 @@ class GlimpseSensor(object):
         # https://www.tensorflow.org/api_docs/python/tf/image/resize_bilinear
         # https://www.tensorflow.org/api_docs/python/tf/image/resize_images
         # tf.resize_bilinear().
-        # make sense to do preprocessing of these or?
         return glimpse_imgs

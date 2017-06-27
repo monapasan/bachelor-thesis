@@ -317,9 +317,8 @@ def log_step(
     logging.info('llratio = {:3.4f}\tbaselines_mse = {:3.4f}'.format(
         logllratio, baseline_mse)
     )
-    add_summary(summary_writer, learning_rate, i, True, 'Learning rate value')
+    add_summary(summary_writer, learning_rate, i, True, 'Learning rate')
     add_summary(summary_writer, reward, i, True, 'Average reward')
-    add_summary(summary_writer, loss, i, True, 'Hybrid loss value')
     add_summary(summary_writer, x_entr, i, True, 'Cross entropy')
     add_summary(summary_writer, logllratio, i, True, 'Log likelihood ratio')
     add_summary(
@@ -356,7 +355,7 @@ def run_training():
         loss = -logllratio + xent + baselines_mse  # `-` for minimize
 
         # Add a scalar summary for the snapshot loss.
-        tf.summary.scalar('loss', loss)
+        tf.summary.scalar('Hybrid loss', loss)
 
         grads = tf.gradients(loss, var_list)
         clipped_grads, _ = tf.clip_by_global_norm(grads, Config.max_grad_norm)
