@@ -123,7 +123,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--num_glimpses',
         type=int,
-        default=15,
+        default=24,
         help='Amount of glimpses needs to be taken before making \
         a classfication decision.'
     )
@@ -164,7 +164,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--n_img_group',
         type=int,
-        default=5,
+        default=4,
         help='Amount of images per group.'
     )
     parser.add_argument(
@@ -176,31 +176,31 @@ if __name__ == '__main__':
     parser.add_argument(
         '--num_classes',
         type=int,
-        default=3,
+        default=2,
         help='Amount of classes for classification task.'
     )
     parser.add_argument(
         '--noises_per_class',
         type=list,
-        default=[4, 3, 2],
+        default=[2, 1],
         help='Amount of noise images per class'
     )
     parser.add_argument(
         '--num_examples_per_class',
         type=list,
-        default=[15000, 15000, 15000],
+        default=[30000, 30000],
         help='Amount of noise images per class for training dataset'
     )
     parser.add_argument(
         '--num_examples_per_class_val',
         type=list,
-        default=[1700, 1700, 1700],
+        default=[4000, 4000],
         help='Amount of noise images per class for validation dataset'
     )
     parser.add_argument(
         '--num_examples_per_class_test',
         type=list,
-        default=[3300, 3300, 3300],
+        default=[7000, 7000],
         help='Amount of noise images per class for test dataset'
     )
     parser.add_argument(

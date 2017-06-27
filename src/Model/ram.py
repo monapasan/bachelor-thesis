@@ -355,7 +355,7 @@ def run_training():
         loss = -logllratio + xent + baselines_mse  # `-` for minimize
 
         # Add a scalar summary for the snapshot loss.
-        tf.summary.scalar('Hybrid loss', loss)
+        tf.summary.scalar('Hybrid_loss', loss)
 
         grads = tf.gradients(loss, var_list)
         clipped_grads, _ = tf.clip_by_global_norm(grads, Config.max_grad_norm)
