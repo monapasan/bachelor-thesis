@@ -16,7 +16,6 @@ FLAGS = None
 
 def main(_):
     """Run the Visual Attention model with the extension."""
-
     from Model.ram import run_training
     if tf.gfile.Exists(FLAGS.log_dir):
         tf.gfile.DeleteRecursively(FLAGS.log_dir)
@@ -124,7 +123,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--num_glimpses',
         type=int,
-        default=6,
+        default=30,
         help='Amount of glimpses needs to be taken before making \
         a classfication decision.'
     )

@@ -43,8 +43,8 @@ class IndexGenerator(object):
                  should be placed at.
         Raises:
             ValueError: If the `noise_quantity` is not one-dimensional array or
-                if no noise_quantity was
-                passed to the contructor.
+                if no noise_quantity was passed to the contructor.
+
         """
         if(noise_quantity is None):
             raise ValueError(
@@ -80,8 +80,6 @@ class IndexGenerator(object):
 
         def generate(size):
             return [generateOneSample() for i in range(size)]
-            # for i in range(size):
-            #     yield generateOneSample()
         self._generate = generate
 
         def generate_for_class(class_number):
@@ -135,5 +133,3 @@ class IndexGenerator(object):
                 )
             )
         return [self.__generate_for_class(cls_number) for i in range(size)]
-        # for i in range(size):
-        #     yield self.__generate_for_class(cls_number)

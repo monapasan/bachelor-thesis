@@ -45,8 +45,7 @@ class GroupDataset(object):
                 sample(i.e. size of group).
             one_hot(Boolean): if True then labels will be one hot encoded,
                 otherwise not.
-        Raises:
-            ValueError:
+
         """
         if(not(hasattr(dataset, "labels") and hasattr(dataset, "images"))):
             raise ValueError(
@@ -80,15 +79,16 @@ class GroupDataset(object):
                 'n_samples should either be an int or fullfil \
                  len(n_samples) == amount_of_classes'
             )
-        self.__dataset = dataset
-        self.index_generator = index_generator
-        self.one_hot = one_hot
         if(isinstance(n_samples, int)):
             self.n_samples_per_class = (
                 [n_samples] * amount_of_classes
             )
         else:
             self.n_samples_per_class = n_samples
+
+        self.__dataset = dataset
+        self.index_generator = index_generator
+        self.one_hot = one_hot
 
         self.noise_label_index = noise_label_index
         self.data_label_index = data_label_index
