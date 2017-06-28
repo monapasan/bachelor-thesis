@@ -3,7 +3,7 @@
 As it was mentioned in \autoref{chap:intro}, Recurrent Models of Visual
 Attention(also known as the recurrent attention model(RAM)) is
 a computational approach presented by google Deepmind’s researchers to reduce
-and contronl computational cost while classifying images.
+and control computational cost while classifying images.
 \subparagraph{Note: } The theory described in this section based on the
 \cite{DBLP:journals/corr/MnihHGK14}, unless otherwise stated.
 
@@ -106,7 +106,8 @@ that produces the next location $l_t$ parametrized by $\theta_l$. We will consid
 location network a bit deeper in the \autoref{chap:analysis}. \\
 Depending on the task, the environment actions can vary, therefore
 we'll concentrate on the environment action that is relevant for this work.
-In our work, environment actions make the classification decision of an image.
+In our work, environment actions make the classification decision of an image
+after attending to $T$ number of locations.
 It's formulated using softmax output from environment neural network
  $f_a(h_t; \theta_a)$, where $\theta_a$ - is a set of parameters of neural network $f_a$.
 
@@ -117,6 +118,7 @@ a reward $r_n = 1$ if the classification decision was correct and $0$ otherwise.
 
 Training of the agent is performed by REINFORCE rule
 described in \autoref{ss:pol_based_rl} with the advantage function.
+% TODO: write about hybrid cost here
 % Given the location (lt−1) and input image (xt), uses the glimpse sensor to extract
 % retina representation ρ(xt, lt−1). The retina representation and glimpse
 % location is then mapped into a hidden space using independent linear

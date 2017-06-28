@@ -608,13 +608,15 @@ As code for producing the dataset having procedural structure,
 it should be fully tested in order to avoid
 unexpected behaviour in the model.
 \\
-To test how the performance of the model following metric should be taken into
-consideration: accuracy on the test data, time needed for the model to train.
-% name: Tesla M40
-% major: 5 minor: 2 memoryClockRate (GHz) 1.112
-% pciBusID 0000:03:00.0
-% Total memory: 11.92GiB
-% Free memory: 11.82GiB
+In this work, we will mostly concentrate on bringing this model to life,
+therefore performance of the model does not play significant role.
+But in order to get an idea of how well the model is performing and
+to be able to analyse it, we will consider following performance metric:
+accuracy on training, validation and test data, hybrid loss value and it's parts
+and the cross entropy between ground truth and prediction. Additionally,
+we will look at the time that the model taken to perform certain
+amount of iterations.
+
 % we need take extra care of this
 % as to assure that the model works correctly.
 
