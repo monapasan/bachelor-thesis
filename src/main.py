@@ -1,3 +1,4 @@
+"""The main file of the prototype. It runs the model."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -189,31 +190,31 @@ if __name__ == '__main__':
         '--num_examples_per_class',
         type=list,
         default=[30000, 30000],
-        help='Amount of noise images per class for training dataset'
+        help='Amount of examples to generate for the training dataset'
     )
     parser.add_argument(
         '--num_examples_per_class_val',
         type=list,
         default=[4000, 4000],
-        help='Amount of noise images per class for validation dataset'
+        help='Amount of examples to generate for the validation dataset'
     )
     parser.add_argument(
         '--num_examples_per_class_test',
         type=list,
         default=[7000, 7000],
-        help='Amount of noise images per class for test dataset'
+        help='Amount of examples to generate for the test dataset'
     )
     parser.add_argument(
         '--noise_label_index',
         type=list,
         default=[0],
-        help='Amount of noise images per class'
+        help='Images at these labels are noise images'
     )
     parser.add_argument(
         '--data_label_index',
         type=list,
         default=[1, 2, 3, 4, 5, 6, 7, 8, 9],
-        help='Amount of noise images per class'
+        help='Images at these labels are non-noise images'
     )
     FLAGS, unparsed = parser.parse_known_args()
     config.init_config(FLAGS)
