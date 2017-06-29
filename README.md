@@ -10,7 +10,8 @@ Below you can find commands that you can execute.
 
 You can change the default parameters of the model by providing the arguments on the command line.
 Another way to change the parameters is to change the values in [/src/main.py](https://github.com/monapasan/bachelor-thesis/blob/master/src/main.py) and then run the model with `make run` or python3 src/main.py. You will also find in this file the descriptions of the parameters. 
----
+
+___
 ## Execution
 
 In the root diretory of the project execute following commands:
@@ -26,9 +27,10 @@ In the root diretory of the project execute following commands:
 
 ### print parameters of the model
 `make help`
-----
 
-Without help of the  make it's also to possible execute the following commands:
+___
+
+Without help of the  makefile it's also to possible execute the following commands:
 
 ### To run tests
 `nosetests tests --nologcapture --rednose -d`
