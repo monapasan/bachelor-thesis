@@ -6,10 +6,10 @@ This is the implementation of the prototype presented in bachelor thesis "Develo
 To run the model, you need to have python3 and pip command available in terminal.
 In order to run the model, you need to install the reuiqred packaged with pip.
 Below you can find commands that you can execute.
----
+___
 
 You can change the default parameters of the model by providing the arguments on the command line.
-Another way to change the parameters is to change the values in [/src/main.py](https://github.com/monapasan/bachelor-thesis/blob/master/src/main.py) and then run the model with `make run` or python3 src/main.py. You will also find in this file the descriptions of the parameters. 
+Another way to change the parameters is to change the values in [/src/main.py](https://github.com/monapasan/bachelor-thesis/blob/master/src/main.py) and then run the model with `make run` or `python3 src/main.py`. You will also find in this file the descriptions of the parameters. 
 
 ___
 ## Execution
