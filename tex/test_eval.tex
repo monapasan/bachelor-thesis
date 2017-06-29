@@ -52,7 +52,7 @@ when debugging and fixing tests. You can see the example of an report on the fig
 the module Model is not, since it has too many non-deterministic values.
 One good way of testing the model is to run an interactive session of TensorFlow,
 which is desired for the further development of the prototype.\footnote{
-TensorFlow documentation explains this method here: https://www.tensorflow.org/api_guides/python/test
+TensorFlow documentation explains this method here: https://www.tensorflow.org/api\_guides/python/test
 }
 
 \section{Evaluation} The model was evaluated with the dataset described
@@ -63,7 +63,7 @@ caused by different configurations.
 We will introduce more details of the first experiments below in this section.
 
 \subsection{Configuration}
-The evaluation was performed on two different types of setting.
+The evaluation was performed on three different types of setting.
 You can see the differences between these configurations
 in table \ref{tab:conf_exp}.
 
@@ -72,7 +72,7 @@ We will explain the settings that are different in the configurations:
 	\item Number of glimpses($T$) - As you can remember from \autoref{sec:ram_model}
 	the agent does a classification decision after $T$ steps. In original RAM
 	paper this number was equal to $T=7$. Since we will have more images in a group,
-	we increased this number in both of configurations.
+	we increased this number in all of configurations.
 	\item Batch size - size of the batch for training the model.
 	\item Labels of noise pictures - the images at the labels considered to be
 	 	insignificant for the classification decision(as described in \autoref{sec:analysis_dataset}).
@@ -123,7 +123,7 @@ The figures \ref{fig:valid_accuracy} and \ref{fig:test_accuracy} indicate that t
 and test data weren't stable. The training accuracy for all three configurations
 was stable and reached high results as shown in the figure \ref{fig:batch_accuracy}.
 Proceeding from that, we can state that overfitting occurs
-by training the model.
+when training the model.
 
 \begin{figure}
 \centering

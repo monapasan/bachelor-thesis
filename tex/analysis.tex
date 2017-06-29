@@ -1,6 +1,6 @@
 \chapter{Analysis}
 \label{ch:analysis}
-The main objective of this work will be to build an extensible prototype,
+The main objective of this work is to build an extensible prototype,
 which will be built on the model of visual attention and additionally
 extended to classify
 a set of images. This chapter discusses the main concerns
@@ -11,8 +11,8 @@ Firstly, let's define the clear problem statement:
 \textit{
 	Given a dataset where each sample consist of a group of images.
 	A certain label is asserted to every sample in a dataset. The goal is
-	to build a extensible prototype upon RAM that is capable of classifying
-	this samples. The prototype is the resemblance of the RAM model with
+	to build a extensible prototype upon \gls{RAM} that is capable of classifying
+	this samples. The prototype is the resemblance of the \gls{RAM} model with
 	with the ability to accept the above mentioned dataset.
 }
 
@@ -29,11 +29,11 @@ Firstly, let's define the clear problem statement:
 \label{sec:quality_concerns}
 This statement makes it clear that the prototype should be extensible. Extensible
 means that other people(including author itself) are able to extend the
-prototype. People should comprehend the code as well as start and configure
-the procedures in order to extend the prototype. Therefore following the best practices
+prototype. People should comprehend the code as well as the configuration
+procedures in order to extend the prototype. Therefore, following the best practices
 and conventions, using widely known frameworks, producing clean and readable code
-to stay consistent with other modern software is an important
-point of this work.
+to stay consistent with other modern software are  important
+points of this work.
 
 It's more convenient to talk about conventions once programming language and
 libraries are chosen for this work.
@@ -57,8 +57,8 @@ not necessarily losing  flexibility. In order to make learning process traceable
 TensorFlow provides TensorBoard, which is a web interface for graph visualization
 built directly into TensorFlow.
 TensorBoard is an important and uniq feature that excels TensorFlow from similar
-libraries; it dramatically improves debugging experience as well as helps
-for understanding models developed using TensorFlow.
+libraries; it improves debugging experience as well as helps
+for understanding models that was developed using the TensorFlow.
 Aforementioned features of the framework as well
 as it's great API for Python is a great fit for this work.
 
@@ -68,8 +68,9 @@ the most popular languages among machine learning community.
 
 \paragraph{Code conventions}
 Now that we assigned interfaces, let's define the conventions that this work
-will follow. As TensorFlow recommends using PEP 8 style guide to stay consistent
-with community \cite{TfWeb}. PEP 8 gives the set of rules about how to lay out
+will follow. As TensorFlow recommends using PEP 8 style guide, we will use it
+as well to stay consistent
+with community \cite{TfWeb}. PEP 8 gives the set of rules about how to layout
 the code, how to name functions, methods and classes and others code style related
 aspects \cite{Rossum}. PEP 8 linter is also integrated in the project, which checks the code
 automatically on presence errors against PEP 8 style guide,
@@ -111,7 +112,7 @@ Below is a list of this code pattern recommendations:
 		from the original method.
 		The idea is to create a small class that will hold the parameters
 		as properties and then to create small methods within this class without
-		passing the parameters to it but instead access them as class properties.
+		passing the parameters to it, but instead access them as class properties.
 		\cite{beck1997smalltalk}
 	% implement
 	\item Method comment - instead of having a comment close to not
@@ -125,8 +126,8 @@ Below is a list of this code pattern recommendations:
 		to assign part of the expression to a variable. This variable can also have
 		the self-explanatory name, consequently increasing the readability of the code.\cite{beck1997smalltalk}
 
-	\item Simple Enumeration Parameter - having a simple name of a parameter
-		when iterating over enumeration: \lstinline{for each in plugins:} \cite{beck1997smalltalk}
+	% \item Simple Enumeration Parameter - having a simple name of a parameter
+	% 	when iterating over enumeration: \lstinline{for each in plugins:} \cite{beck1997smalltalk}
 	% done below
 	\item Cascade pattern - when a method of a class doesn't return any value,
 		one can return instance of the class in order to be able to call a
@@ -170,10 +171,10 @@ softwares, easy configurable, readable code.
 
 
 \section{Analysis of the previous work}
-As we will build the current model upon the RAM described
+As we will build the current model upon the \gls{RAM} described
 in \autoref{sec:ram_model}, it makes sense to look over the existing implementations
-of the RAM model.
-The authors of RAM paper haven't provided the implementation, but
+of the \gls{RAM} model.
+The authors of \gls{RAM} paper haven't provided the implementation, but
 fortunately there are some implementations built by the open source community.
 It's common to see that people, who are working on a model as open source project,
 often do it in their free time. As a consequence, it is expected that those model
@@ -195,12 +196,12 @@ of this work:
 After doing the research and taking into account the above listed criteria,
 the choice fell on the project from github user 'zhongwen'. We will refer to
 this implementation as \emph{
-	basic RAM implementation
+	basic \gls{RAM} implementation
 	\footnote{The original project is located on github: https://github.com/zhongwen/RAM .}
 }.
 
 This project is built using TensorFlow framework.
-
+% TODO: change the notation.
 \subsection{Advantages over original RAM paper}
 Building a machine learning software is not as straight forward as building
 conventional software. In machine learning, in order to achieve high accuracy
@@ -217,17 +218,16 @@ described in \cite{DBLP:journals/corr/MnihHGK14}.
 Let's take a look at how the gradient of objective function is calculated in \cite{DBLP:journals/corr/MnihHGK14}:
 \begin{equation} \label{eq:}
 	\Delta_{\theta} J = \frac{1}{M} \sum_{i=1}^M \sum_{t=1}^T
-		\Delta_{\theta} \log \pi_{\theta}(u_t^i| s_{1:t}^i) (R_t^i - b_t)
+		\Delta_{\theta} \log \pi_{\theta}(a_t^i| s_t^i) (R_t^i - b_t)
 \end{equation}
 where $J$ - is a cost function, $M$ - number of episodes,
-$T$ - is a time step where the agent is forced to make a classification decision,
-$s_{1:t}^i$ - are state sequences obtained by
-running the current agent $\pi_{\theta}$ for $i = 1 . . .M$ episodes,
-$b_t$ - baseline to reduce variance, $u_t_i$ - action at time step $t$
-of episode $t$.
+$T$ - is a time step where the agent is forced to make a classification decision(end of an episode),
+$s_t^i$ - state at time step $t$ of episode $i$,
+$b_t$ - baseline to reduce variance, $a_t^i$ - action at time step $t$
+of episode $i$.
 
 As we can see the gradient is calculated based on running $M$ episodes.
-Firstly, the agent chooses sequentially $n$ location and makes a classification
+Firstly, the agent chooses sequentially $T$ locations and finally makes a classification
 decision. Then we run $M$ similar episodes like this. After this,
 we compute the gradient. The basic RAM implementation used slightly different
 approach. It does not run multiple episodes to update the parameters, but instead
@@ -246,7 +246,8 @@ which theoretically should improve performance. \cite{DBLP:journals/corr/KingmaB
 
 
 \paragraph{Gradient clipping} In contrast to RAM paper, the basic RAM implementation
-additionally clipped the gradient values by global norm of their values to prevent the vanishing
+additionally clipped the gradient values by global norm of their values.
+This is normally done to prevent the vanishing
 and the exploding gradient problems \cite{Pascanu2012}.
 
 
@@ -254,9 +255,9 @@ and the exploding gradient problems \cite{Pascanu2012}.
 Unfortunately, the basic RAM implementation used old version of TensorFlow,
 which was unstable at that moment, therefore migration of the project
 to the latest TensorFlow version is required\footnote{
-	Migration was performed according to TensorFlow migration
+	Migration was performed according to the TensorFlow migration
 	guide: https://www.tensorflow.org/install/migration
-}
+}.
 
 Looking at basic RAM implementation purely from software engineering side,
 one can observe several flaws. Not following python conventions as well
@@ -277,8 +278,8 @@ As you can remember from \autoref{sec:ram_model}, glimpse sensor is taking
 multiple patches from an image, where each patch is taken at different resolution.
 The basic RAM implementation is not capable of taking multiple patches,
 but only a single one. Without the ability of taking multiple patches within a glimpse,
-accuracy of inference will be ore likely to decrease. Therefore this functionality
-should be available in the work in order to achieve better results.
+accuracy of inference will be more likely to decrease when working with high-resolution
+images.
 
 Additionally to this, TensorBoard wasn't configured in basic RAM implementation.
 Training such massive model as RAM can be complex and sometimes confusing.
@@ -347,7 +348,7 @@ prerequisite for a good prototype.
 In order to fulfill the objective of this work, it's required to extend the basic
 RAM implementation in a following way: it should accept a group of images as input
 and based on that input make a classification decision. Group in this case means
-more than one image(e.g. 2,3 or 5 images). More formally:
+more than one image(e.g. 2, 3 or 5 images and etc.). More formally:
 \textit{given a group of images, extended model returns a probability distribution over
 $K$ different outcomes, where $K$ - is amount of classes in the classification problem.}
 We'll refer to amount of the image in a group as $n$.
@@ -359,7 +360,7 @@ was presented in \autoref{sec:ram_model}.
 
 \begin{figure}[h!]
 	\includegraphics[width=\linewidth,scale=0.4]{ram_model_arch}
-	\caption{Original architecture of RAMS(Source: \cite{DBLP:journals/corr/MnihHGK14}).}
+	\caption{Original architecture of RAM (source: \cite{DBLP:journals/corr/MnihHGK14}).}
 	\label{fig:ram_model_arch}
 \end{figure}
 
@@ -391,7 +392,7 @@ All of networks above have a similar structure:
 	f_l(h_t; \theta_l) = Linear_{\theta_l}(h_t) \\
 	f_p(h_t; \theta_p) = Softmax(Linear_{\theta_p}(h_t))
 \end{align}
-where $Z$ - is a normalizing constant, $Softmax$ - is softmax activation function
+wher $Softmax$ - is softmax activation function
 $Linear_{\theta}(x)$ - represents
 a linear transformation $Linear_{\theta}(x) = W_{\theta}x+b_{\theta}$ with weights
 $W_{\theta}$ and bias $b_{\theta}$.
@@ -405,7 +406,7 @@ by introducing new RNN layer on top of the current RNN layer.
 
 \begin{figure}
 	\includegraphics[width=\linewidth,scale=0.7]{deep_attention_model.png}
-	\caption{Source: \cite{DBLP:journals/corr/BaMK14}}
+	\caption{The deep recurrent attention model (source: \cite{DBLP:journals/corr/BaMK14})}
 	\label{fig:deep_att_model}
 \end{figure}
 
@@ -415,7 +416,7 @@ was consumed by the location network and classification network in \cite{DBLP:jo
 This will be different in current approach. We can describe it as following:
 We introduce new RNN $r^{(2)}$ on top of first RNN:
 \begin{itemize}
-	\item The new RNN is initialized by output from convolution
+	\item The new \gls{RNN} is initialized by output from convolution
 		network(called Context Network) applied on the down
 		sampled low-resolution version of input image.
 		The feature vector outputted from convolutional layer
@@ -427,29 +428,30 @@ We introduce new RNN $r^{(2)}$ on top of first RNN:
 		“short cut” solution that is much easier for the model to
 		learn from contextual information than by combining information
 		from different glimpses}
-	\item The new RNN takes as input the output of RNN $r^{(1)}$:
+	\item The new \gls{RNN} takes as input the output of \gls{RNN} $r^{(1)}$:
 		$r_n^{(2)} = f_{r^{(2)}}(r_n^{(1)}, r_{n-1}^{(2)})$,
-		where $r_n^{(1)}$ - is the output of RNN $r^{(1)}$ at time step $n$,
-		$f_{r^{(2)}}$ - is RNN cell function(e.g. LSTM cell),
+		where $r_n^{(1)}$ - is the output of \gls{RNN} $r^{(1)}$ at time step $n$,
+		$f_{r^{(2)}}$ - is \gls{RNN} cell function of the new \gls{RNN} $r^{(2)}$ (e.g. \gls{LSTM} cell),
 		% $r_n^{(2)$ and $r_{n-1}^{(2)}$
-		  $r_n^{(2)}$ and $r_{n-1}^{(2)}$ are outputs of RNN $r^{(2)}$
+		  $r_n^{(2)}$ and $r_{n-1}^{(2)}$ are outputs of \gls{RNN} $r^{(2)}$
 		  at time step $n$ and $n-1$ respectively.
-	\item The output of new RNN is used to produce next location.
+	\item The output of new \gls{RNN} is used to produce next location.
 		The output is fed into fully connected network, which maps
-		the feature vector produced by new RNN into coordinate object $[i, (x,y)]$,
-		wherer $i$ - is a index in the group of images.
+		the feature vector produced by new \gls{RNN} into coordinate object $[i, (x,y)]$,
+		where $i$ - is a index in the group of images. Having this index $i$,
+		which can be from $0$ to $K$, we attend to a certain image $i$ at the location $(x, y)$.
 \end{itemize}
 
-The reason for having the second RNN is to implicitly
+The reason for having the second \gls{RNN} is to implicitly
 represent decision about location and
 prevent using location information in classification. Separation is crucial:
-first RNN network is responsible for
+first \gls{RNN} network is responsible for
 classification, while second one for choosing the right location.
 One state will hold information about classification, while the state of
-the RNN cell on the top will hold information about locations.
+the \gls{RNN} cell on the top will hold information about locations.
 One advantage of this work is that having this separation of concerns between
 location and classification information which theoretically should improve the model.
-This approach we will call \emph{Deep attention model}.
+We will refer to this approach as \emph{deep attention model}.
 
 \subsection{Exploration network}
 In original RAM paper, the model is required to execute a number of
@@ -498,7 +500,7 @@ New exploration network computes the distribution in the following way:
 	f_e(h_t; \theta_e) = Softmax(Linear_{\theta_e}(h_t))
 \end{equation}
 
-The main advantage of this approach is the flexibility since it can easily be combined
+The advantage of this approach is the flexibility since it can easily be combined
 with deep attention model introduced in \autoref{subs:deep_att_model}. This
 approach can be also augmented with following actions:
 \begin{itemize}
@@ -509,6 +511,10 @@ approach can be also augmented with following actions:
 
 There is no theoretical to prove which one from the extensions will work better,
 therefore testing them with experiments is required.
+We will chose only one of the approaches for
+performing experiments since testing all the extensions
+is out of scope of this work.
+
 \section{Dataset}
 \label{sec:analysis_dataset}
 
@@ -530,16 +536,19 @@ Additionally, it includes a label for each of the image.
 
 \begin{figure}[h!]
 	\includegraphics[width=\linewidth,scale=0.4]{MNIST}
-	\caption{MNIST example (Source: \cite{tensorFlowSite})}
+	\caption{MNIST example (source: \cite{tensorFlowSite})}
 	\label{fig:mnist}
 \end{figure}
 
 For example, in the figure \ref{fig:mnist} the labels are 5, 0, 4 and 1.
-Each images consist of $28\times28$ pixels, therefore an MNIST image would
+Each images consist of $28\times28$ pixels, hence an MNIST image would
 be an array of size $784$.
 
 MNSIT dataset consist of 55,000 training samples, 10,000 test samples, 5,000 validation samples.
-Requirement for the dataset can be formulated as following:\\
+
+\subparagraph{Group dataset}
+
+Requirement for the new dataset can be formulated as following:\\
 \textit{Each sample in the dataset should contain fixed number of images. Amount of images
 in an sample should be more than 1. The dataset should have at least two classes,
 which are used to label each of the sample. The dataset should provide enough
@@ -554,7 +563,7 @@ data to train, validate and evaluate the model.}
 We should come up with the dataset that will fulfill the requirements above.
 One way of doing it could be described as following:
 having limit of 10 classes in MNIST dataset, we decide about the class(or classes) of images
-that hold information relevant for classification decision(it can be f.e. classes
+that hold information relevant for classification decision(it can be for example classes
 labeled with 4 and with 3 in MNIST),
 we'll refer to those images as non-noise images. Subset of classes of non-noise image
 we denote as: $\mathcal{D} = \{d_1,..., d_n\}$.
@@ -577,7 +586,7 @@ We then divide the original MNIST dataset into two:
 	\item First dataset - consisting of noise images, where each sample is a group(array)
 		of noise images with the size of $k$.
 	\item Second dataset - consisting of non-noise images, where each sample is a group(array)
-		of noise images with the size of $n-k$.
+		of non-noise images with the size of $n-k$.
 \end{itemize}
 
 We then create a new dataset and fill the sample that is a concatenation of sample

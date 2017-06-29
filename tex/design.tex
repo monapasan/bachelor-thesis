@@ -21,22 +21,22 @@ The dataset is component that is responsible for data holding. It should
 accept original MNIST dataset and transform it into dataset described
 in \autoref{sec:analysis_dataset}.
 
-For example, in the figure \ref{fig:mnist} the labels are 5, 0, 4 and 1.
-Each images consist of $28\times28$ pixels, therefore an MNIST image would
-be an array of size $784$. To each of the image, a label is assigned,
-which provides the ground truth.
+% For example, in the figure \ref{fig:mnist} the labels are 5, 0, 4 and 1.
+% Each images consist of $28\times28$ pixels, therefore an MNIST image would
+% be an array of size $784$. To each of the image, a label is assigned,
+% which provides the ground truth.
 
 \subparagraph{MNIST dataset from TensorFlow}
 
 TensorFlow provides a small class \lstinline{Dataset}\footnote{
-The class is implemented here: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/contrib/learn/python/learn/datasets/mnist.py
+The class is implemented here on tensorflow Github repository under the path: \lstinline{tensorflow/contrib/learn/python/learn/datasets/mnist.py}.
 } which stores MNIST data and splits it into training,
 validation and test data. TensorFlow also provides functions for iterating
 over the batches as well as the function which downloads and read
 the original data
 from MNIST web site. Taking this into account, in this work we will abstract from
 downloading and reading MNIST data by using this class. We'll refer
-to this class as \emph{MNIST tf-dataset class}
+to this class as \emph{MNIST tf-dataset class}.
 
 % Remove this:
 % \begin{lstlisting}[language=Python]
@@ -47,7 +47,7 @@ to this class as \emph{MNIST tf-dataset class}
 
 We want that our dataset component has a similar behaviour and functionally
 as MNIST tf-dataset class. The reason for this is that we want to stay
-consistent with tensorFlow practices as we use this library in this work.
+consistent with TensorFlow practices as we use this library in this work.
 
 % Dataset is a non-real world data, but may behave and represent similar
 % task as it could in real world data.
@@ -105,14 +105,13 @@ the desired dataset, three classes are required:
 		to be heuristic, this class will control the indexes where noise image
 		will be located at. By instantiating this class, it's possible to have
 		always the same indixes for the noise images, as well as control it by
-		providing distribution function, where this indexes should be sampled from.
+		providing discrete distribution function, where this indexes should be sampled from.
 	\item DummyDataset - The purpose of this class is to hold MNIST images
 		and labels. Additionally, this class provides some auxiliary functionality
 		like permutation of the data.
 	\item GroupDataset - this is our desired dataset. It should be flexible
 		enough to generate and hold the data for all classes. In terms of
-		available methods, this class behaves the same way as NIST tf-dataset class
-		once initialized.
+		available methods, this class behaves the same way as MNIST tf-dataset class.
 \end{itemize}
 
 Dataset component should be flexible enough in order to be similar to real problems,
@@ -130,21 +129,21 @@ as well as the it's connection to tf-dataset class. As you can see from the UML
 class diagram.
 \lstinline{GroupDataset} class holds two \lstinline{DummyDataset}, one for
 non-noise data and one for noise-data. This is exactly the way
-we described it in \autoref{sec:design_data}.
+we described it in \autoref{sec:analysis_dataset}.
 \begin{figure}
 	\includegraphics[width=\linewidth]{Dataset_UML}
 	\caption{UML class diagram of the dataset module}
 	\label{fig:dataset_uml}
 \end{figure}
 
-\paragraph{Code pattern} As we can see from the UML class in the figure
+\paragraph{Code patterns} As we can see from the UML class in the figure
 \ref{fig:dataset_uml}, we have three classes. It would be also possible
 to merge the classes, however, this contradicts the "Single Responsibility Principle"
 as one class should only have one responsibility \cite{martin2003agile}.
 Therefore, dividing this into two classes allows us to clearly
-define responsibilities. Consequently, these separations seem to be reasonable.
+define responsibilities. Consequently, this separation seems to be reasonable.
 
-As you might notice from UML class diagram, some of the function like
+As you might notice from UML class diagram, some of the functions like
 \lstinline{add_sample} in \lstinline{DummyDataset} returns the object itself: \lstinline{DummyDataset}.
 This is an example of Cascade code pattern described in \autoref{sec:quality_concerns}.
 % As you might notice from UML class diagram, that \lstinline{GroupDataset} can inherit
@@ -292,7 +291,7 @@ We will take a closer look at some of details of this functions in the
 	\includegraphics[width=\linewidth]{uml_activity_model}
 	\caption{UML activity diagram of the Model}
 	\caption*{This is simplified flow of the \lstinline{Model} class.
-	Each activity represent a function. For the sake of simplicity some of the function
+	Each activity represent a function. For the sake of simplicity some of the functions
 	are not shown here. However, it should not influence on the understanding
 	of the \lstinline{Model}}.
 	\label{fig:uml_activity_model}

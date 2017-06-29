@@ -5,6 +5,9 @@
 \usepackage{listings}
 \usepackage{color}
 \usepackage{hyperref}
+\usepackage{url}
+\usepackage[nottoc,numbib]{tocbibind}
+\usepackage[toc]{glossaries}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -30,7 +33,9 @@
 % \title{Development and Evaluation of a Visual Attention Model with Python and Tensorflow}
 % \date{31-05-2017}
 % \author{Oleg Yarin}
-
+% \usepackage{biblatex}
+%
+% \usepackage{filecontents}
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage[autostyle]{csquotes}
@@ -49,6 +54,46 @@
 \graphicspath{ {img/} }
 
 \usepackage{float}
+\makeglossaries
+
+\newglossaryentry{NN}{%
+name={NN},%
+description={Neural network}%
+}
+
+\newglossaryentry{RNN}{%
+name={RNN},%
+description={Recurrent neural network}%
+}
+
+\newglossaryentry{CNN}{%
+name={CNN},%
+description={Convolutional neural network}%
+}
+
+\newglossaryentry{ANN}{%
+name={ANN},%
+description={Artificial neural network}%
+}
+\newglossaryentry{LSTM}{%
+name={LSTM},%
+description={Long Short-Term Memory}%
+}
+\newglossaryentry{BPTT}{%
+name={BPTT},%
+description={Backpropagation Through Time}%
+}
+
+\newglossaryentry{RL}{%
+name={RL},%
+description={Reinforcement learning}%
+}
+
+\newglossaryentry{RAM}{%
+name={RAM},%
+description={Recurrent attention model}%
+}
+
 
 
 \begin{document}
@@ -56,6 +101,7 @@
 	\tableofcontents
 	\listoffigures
 	\listoftables
+    \printglossary[style=long]
 	\include{./tex/intro}
     \input{./tex/theory}
     \input{./tex/analysis}
@@ -68,5 +114,13 @@
 	% \input{./tex/mybibliography.tex}
 	\bibliographystyle{ieeetr}
 	\bibliography{bibliography}
-    \input{./tex/authorship}
+     \input{./tex/authorship}
 \end{document}
+
+
+
+
+
+
+% \begin{document}
+% Here is some text, where we use \gls{apc}.

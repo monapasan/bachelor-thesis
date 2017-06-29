@@ -2,7 +2,7 @@
 \label{ch:implementation}
 In this chapter we will discuss several implementation details that
 is important for understanding the work. We will also show
-the code patterns examples that were mentioned in the \auroref{sec:quality_concerns}.
+the code patterns examples that were mentioned in the \autoref{sec:quality_concerns}.
 
 \section{TensorFlow}
 In the figure \ref{fig:model_uml}, you might notice that some of the functions
@@ -12,7 +12,7 @@ In the listing \ref{list:tf_graph}, you can find a small TensorFlow program.
 
 
 
-\begin{lstlisting}[language=Python, caption={TensorFlow example \cite{tensorflow2015-whitepaper}},label={list:tf_graph}]
+\begin{lstlisting}[language=Python, caption={TensorFlow example (source: \cite{tensorflow2015-whitepaper)}},label={list:tf_graph}]
 import tensorflow as tf
 b = tf.Variable(tf.zeros([100])) # 100-d vector, init to zeroes
 W = tf.Variable(tf.random_uniform([784,100],-1,1)) # 784x100 matrix w/rnd vals
@@ -37,11 +37,12 @@ an abstract computation. For example, in figure \ref{fig:comp_graph_tf} you can 
 such operations: 'ReLU', 'Add', 'MatMul'.
 
 
-\begin{center}
-	\includegraphics[scale=0.6]{comp_graph_tf}
-	\caption{Computational graph of the listing \ref{list:tf_graph}(Source: \cite{tensorflow2015-whitepaper})}
+\begin{figure}[H]
+	\includegraphics[width=\linewidth]{comp_graph_tf}
+	\caption{Computational graph of the listing \ref{list:tf_graph} (source: \cite{tensorflow2015-whitepaper})}
 	\label{fig:comp_graph_tf}
-\end{center}
+\end{figure}
+
 
 To execute a TensorFlow program, one needs to build the computational graph,
 and then execute it. We're building
@@ -71,7 +72,7 @@ These recommendation were carefully followed in the implementation of this work.
 \subsection{Code patterns in the code} We introduced code patterns in the
 \autoref{sec:quality_concerns}, that are
 helpful for understanding and reasoning about the code. Here we will show
-examples of how this code patterns can be applied.
+examples of how this code patterns was applied in the prototype.
 
 \subparagraph{Method comment} Would be perfect, if the code would
 be so clear and readable that we could avoid unnecessary comments in it.
@@ -90,7 +91,7 @@ comment directly in the place where this function is called, but having
 a function with the name \lstinline{init_location_network} should be more than enough
 to understand that the function is initializing the location network.
 
-\subparagraph{Composed method} encourages function to have an identifiable
+\subparagraph{Composed method} This encourages function to have an identifiable
 task and that all operations performed in the function should be on the same
 level of abstraction.
 
@@ -122,10 +123,10 @@ def init_seq_rnn(images_ph, labels_ph):
 In the listing \ref{list:composed}, you can see the example of the composed method.
 As you might guess from the function name \lstinline{init_seq_rnn}, the
 function
-is initialising the sequence of RNN cells, which is indeed an identifiable task.
+is initialising the sequence of \gls{RNN} cells, which is indeed an identifiable task.
 Additionally, all of the operations performed in the function
 have a high level of abstraction: for example to
-create LSTM inputs or to initialise glimpse network, it uses helper functions
+create \gls{LSTM} inputs or to initialise glimpse network, it uses helper functions
 \lstinline{lstm_inputs} and \lstinline{init_glimpse_network} respectively.
 For the understanding the composed method, one can skip the function \lstinline{get_next_input}.
 
@@ -147,7 +148,7 @@ with tf.variable_scope('data'):
 
 The variables \lstinline{img_size}, \lstinline{images_shape}, \lstinline{labels_shape}.
 increase readability by avoiding very long expressions in the lines after.
-The names make it also more ease to comprehend for those who are unfamiliar
+The names make it also easier to comprehend for those who are unfamiliar
 with the code.
 
 \subparagraph{Duck typing} This a concept that is used by dynamic typed languages.
@@ -180,8 +181,9 @@ The purpose of this section is to show the implementation details that
 are important to understand the code and the model.
 
 \paragraph{Hybrid loss} One of the essential aspect in machine learning is to
-define the loss function carefully. As this works to train the model,
-we use some of reinforcement learning aspects, as our loss function is compose
+define the loss function carefully.
+In this work, we have reinforcement learning aspects as a part of the training,
+therefore our loss function is composed
 of multiple loss function:
 \begin{itemize}
 	\item loss function to train the location network with
@@ -192,8 +194,8 @@ of multiple loss function:
 	\item loss function to train the classification network based on the ground truth.
 \end{itemize}
 
-The loss which is composed of multiple loss function known as \emph{hybrid loss}.
-You can see the way it's computer in listing \ref{list:hybrid_loss}}
+
+You can see the way it's computed in listing \ref{list:hybrid_loss}}
 
 \begin{lstlisting}[language=Python, caption={Hybrid loss},label={list:hybrid_loss}]
 baselines = init_baseline_net(outputs)
@@ -218,7 +220,7 @@ var_list = tf.trainable_variables()
 loss = -logllratio + xent + baselines_mse  # `-` for minimize
 \end{lstlisting}
 
-where \lstinline{outputs} - are the output from LSTM cell,
+where \lstinline{outputs} - are the output from \gls{LSTM} cell,
 \lstinline{xent} - is the cross entropy between predicted values and ground truth,
 \lstinline{baselines_mse} - is the mean squared error loss between actual rewards
 and expected reward(baseline),

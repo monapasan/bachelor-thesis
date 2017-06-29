@@ -1,1 +1,52 @@
 \chapter{Disscussion}
+
+The main objective of this work was to build a functional prototype that is able to
+ classify a group of images by extending
+the visual attention model.
+
+The analysis of the previous implementation was done that highlighted it's
+ limitations and strengths.
+
+We presented three possible extensions of the RAM model to make the model
+ suitable for our problem. One of this approaches was implemented, although
+  did not reach any gut results
+as the evidence revealed. However, it does not indicate that the model is
+ not functional because the experiments that were performed in this work are
+  not sufficient to prove that.
+  More of the model's parameters can be tuned in further experiments
+   to get more stable results.
+\subparagraph{}
+We built a toy dataset on top of MNIST data that can be used for playing
+with the model.
+As the dataset is flexible enough to represent different sort of
+problems, more variations can be built with the implementation
+to be closer to real problem
+dataset.
+
+From the software engineering side, the prototype follows the best
+practices of the Python programming which makes the code
+of the prototype consistent with most of the modern software. Using
+the code patterns in the prototype simplifies the reasoning behind the
+components and classes.
+Considering the above conditions, it should not be a hard task for
+ new developers to analyse and improve the current implementation.
+ Additionally, the presence of the reports from TensorBoard makes the training experience more trackable.
+ Consequently, it simplifies the tuning of the model's parameters.
+Saying all this, we can state that the objective of building an
+extensible prototype is achieved.
+
+Further experimental tests with different configurations of the model
+ parameters are needed to establish whether the model is suitable for the task.
+ We also encourage to implement the other extensions of the RAM
+ described in \autoref{sec:ram_model}. Further studies can also augment the picker network
+to output the parameters of a discrete distribution.
+This distribution can serve as a distribution where
+we can sample a number of an image from. In a  similar way,
+it was done for the locations in the RAM \cite{DBLP:journals/corr/MnihHGK14}.
+We also propose that further research considers using the dropout
+regularization for LSTM that has a potential to reduce the overfiting
+of the model \cite{DBLP:journals/corr/ZarembaSV14}.
+
+We hope that this work will serve as a base for further studies in the
+area and will eventually bring better results at classifying a group
+of images.

@@ -1,17 +1,17 @@
 \section{Recurrent Models of Visual Attention}
 \label{sec:ram_model}
 As it was mentioned in \autoref{chap:intro}, Recurrent Models of Visual
-Attention(also known as the recurrent attention model(RAM)) is
+Attention(also known as the recurrent attention model(\gls{RAM})) is
 a computational approach presented by google Deepmind’s researchers to reduce
 and control computational cost while classifying images.
 \subparagraph{Note: } The theory described in this section based on the
 \cite{DBLP:journals/corr/MnihHGK14}, unless otherwise stated.
 
-\paragraph{Why RAM?}
+\paragraph{Why \gls{RAM}?}
 Today's state of the art approaches to classify the images is convolutional
-neural network(CNN). Nevertheless, to train CNN model on the high resolution
+neural network(\gls{CNN}). Nevertheless, to train \gls{CNN} model on the high resolution
 images will require days of time. Similar to RNN models, some computations
-in CNN are shared, however the main cost is laid on applying the convolutional
+in \gls{CNN} are shared, however the main cost is laid on applying the convolutional
 filter on the entire image, hence the bigger image is the
 more computations is required.\cite{Krizhevsky2012}
 
@@ -21,9 +21,9 @@ locations and only processing these location at high-resolution
 
 
 \paragraph{The reccurent attention model}
-The attention problem in RAM is considered as the sequential decision
+The attention problem in \gls{RAM} is considered as the sequential decision
 process of an agent whom interacts with the visual environment. The idea is,
-that agent never sees the whole input, but only receives the observations
+that the agent never sees the whole input, but only receives the observations
 via bandwidth-limited sensor. The goal for our agent is
 to find and select these locations on the images where the agent can extract
 most of the information needed for a classification decision.
@@ -45,7 +45,7 @@ To summarize this:
 		A) Glimpse Sensor,
 		B) Glimpse Network,
 		C) Model Architecture,
-		(Source: \cite{DBLP:journals/corr/MnihHGK14})
+		(source: \cite{DBLP:journals/corr/MnihHGK14})
 	}
 	\label{img:ram_model}
 \end{figure}
@@ -58,7 +58,7 @@ of the model.
 which takes image and location as input and produces the bandwidth-limited representation of it.
 Thus, the main responsibility of the glimpse sensor
 is to build from an image $x_t$ the image representation $\rho(x_t, l_{t-1})$
-with respect to the location $l_{t-1}$. The sensor select a number of patches
+with respect to the location $l_{t-1}$. The sensor select a predefined number of patches
  from an image $x_t$ centered at the location $l_{t-1}$ as you can see in \ref{img:ram_model}.
  The first patch is processed at high resolution, while for patches further
  from $l_{t-1}$, progressively lower resolution is used. This representation contained
@@ -90,7 +90,14 @@ $l_{t-1}$ into two independent neural networks with parameters $\theta_g^0$ and 
 respectively followed by another neural network which combines the information
 from both components. The last NN parametrized by $\theta_g^2$ produces then
 final feature vector $g_t = f_g (x_t, l_{t-1}; \theta_g)$,
-where $\theta_g = \{\theta_g^0, \theta_g^1, \theta_g^2\}$.
+where $\theta_g = \{\theta_g^0, \theta_g^1, \theta_g^2\}$ are set of parameters
+for glimpse network.
+
+\subparagraph{Notation} The notation we use in this section is slightly different from what
+we used before. This is because we want to prevent confusing and stay consistent
+with the \gls{RAM} paper: $f (x; \theta)$ - means that we have a \gls{NN} $f$
+with parameters $\theta$ and input $x$.
+
 
 \paragraph{Model Architecture} The model architecture is shown
 on picture C) in the figure \ref{img:ram_model}. The agent is built around
@@ -102,8 +109,8 @@ summarizes it by using a LSTM cell : $h_t = f_h(h_{t-1}, g_t; \theta_h)$.
 \subparagraph{Actions} Agent perfums two types of actions: environment actions
 and location action. Location action $l_t$ decides where to allocate the next glimpse
 on the picture. The location network $f_l(h_t; \theta_l)$ is a NN layer
-that produces the next location $l_t$ parametrized by $\theta_l$. We will consider the
-location network a bit deeper in the \autoref{chap:analysis}. \\
+that produces the next location $l_t$ parametrized by $\theta_l$. We will also consider the
+location network in the \autoref{ch:analysis}. \\
 Depending on the task, the environment actions can vary, therefore
 we'll concentrate on the environment action that is relevant for this work.
 In our work, environment actions make the classification decision of an image
@@ -114,6 +121,12 @@ It's formulated using softmax output from environment neural network
 \subparagraph{Rewards} As we make a classification decision only after $T$
 number of steps, our reward signal will be delayed. Therefore agent is receiving
 a reward $r_n = 1$ if the classification decision was correct and $0$ otherwise.
+
+\subparagraph{Hybrid loss} In the RAM concept of \emph{hybrid loss} is used.
+This is nothing more that the loss which is composed of multiple loss functions.
+In the ram we rely on the reward signal, and use that as measure of the loss.
+Additionally, we have a classification network where we can define our loss
+by means of the cross entropy between predictions made by the model and the ground truth.
 
 
 Training of the agent is performed by REINFORCE rule

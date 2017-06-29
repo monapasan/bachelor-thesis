@@ -30,9 +30,9 @@ in a different way.
 They don't execute programs instructions, they don't have
 sequential semantic and normally are not
 deterministic. They acquire their "knowledge" by extracting patterns from raw data,
-which is normally called training data(which normally is a set of tuple $(input, label)$.
+which is normally called training data(normally it's a set of tuple $(input, label)$.
 The label of the an input is also known as the ground truth.
-This approach also know as concept of statistical pattern recognition. \cite{Bishop1995}
+This approach also know as concept of statistical pattern recognition \cite{Bishop1995}.
 Artificial Neural networks have recently shown an excellent performance and
 accuracy at recognizing objects compared with other
 machine learning techniques \cite{Krizhevsky2012}.
@@ -40,18 +40,18 @@ machine learning techniques \cite{Krizhevsky2012}.
 \paragraph{What is Neural Network?}
 Artificial Neural Network(ANN), often referred just as Neural Network(NN),
 in simple words is a computational model, which was inspired by how human/animal
-brain works. Artificial NN is modeled based on the neuronal structure in the brain's
+brain works. Artificial \gls{NN} is modeled based on the neuronal structure in the brain's
 cortex. Though the inspiration was from the brain,
 it's indeed much much simpler than brain in terms of number of neurons that are used
 in ANN \cite{Goodfellow-et-al-2016}.
 To understand how neural networks work it is crucial to understand first the
 way a \emph{perceptron} work.
 
-\paragraph{Perceptron} is a simple type of an artificial neuron.
+\paragraph{Perceptron} This is a simple type of an artificial neuron.
 Given several binary inputs, perceptron is meant to produce a single binary output.
 \begin{figure}[H]
 	\includegraphics[width=\linewidth]{perceptron.png}
-	\caption{A perceptron \cite{Nielsen2015}.} % to show under the picture
+	\caption{A perceptron (source: \cite{Nielsen2015}).} % to show under the picture
 	\label{img:model} % to reference to the figure later
 \end{figure}
 In the figure \ref{img:model} the perceptron has three inputs: $x_1, x_2, x_3$.
@@ -72,7 +72,7 @@ by extending the model to more complex network of perceptrons, we might improve 
 
 \begin{figure}[H]
 	\includegraphics[width=\linewidth]{layer_perc.png}
-	\caption{Two layer perceptron network\cite{Nielsen2015}.} % to show under the picture
+	\caption{Two layer perceptron network (source: \cite{Nielsen2015}).} % to show under the picture
 	\label{img:layer_perc} % to reference to the figure later
 \end{figure}
 
@@ -80,26 +80,30 @@ In the network shown on figure \ref{img:layer_perc}, we can observe
 two layer of perceptrons. First layer will correspond to the first column of perceptrons
 and will be responsible for the weighting up input, in contrast to second layer
 (second column of perceptrons) which determines output by weighting up the result from
-the first layer. Therefore, the second layer is located on more abstract level from input data
-compared and can make more complicated decisions. Further layers may be capable
+the first layer. Therefore, the second layer is located on more abstract level
+with respect to input data
+compared to the first layer and can make more complicated decisions. Adding further
+layers may improve the model to be capable
 of making even more sophisticated decisions.
 \subsection{The Basics of Neural Networks}
 
 \paragraph{Neural Network} Now that we know the way perceptrons work,
-it's fairly easy to understand Neural Network. However, we need to change
-the mathematical notation a bit. For the sake of convenience, let's move
+it's fairly easy to understand concept of Neural Network. However, we need to
+slightly change
+the mathematical notation. For the sake of convenience, let's move
 $threshold$ in equation \ref{perc:out} to the left part and replace it
 with a variable known as the \epmh{bias} : $b = -threshold$. Let's also simplify
 the sum sign: $\sum_j w_j x_j$ by writing weights and input as vectors and use a dot product
 to multiply them:
-$\sum_j w_j x_j = W \cdot x$. Using changes described above we can rewrite the
+$\sum_j w_j x_j = W \cdot x$, where $W$ - is a weight matrix and $x$ - is an input vector.
+Using the changes described above we can rewrite the
 equation \ref{perc:out} as following:
 
 \begin{equation} \label{perc:with_bias}
 	output = \begin{cases} 0, & \mbox{if } W \cdot x + b\leq 0 \\ 1, & \mbox{if } W \cdot x + b > 0 \end{cases}
 \end{equation}
 
-\emph{Bias} is a measure of how influential is a certain neuron on making output 1.
+\emph{Bias} is a measure of how influential a certain neuron is on making output equal to $1$.
 Some people also use more biological terms: the bias is a measure of how easy it is
 to get a neuron to fire. To devise the neural network
 next improvement over the perceptron network is that network should not be limited
@@ -112,6 +116,7 @@ actually outputting a value: $output = g( W \cdot x + b)$ \cite{Nielsen2015} .
 Activation function helps to control the output and non-linearity of the network.
 Activation function also plays a crucial role in multi layer architecture, where it helps
 to prevent the values of each layer from blowing up.
+\subparagraph{}
 For example, let's look at the \emph{softmax} activation function which has
 the following form:
 \begin{equation} \label{sigmoid_function}
@@ -123,7 +128,8 @@ where $j = 1,2 ..., K$ - is the index of the vector $z$.
 
 The use of the sigmoid activation will make a network to produce output to be
 interpreted as posterior probabilities. Probability interpretation helps to provide
-more powerful and more useful results \cite{Bishop1995}.
+more powerful and more useful results \cite{Bishop1995}. Softmax activation function
+is used for classification tasks with more than 2 classes.
 \\
 Second type of activation function is \emph{rectified function}.
 Rectified function is fairly simple.
@@ -143,20 +149,20 @@ input is more than 0:
 % and \emph{rectified function}.
 Now that we derived a concept of Neural Network, we can talk more about
 what is called feedforward neural network and the terms related to it.
-\paragraph{Feedforward neural network} is a network where the output
-from one layer is used as input to the next layer. In feedforward NN
-information is always fed forward in contrast to recurrent neural network(RNN)
+\paragraph{Feedforward neural network} This is a network where the output
+from one layer is used as input to the next layer. In feedforward \gls{NN}
+information is always fed forward in contrast to recurrent neural network(\gls{RNN})
 where information can go in a loop. We will take a closer look at RNNs in section
 \autoref{sec:rec_NN}.
 
 \begin{figure}[H]
 	\includegraphics[width=\linewidth]{mult_layer.png}
-	\caption{The architecture of neural networks\cite{Nielsen2015}.} % to show under the picture
+	\caption{The architecture of neural networks (source: \cite{Nielsen2015}).} % to show under the picture
 	\label{img:mult_layer} % to reference to the figure later
 \end{figure}
 
-Basically Feedforward neural network is exactly
-what we described above. Let's name different parts of feedforward NN:
+Basically, feedforward neural network is exactly
+what we described above. Let's name different parts of feedforward \gls{NN}:
 
 \begin{itemize}
 	\item Input layer - the leftmost layer in the network. The Neurons within
@@ -180,39 +186,40 @@ For example, the Neural network in figure \ref{img:mult_layer} consist of
 
 
 \subsection{Training an Artificial Neural Network}
-As mentioned above Neural Network is capable of solving complicated
-pattern recognition problems. However designing a neural network is not sufficient
-for this. It's also requiring to train an network. In this paragraph we will
-introduce learning procedure. But before going into learning, let's recap
+As mentioned above neural networks are capable of solving complicated
+pattern recognition problems. However, designing a neural network is not sufficient
+for this. It's also required to train the network. In this subsection, we will
+introduce learning procedure. But before going into the training, let's recap
 how our neural network model looks like:
 
 \begin{equation} \label{eq:nn}
 	y = g(W \cdot x + b)
 \end{equation}
-Where $g$ is an activation function, $W$ - weights, $b$-biases, $x$ - input data.
-The space of different weights and biases values building a space of solution for
-cetrain problem. The goal of the training is to find the best parameters
+Where $g$ is an activation function, $W$ - matrix of weights, $b$ - biases, $x$ - input data.
+The space of different weights and biases values building a space of solutions for
+certain problem. The goal of the training is to find the best parameters
 for neural network ($W, b$), that suited our problem.
 
 \paragraph{Training data} To solve pattern recognition problem we need to provide
-a continuous feedback to NN, which NN can use to learn from. This feedback
+a continuous feedback to \gls{NN}, which \gls{NN} can use to learn from. This feedback
 in machine learning called \emph{training data}.
 Training data consist of the input data samples
 and appropriated outputs. You can think of training data as of an list of tuples:
-${{(x^{(1)}, y^{(1)}), (x^{(2)}, y^{(2)}), ..., (x^{(n)}, y^{(n)})}}$ where $x$ - input,
+${\{(x^{(1)}, y^{(1)}), (x^{(2)}, y^{(2)}), ..., (x^{(n)}, y^{(n)})\}}$ where $x$ - input,
 $y$ - output (also known as \emph{ground truth}), $n$ - amount of training examples. Neural network trained on training data
 should be able to generalise the output on unseen input data.
-The goal of the learning is to train network on training data and make it to capable of generalizing the output on unseen input data.
+The goal of the learning is to train network on training data and make
+it to capable of generalizing the output on unseen input data.
 
 \paragraph{Cost} In order to teach the model, it's essential to understand
 what it means for an neural network to be good or to be bad. For this purpose
-it's required first to define a \epmh{cost function}. Cost(also knows as error) is the metric
-for the NN(or any other function approximation method), which represents how far of
-the model is from desired outcome. If cost is big , our network does not work well.
+it's required first to define a \epmh{cost function}. Cost is the metric
+for the \gls{NN}(or any other function approximation method), which represents how far of
+the model is from desired outcome. If the cost is big , our network does not work well.
 With the cost function, it's possible
 to define our training goal more precisely: the smaller our cost, the better our
 model works, therefore the goal of the learning is to minimize the cost of our model.
-The term cost is also known as a \emph{loss} or an \emph{objective}. We will use these terms
+The term cost is also known as a \emph{loss}, \emph{error} or an \emph{objective}. We will use these terms
 interchangeably throughout the work.
 
 \paragraph{Types of cost} There are a plenty of ways to define cost of the model.
@@ -226,7 +233,7 @@ Mean squared error function has following form:
 	\item $x^{(i)}, y^{(i)}$ - is input and output of a training sample respectively.
 \end{itemize}
 
-Another common type of function to measure the cost of NN known as \emph{cross entropy}.
+Another common type of function to measure the cost of \gls{NN} known as \emph{cross entropy}.
 In short, cross entropy gives a way to express how different two distributions are:
 \begin{equation} \label{eq:cross_entr}
 	I_{W^\prime} = - \sum_{i=1}^n  y_{W^\prime}(x^{(i)}) log(y^{(i)})
@@ -243,7 +250,7 @@ where:
 \paragraph{Gradient Descent} \label{par:grad_desc}Once we defined our cost function, we need to find
 a set of parameters $W, b$ which make the cost as small as possible. The most common
 algorithm used to minimize the cost function called \emph{gradient descent}.
-Let's explain the algorithm on an example function:
+Let's explain the algorithm on the example function:
 \begin{equation} \label{eq:ex_cost}
 	f = f(\Theta)
 \end{equation}
@@ -251,15 +258,16 @@ where $\Theta = \vec{v_1}, \vec{v_2},...$ are variables that we want to minimize
 \\
 Gradient descent uses partial derivative
 to iteratively update parameters. Derivative of a function shows how function output
-will change with respect to very, very small change in input $\Delta \Theta $.
+will change with respect to very, very small change in the input $\Delta \Theta $.
 For example, partial derivative with respect to variable $\Delta{\vec{v_1}}$ will tell us, how different
 the output will be $\Delta f $ if we change $\vec{v_1}$ on the small amount.
 This property of derivative is used in gradient descent algorithm.
 Essentially, the gradient descent
-performs updates on the variables to be minimized according to partial derivative of the
+performs updates on the variables to be minimized according to the partial derivative of the
 cost function with respect to this variables. \\
 Gradient descent adopt the following procedure.
-Beginning with an initial guess for value $v= \vec{v_1}, \vec{v_2}, ...$, we update the vector $v$
+Beginning with an initial guess for value $\Theta = \vec{v_1}, \vec{v_2}, ...$, we
+update the vector $\Theta$
 by moving a small distance in v-space in direction in which our function $f$ raises
 most rapidly, i.e. in the direction of $- \Delta_{\Theta} f $. Iterating this process,
 we can devise the new set of parameters $\Theta^{(new)}$:
@@ -285,7 +293,7 @@ be differentiable \cite{Bishop1995}.
 \paragraph{Mini-batch Gradient Descent} Normally gradient descent algorithm
 is associated with the update on the loss computed with whole set of training data,
 while, gradient descent where updates is performed only using loss computed
-on a small batch of data knows as \emph{mini-batch gradient descent}.
+on a small batch of data is known as \emph{mini-batch gradient descent}.
 Much faster convergence can be achieved in practice using mini-batch gradient descent.
 \cite{KarpathyAndrej2016}
 
@@ -320,10 +328,26 @@ till the input in order to associate it with extent of this error($\Delta$)
 which a certain neuron is responsible
 for. Once this extent is calculated, it performs a weights update \cite{Rumelhart1986}.
 
+\subparagraph{Training, validation and test data} While training the model,
+it's important to see that the model is able to generalise on unseen data.
+While a high accuracy can be achieved on the data we train the model with, it's
+not guaranteed that the model will achieve the same results for the real world
+data. Therefore it's common to divide the data on three different datasets:
+\begin{itemize}
+	\item Training dataset - the actual data used to train the model with.
+	\item Validation dataset - the dataset is used for the tuning the parameters of \gls{NN},
+		like learning rate, or size of the weights.
+		This data is used only at the step of evaluation the model.
+		Compared accuracy on the validation data and training data, will indicate
+		whether overfitting or underfitting occurs when training the model
+	\item Test dataset - this dataset is used only for testing actual
+		performance on the model. This can be represented as testing on the
+		real world data.
+\end{itemize}
 
 \section{Recurrent Neural Network} \label{sec:rec_NN}
 
-\paragraph{Why recurrent NN?} Motivation for recurrent neural network(RNN) is
+\paragraph{Why recurrent \gls{NN}?} Motivation for recurrent neural network(\gls{RNN}) is
 in contrast to feedforward neural network, as RNNs are capable of having internal memory,
 i.e. capable of memorizing information, therefore deal better with sequential input data.
 RNNs are closer to the way human's brain works. We don't start our thinking from scratch,
@@ -337,23 +361,23 @@ on the knowledge(memory) extracted from a location, network chooses a new locati
 attend. As you might notice since more steps need to be required, we will have sequential
 data. Hence, RNNs are an underlying concept for this work.
 
-\paragraph{What is RNN} RNN is a special type of neural network architecture, which can
+\paragraph{What is \gls{RNN}} \gls{RNN} is a special type of neural network architecture, which can
 accept a sequence with an arbitrary length without changing weights of a network.
 % Essentially, they are network who is capable of
-RNN are capable of persisting the information by means of recurrences, i.e. including
+\gls{RNN} are capable of persisting the information by means of recurrences, i.e. including
 the output of the network into the next computational steps and summarizing this information
 into an object called \emph{state}.
  \cite{Kriesel2007NeuralNetworks}.
 \\
-To simplify the understanding you can imagine RNN as a composition of identical
+To simplify the understanding you can imagine \gls{RNN} as a composition of identical
 feedforward network, one for each step in time, passing the message to a successor.
 Essentially, it's a computational unit that is repeated over and over again and
-can be also thought as an for-loop.
+can be also understood as an for-loop.
 One neural network in this composition known as \emph{RNN cell}.
 
 \begin{figure}[H]
 	\includegraphics[width=\linewidth]{RNN-unrolled.png}
-	\caption{Unrolling recurrent neural network(source: \cite{ColahChristopher2015})}
+	\caption{Unrolling recurrent neural network (source: \cite{ColahChristopher2015})}
 	\label{img:rnn_unrolled}
 \end{figure}
 
@@ -367,7 +391,7 @@ equation:
 \begin{equation} \label{eq:rnn_basic}
 	\begin{pmatrix}
 		s_t \\
-		o_t
+		h_t
 	\end{pmatrix} = f
 	\begin{pmatrix}
 		s_{t-1} \\
@@ -377,27 +401,27 @@ equation:
 where:
 \begin{itemize}
 	\item $s_t, s_{t-1}$ - are states at time step $t$ and $t-1$ respectively,
-	\item $o_t$ - is the output at time step $t$,
+	\item $h_t$ - is the output at time step $t$,
 	\item $x_t$ - is the input at time step $t$,
 	\item $f$ - is a recurrent function(normally called as RNN cell).
 \end{itemize}
 
 As you might notice, all calculations responsible for extracting and
-memorising information performed in $f$, provide knowledge about
+memorising information performed in function $f$ that provides knowledge about
 specific \emph{RNN architecture(RNN cell)}.
-Thus the choice of recurrent function $f$(RNN cell)
+Thus the choice of recurrent function $f$(\gls{RNN} cell)
 is essential for RNNs to work and remember information. There are a lot of variations
 of RNN cells, but we mostly will consider one of the recent and
-most widely known architecture called \emph{Long Short-Term Memory (LSTM)}.
+most widely known architecture called \emph{Long Short-Term Memory (\gls{LSTM})}.
 
 
-\subsection{Long Short-Term Memory (LSTM)}
+\subsection{Long Short-Term Memory (\gls{LSTM})}
 % The reason that the vanilla RNN(Elman RNN cell \cite{Elman1990}) is not considered here,
 % because they are not able
 % to learn long term dependencies due to vanishing and exploding gradient
 % problem \cite{Hochreiter1991}.
 \paragraph{Long Short Term Memory networks(LSTMs)} are a special architecture of RNN cell,
-capable of learning long-term dependencies. \cite{Hochreiter:1997:LSM:1246443.1246450}
+capable of learning long-term dependencies \cite{Hochreiter:1997:LSM:1246443.1246450}.
 LSTMs have the ability to remember new information and forget old, unnecessary information
 using the concept of gates. LSTM cell holds information in the object called \emph{state($C_t$)}
 and only the gates are permitted to manipulate and change this state.
@@ -408,7 +432,7 @@ below.
 \begin{figure}[H]
 	\includegraphics[width=\linewidth]{LSTM_inside.png}
 	\caption{
-		Structure of LSTM cell(Source: \cite{ColahChristopher2015})}
+		Structure of LSTM cell (source: \cite{ColahChristopher2015})}
 		\medskip
 		\small
 		The yellow square with $\sigma$ inside represents a neural
@@ -427,7 +451,7 @@ which build up three gates to interact with the state:
 \subparagraph{Forget gate layer}
 The sigmoid layer that you can see on the right side is
 called "forget gate layer". As you might notice from the name, this gate is responsible
-for remembering information(or forgetting). It concatenates output from previous state: $h_{t-1}$
+for remembering information(or forgetting). It concatenates output from previous state: $h_{t-1}$,
 with the input at the timestep $t$: $x_t$. Then the result is fed to the neural network
 with sigmoid activation function which produces an output with values from $0$ to $1$.
 Where 0 means to completely forget the information and $1$ means to leave
@@ -436,6 +460,7 @@ the information in the state:
 \begin{equation} \label{eq:forget_gate}
 	f_t = \sigma (W_f \cdot [h_{t-1}, x_t] + b_f)
 \end{equation}
+where $W_f$ and $b_f$ - are appropriate parameters for the NN of forget gate layer.
 
 \subparagraph{Input gate layer} This is composed of two networks: networks with sigmoid
 and tahn activation functions. The first sigmoid network decides which values needs
@@ -447,6 +472,8 @@ to create an update for the LSTM cell's state:
 	i_t = \sigma (W_i \cdot [h_{t-1}, x_t] + b_i) \nonumber\\
 	C_t^{(candidate)} = tahn(W_C \cdot [h_{t-1}, x_t] + b_C)
 \end{align}
+where $W_o$ and $b_i$ - are appropriate parameters for the first NN of input gate layer
+and $W_C$ and $b_C$ - are appropriate parameters for the second NN of input gate layer.
 
 \subparagraph{Updating the state}
 It's fairly simple now to update the old state $C_{t-1}$ using $f_t$ from equation
@@ -457,14 +484,14 @@ $C_t^{(candidate)}$ and it's extent $i_t$ from equation \ref{eq:input_gate}:
 	C_t = f_t \cdot C_{t-1} + i_t \cdot C_t^{(candidate)}
 \end{equation}
 
-\subparagraph{Output gate layer} is responsible for the cell's output $h_t$.
+\subparagraph{Output gate layer} Tis gate layer is responsible for the cell's output $h_t$.
 This layer is allowed to read information from state $C_t$ and decides what information
 should be outputted.
 
 \begin{figure}[H]
 	\includegraphics[width=\linewidth,height=6cm,keepaspectratio]{LSTM_out.png}
 	\caption{
-		LSTM's output gate layer (Source: \cite{ColahChristopher2015})
+		LSTM's output gate layer (source: \cite{ColahChristopher2015})
 		}
 	\label{img:lstm_out}
 \end{figure}
@@ -477,9 +504,10 @@ with output from the neural network of output gate layer:
 	o_t = \sigma (W_o \cdot [h_{t-1}, x_t] + b_o) \\
 	h_t = o_t \cdot tahn(C_t)
 \end{align}
-
-$h_t$ is the output of LSTM cell at time step $t$ as well as the input
-for RNN cell at time step $t+1$. The gates stabilize the state and solve the
+where $W_o$ and $b_o$ - are appropriate parameters for the NN of output gate layer,
+$h_t$ - is the output of \gsl{LSTM} cell at time step $t$ as well as the input
+for RNN cell at time step $t+1$.
+The gates stabilize the state and solve the
 vanishing gradient problem, hence it's very important for an LSTM
 cell to work.\cite{Goodfellow-et-al-2016}
 
@@ -493,7 +521,7 @@ share all weight between layers(time steps), there is a specific
 technic for computing
 gradient when training the network called \emph{Backpropagation Through Time(BPTT)}.
 It propagates the error all the way back through the time to the time step 0,
-that's the reason it's called BPTT. \cite{werbos:bptt}
+that's the reason it's called \gls{BPTT}. \cite{werbos:bptt}
 % hence why it's called
 % hence is the name.
 
@@ -516,7 +544,7 @@ of backpropagating it to the first time step.
 % We can only say whether the network made a right classification decision after the network
 % has already chosen several locations. Consequently, the training of the network parameters will
 % be a very difficult task. As previously mentioned in \autoref{par:grad_desc}, using gradient descent
-% with backpropagation for training NN is possible only with differentiable cost function like
+% with backpropagation for training \gls{NN} is possible only with differentiable cost function like
 % mean squared error function or cross entropy function. However, we can't use this functions without
 % the knowing the right answer, therefore defining the cost function would be a complicated task.
 % This sort of tasks is studied by a field of machine learning called \emph{reinforcement
