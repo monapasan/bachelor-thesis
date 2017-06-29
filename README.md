@@ -15,7 +15,7 @@ In the root diretory of the project execute following commands:
 ### To run tests
 `make test`
 
-### To start train the model
+### To start training of the model
 `make run`
 
 ### print parameters of the model
@@ -26,7 +26,7 @@ Without help of the  make it's also to possible execute the following commands:
 ### To run tests
 `nosetests tests --nologcapture --rednose -d`
 
-### To start train the model
+### To start training of the model
 `python3 src/main.py`
 
 ### print parameters of the model
