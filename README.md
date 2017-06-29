@@ -1,22 +1,22 @@
-# RAM
+This is the implementation of the prototype presented in bachelor thesis "Development and Evaluation of a Visual Attention Model with Python and Tensorflow".
 
-Modified from https://github.com/jlindsey15/RAM
+To run the model, you need to have python3 and p command available in terminal.
 
-Implementation of "Recurrent Models of Visual Attention" V. Mnih et al.
+## Execution
 
-Run by `python ram.py` and it can reproduce the result on Table 1 (a) 28x28 MNIST
+Beeing the root diretory of the project execute follwing commands:
 
-### Install dependencies
+### To onstall dependencies
 `pip install -r requirements.txt`
 
-### Run tests
+### To run tests
 `make test`
 
+### To start train the model
+`make run`
 
-### TODO:
+### print command line arguments
+`make help`
 
-* Run against OpenStack Style Guidelines and  docstrings (pep257) - https://atom.io/packages/linter-flake8
-* RawDataset should extend dummydataset.
-* Direct acces variable - https://github.com/monapasan/bachelor-thesis/blob/master/src/RawDataset.py#L111
-* https://github.com/monapasan/bachelor-thesis/blob/master/src/RawDataset.py#L118, dataset should have property add_sample()
-* https://github.com/monapasan/bachelor-thesis/blob/master/src/RawDataset.py#L167 , porpert get() : tuple()
+## 
+
