@@ -6,3 +6,5 @@ test:
 
 run:
 	python3 src/main.py
+help:
+	python3 src/main.py --help 
