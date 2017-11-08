@@ -1,0 +1,145 @@
+\chapter{Introduction}
+\label{chap:intro}
+\paragraph{} Neural network approaches have received a lot of attention in the last several years.
+It's becoming a popular choice for performing various tasks like speech and image recognition,
+object detections etc. as these methods have dramatically increased accuracy
+compared to traditional machine learning approaches.
+However, achieving high accuracy on recognition tasks is still computationally
+expensive and needs improvements in performance.
+This study will be a close resemblance of the recurrent neural network of visual attention which is able to extract necessary
+information from an image by looking at it in low resolution, and then
+adaptively select parts that are most relevant for a task \cite{DBLP:journals/corr/MnihHGK14}.
+
+ \paragraph{} The idea of visual attention was inspired by how human perception works.
+ Humans do not perceive a visual scene as a whole but focus on parts of
+ the scene that gives the most useful information to them.
+ Humans are also capable of combining information from different parts of a picture.
+ They then connect it to build subjective knowledge of the picture (or sequence of pictures) \cite{Goldsborough}.
+Taking into account these properties, researchers from google
+Deepmind build a model which can be described as follows:
+ \blockquote{
+ 	Instead of processing an entire image or even bounding box at once,
+ 	at each step, the model selects the next location to attend to;
+	based on past information and the demands of the task....
+	The model is a recurrent neural network (RNN) which processes
+	inputs sequentially, attending to different locations within the
+	images (or video frames) one at a time, and incrementally combines
+	information from these fixations to build up a dynamic internal
+	representation of the scene or environment.\cite{DBLP:journals/corr/MnihHGK14}
+}
+
+ \paragraph{} One of the main advantage of this model, is that the computation required is
+ controlled and is independent of the input image size.
+ Deepmind’s researchers evaluated their model on several image classification
+ and dynamic visual control problems which showed a better performance when
+ compared with convolution neural network\cite{Goldsborough}.
+
+ \paragraph{} The evidence from this study suggests the application of this model on large scale
+ object recognition as well as classification of a sequence of images, which will
+ be a great fit since the model's performance is not dependent on the size of an input object.
+
+ \paragraph{} The main aim of this study is to extend the current knowledge of the work mentioned
+ above and build a model which will be able to classify a set of images and develop appropriate
+ prototype system since it can be useful in a variety of areas. However,
+ the experiments in the current work is limited by low-resolution images and mostly will concentrate
+ on classifying a group of objects as this restriction will reduce complexity
+ of the experiments and therefore reach better results on a task of classifying
+ a group of images.
+
+\section{Motivation}
+This approach to classify a group of images has a potential to help with automated
+detection and classification of breast cancer metastases, which is the main concern
+of camelyon challenge. Camelyon challenge provides the whole-slide images (WSI)
+of lymph nodes of different patients. Based on this images, competitors solutions
+should be able to
+detect the presence of breast cancer metastases in lymph nodes. \cite{CAMEL}
+\\
+Camelyon challenge is an inspiration for this work since pathologist's efforts
+along with the assistance of automated detection system will reduce significantly
+not only the workload of pathologists but the human error rate in diagnosis as well.
+
+\paragraph{}
+This work will be the first step in building software that will be capable of
+classifying whole-slide images of histological lymph node at the patient level.
+That is, bringing together estimations from multiple lymph node slides into a single outcome.
+
+\paragraph{}
+Digital pathology is a very attractive field for machine learning researchers
+since whole-slide images have a very high resolution and are typically about 200000 x 100000 pixels.
+To give you some sense of data, camelyon challenge provides data for 200 patients,
+where each patient has 5 different slides. It means that in total they release
+about 1000 slides which is 55.88gb of uncompressed data \cite{CAMEL}.
+
+\paragraph{}
+It is quite clear that using \gls{CNN} for this task is computationally very expensive.
+Applying model of visual attention promises to solve the issue of
+high-resolution pictures at a computational level.
+Therefore making an extensible piece of software, that will allow further
+improvements is also one of the main concerns of this work.
+
+
+
+
+% 	Hello World!
+% 	\subsection{My first sub section}
+% 	here goes my first shit
+% 	\subsubsection{ My sub sub section}
+% 	I will tell you more about neural networks in general and how they will change our life to the better.
+% 	\paragraph{ Why NN?}
+% 		because it's fucking awesome
+% 	\subparagraph{more detailed}
+% 	because it's incredibly amazing
+% \section{Second section}
+% Let's have some math in my document so it will look cooler
+% \begin{equation*}
+% 	f(*|x) = x^2 / \sqrt{y^{e+1}}
+% 	F(x) = y
+% \end{equation*}
+% \begin{align*}
+% 	f(*|x) &= x^2 / \sqrt{y^{e+1}}\\
+% 	F(x) = \frac{y^{e+1}}{x^{\frac{x^2}{1}}}
+% \end{align*}
+% % \left[
+% \begin{matrix}
+% 1 & 0\\
+% 0 & 1
+% \end{matrix}
+% % \right]
+% Some text
+% \subsection{My Model}
+% \begin{figure}[H]
+% 	\includegraphics[width=\linewidth]{trying.png}
+% 	\caption{A model.} % to show under the picture
+% 	\label{fig:model} % to reference to the figure later
+% \end{figure}
+% Figure \ref{fig:model} shows a boat.I am so cool that even can type the equation inline $F(x) = P(x|y=1)$
+% and still be so awesome
+% \begin{table}
+% 	\caption{Dummy table}
+% \end{table}
+% I will cite here something \cite{Ba2015}.
+% This is some example text\footnote{\label{myfootnote}Hello footnote}.
+% I'm referring to footnote \ref{myfootnote}.
+% % Random citation \autocite{Ba2015} embeddeed in text.
+% \newpage
+%
+% \begin{table}[h!]
+% 	\centering
+% 	\caption{Caption for the table.}
+% 	\label{tab:table1}
+% 	%  and the letters tell whether we want to align the content to the
+% 	% left (l), to the center (c) or to the right (r) for each column.
+% 	\begin{tabular}{r||c|r|r}
+% 		1 & 2 & 3 & 4\\
+% 		\hline
+% 		a & b & c & d\\
+% 	\end{tabular}
+% \end{table}
+% I want to refer to the table \ref{tab:table1}
+% \newpage
+% \bibliographystyle{ieeetr}
+% \bibliography{my}
+% \printbibliography
+% \underline
+% \em
+%    \emph

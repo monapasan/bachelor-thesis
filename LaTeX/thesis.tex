@@ -1,0 +1,126 @@
+% preamble:
+\documentclass[12pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+
+\usepackage{listings}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage[nottoc,numbib]{tocbibind}
+\usepackage[toc]{glossaries}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+% \title{Development and Evaluation of a Visual Attention Model with Python and Tensorflow}
+% \date{31-05-2017}
+% \author{Oleg Yarin}
+% \usepackage{biblatex}
+%
+% \usepackage{filecontents}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[autostyle]{csquotes}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\usepackage{booktabs} % For \toprule, \midrule and \bottomrule
+\usepackage{siunitx} % Formats the units and values
+\usepackage{pgfplotstable} % Generates t
+\usepackage{book­tabs]
+\sisetup{
+  round-mode          = places, % Rounds numbers
+  round-precision     = 2, % to 2 places
+}
+
+\graphicspath{ {img/} }
+
+\usepackage{float}
+\makeglossaries
+
+\newglossaryentry{NN}{%
+name={NN},%
+description={Neural network}%
+}
+
+\newglossaryentry{RNN}{%
+name={RNN},%
+description={Recurrent neural network}%
+}
+
+\newglossaryentry{CNN}{%
+name={CNN},%
+description={Convolutional neural network}%
+}
+
+\newglossaryentry{ANN}{%
+name={ANN},%
+description={Artificial neural network}%
+}
+\newglossaryentry{LSTM}{%
+name={LSTM},%
+description={Long Short-Term Memory}%
+}
+\newglossaryentry{BPTT}{%
+name={BPTT},%
+description={Backpropagation Through Time}%
+}
+
+\newglossaryentry{RL}{%
+name={RL},%
+description={Reinforcement learning}%
+}
+
+\newglossaryentry{RAM}{%
+name={RAM},%
+description={Recurrent attention model}%
+}
+
+
+
+\begin{document}
+	\input{./tex/title.tex}
+	\tableofcontents
+	\listoffigures
+	\listoftables
+    \printglossary[style=long]
+	\include{./tex/intro}
+    \input{./tex/theory}
+    \input{./tex/analysis}
+	\input{./tex/design}
+    \input{./tex/implementation}
+    \input{./tex/test_eval}
+    \input{./tex/results}
+	% Bibliography:
+	\clearpage
+	% \input{./tex/mybibliography.tex}
+	\bibliographystyle{ieeetr}
+	\bibliography{bibliography}
+     \input{./tex/authorship}
+\end{document}
+
+
+
+
+
+
+% \begin{document}
+% Here is some text, where we use \gls{apc}.
